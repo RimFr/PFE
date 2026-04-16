@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Lumina School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--navy:#05111F;--navy2:#081929;--navy3:#0C2140;--blue8:#0D3A68;--blue7:#114F90;--blue6:#1666BC;--blue5:#2080D8;--blue4:#4298E8;--blue3:#74B8F0;--blue2:#AACFF5;--blue1:#D4E9FA;--surface:#F2F7FC;--white:#FFFFFF;--text:#0C2140;--muted:#6B8AA8;--border:#D8E8F4;--green:#10B981;--red:#EF4444;--amber:#F59E0B;--purple:#8B5CF6;--sb-open:264px;--sb-shut:74px;--ease:cubic-bezier(.4,0,.2,1);}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;overflow:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);display:flex;}
+#sb{width:var(--sb-open);height:100vh;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;transition:width .4s var(--ease);overflow:visible;z-index:200;}
+#sb::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+#sb::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--blue5) 25%,var(--blue4) 60%,transparent 100%);z-index:3;}
+#sb.shut{width:var(--sb-shut);}.sb-chip{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--blue6);border:2.5px solid var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:background .25s,transform .4s var(--ease);color:#fff;font-size:.6rem;}
+.sb-chip:hover{background:var(--blue5);}#sb.shut .sb-chip{transform:translateY(-50%) rotate(180deg);}
+.sb-head{display:flex;align-items:center;gap:13px;padding:24px 18px 20px 20px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-icon-wrap{flex-shrink:0;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue7),var(--blue5));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,128,216,.4);transition:border-radius .4s var(--ease);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;}
+#sb.shut .sb-icon-wrap{border-radius:50%;}.sb-brand{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),transform .3s var(--ease),width .4s var(--ease);transform-origin:left;}
+#sb.shut .sb-brand{opacity:0;transform:scaleX(.85);width:0;}.sb-name{font-family:'Cormorant Garamond',serif;font-size:1.18rem;font-weight:600;color:#fff;letter-spacing:.03em;line-height:1.2;}.sb-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-top:1px;}
+.sb-teacher{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-teacher-av{width:40px;height:40px;border-radius:50%;border:2px solid rgba(59,130,246,.5);flex-shrink:0;overflow:hidden;}
+.sb-teacher-av img{width:100%;height:100%;object-fit:cover;}.sb-teacher-info{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-teacher-info{opacity:0;width:0;}.sb-teacher-name{font-size:.84rem;font-weight:600;color:#fff;}.sb-teacher-role{font-size:.65rem;color:rgba(255,255,255,.38);margin-top:1px;}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 10px;position:relative;z-index:1;}.sb-scroll::-webkit-scrollbar{width:0;}
+.sb-lbl{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .3s,max-height .3s,padding .3s;}
+#sb.shut .sb-lbl{opacity:0;max-height:0;padding-top:0;padding-bottom:0;}.sb-divider{height:1px;background:rgba(255,255,255,.05);margin:8px 14px;transition:opacity .3s;}
+#sb.shut .sb-divider{opacity:0;margin:4px 14px;}
+.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:12px;color:rgba(255,255,255,.48);text-decoration:none;font-size:.875rem;font-weight:400;transition:background .22s,color .22s,transform .22s,padding .4s var(--ease);white-space:nowrap;overflow:hidden;cursor:pointer;position:relative;margin-bottom:2px;}
+#sb.shut .ni{padding-left:0;padding-right:0;justify-content:center;}
+.ni-icon{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:rgba(255,255,255,.04);color:rgba(255,255,255,.42);transition:background .25s,color .25s,border-radius .4s var(--ease);}
+#sb.shut .ni-icon{border-radius:50%;}.ni-label{flex:1;overflow:hidden;transition:opacity .25s var(--ease),width .4s var(--ease),transform .25s var(--ease);white-space:nowrap;}
+#sb.shut .ni-label{opacity:0;width:0;transform:translateX(-8px);}.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);transform:translateX(3px);}
+#sb.shut .ni:hover{transform:none;}.ni:hover .ni-icon{background:rgba(32,128,216,.18);color:var(--blue3);}
+.ni.active{background:linear-gradient(135deg,rgba(22,102,188,.7),rgba(32,128,216,.5));color:#fff;box-shadow:0 4px 20px rgba(32,128,216,.25),inset 0 1px 0 rgba(255,255,255,.08);}
+.ni.active .ni-icon{background:rgba(255,255,255,.15);color:#fff;}
+.ni-tip{position:absolute;left:calc(100% + 16px);top:50%;transform:translateY(-50%);background:var(--navy3);color:#fff;font-size:.8rem;font-weight:500;padding:7px 14px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 6px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);z-index:999;}
+.ni-tip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:var(--navy3);}
+#sb.shut .ni:hover .ni-tip{opacity:1;}
+.sb-foot{padding:14px 12px;border-top:1px solid rgba(255,255,255,.055);display:flex;align-items:center;gap:11px;overflow:hidden;flex-shrink:0;position:relative;z-index:1;background:rgba(0,0,0,.18);}
+.sb-av{flex-shrink:0;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue8),var(--blue6));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:#fff;border:1.5px solid rgba(255,255,255,.12);transition:border-radius .4s var(--ease);}
+#sb.shut .sb-av{border-radius:50%;}.sb-foot-info{flex:1;min-width:0;overflow:hidden;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-foot-info{opacity:0;width:0;}.sb-foot-name{font-size:.85rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-foot-role{font-size:.68rem;color:rgba(255,255,255,.35);white-space:nowrap;}.sb-foot-actions{display:flex;gap:4px;flex-shrink:0;transition:opacity .3s;}
+#sb.shut .sb-foot-actions{opacity:0;pointer-events:none;}.sb-foot-btn{width:30px;height:30px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.78rem;transition:background .2s,color .2s;}
+.sb-foot-btn:hover{background:rgba(248,113,113,.15);color:#F87171;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;padding:0 2.5rem;gap:1rem;flex-shrink:0;}
+.topbar-left{flex:1;}.topbar-greeting{font-size:1.05rem;font-weight:600;color:var(--text);}.topbar-greeting span{color:var(--blue6);}
+.topbar-right{display:flex;align-items:center;gap:1rem;}
+.notif-btn{position:relative;width:40px;height:40px;border-radius:11px;background:var(--surface);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.95rem;transition:background .2s,border-color .2s;}
+.notif-btn:hover{background:var(--blue1);border-color:var(--blue3);color:var(--blue6);}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:.58rem;font-weight:700;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--white);}
+.profile-chip{display:flex;align-items:center;gap:.7rem;padding:6px 12px 6px 6px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;}
+.chip-av{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blue8),var(--blue6));display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:#fff;}
+.chip-name{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.2;}.chip-role{font-size:.68rem;color:var(--muted);}
+.content{flex:1;overflow-y:auto;padding:2rem 2.5rem;}.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:var(--blue2);border-radius:4px;}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:1.8rem;}
+.scard{background:var(--white);border-radius:14px;border:1px solid var(--border);padding:1.3rem 1.5rem;display:flex;align-items:center;gap:1rem;transition:box-shadow .25s,transform .25s;position:relative;overflow:hidden;}
+.scard:hover{box-shadow:0 6px 24px rgba(12,33,64,.08);transform:translateY(-2px);}
+.scard-icon{width:46px;height:46px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.95rem;}
+.si-b{background:rgba(22,102,188,.1);color:var(--blue6);}.si-g{background:rgba(16,185,129,.1);color:var(--green);}.si-r{background:rgba(239,68,68,.1);color:var(--red);}.si-a{background:rgba(245,158,11,.1);color:var(--amber);}
+.scard-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:var(--text);line-height:1;}
+.scard-lbl{font-size:.7rem;color:var(--muted);letter-spacing:.05em;margin-top:3px;}
+.scard-accent{position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 14px 14px;}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-bottom:1.4rem;}
+.panel{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:box-shadow .25s;}
+.panel:hover{box-shadow:0 8px 32px rgba(12,33,64,.06);}
+.panel-hdr{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:.9rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;}
+.p-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.75rem;}
+.pi-b{background:rgba(22,102,188,.1);color:var(--blue6);}.pi-a{background:rgba(245,158,11,.1);color:var(--amber);}
+.class-list{padding:1rem 1.5rem;display:flex;flex-direction:column;gap:.6rem;}
+.class-item{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1rem;background:var(--surface);border-radius:10px;border:1px solid var(--border);transition:all .2s;cursor:pointer;}
+.class-item:hover{border-color:var(--blue3);background:var(--blue1);}
+.class-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-right:10px;}
+.class-name{font-size:.87rem;font-weight:600;color:var(--text);}
+.class-meta{font-size:.7rem;color:var(--muted);margin-top:1px;}
+.flag-chips{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.35rem;}
+.flag-chip{padding:2px 8px;border-radius:5px;font-size:.66rem;font-weight:600;}
+.fc-fr{background:rgba(22,102,188,.1);color:var(--blue7);}.fc-en{background:rgba(16,185,129,.1);color:#059669;}.fc-es{background:rgba(245,158,11,.1);color:#B45309;}.fc-it{background:rgba(139,92,246,.1);color:#6D28D9;}.fc-tr{background:rgba(239,68,68,.08);color:#B91C1C;}
+.class-count{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--blue6);text-align:right;}
+.class-count-lbl{font-size:.62rem;color:var(--muted);}
+.event-list{padding:1rem 1.5rem;display:flex;flex-direction:column;gap:.2rem;}
+.event-item{display:flex;gap:10px;padding:.7rem 0;border-bottom:1px solid var(--border);align-items:center;}
+.event-item:last-child{border-bottom:none;}
+.event-date{min-width:34px;height:34px;background:rgba(32,128,216,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;color:var(--blue6);}
+.event-title{font-size:.84rem;font-weight:600;color:var(--text);}
+.event-sub{font-size:.7rem;color:var(--muted);}
+/* quick actions */
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.qa-item{background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.qa-item:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(12,33,64,.1);}
+.qa-top{width:100%;height:60px;background:linear-gradient(135deg,var(--navy),var(--navy3));display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--blue3);}
+.qa-body{padding:.7rem 1rem;}
+.qa-title{font-size:.82rem;font-weight:700;color:var(--text);}
+.qa-sub{font-size:.7rem;color:var(--muted);margin-top:2px;}
+/* Notification panel */
+#notifPanel{display:none;position:absolute;top:calc(100% + 10px);right:0;width:360px;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.12),0 0 0 1px rgba(12,33,64,.06);z-index:9999;overflow:hidden;animation:notifFadeIn .2s ease;}
+#notifPanel.open{display:block;}
+@keyframes notifFadeIn{from{opacity:0;transform:translateY(-8px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent;}
+.notif-item:hover{background:#f8fafc;}
+.notif-item.unread{background:#eff6ff;border-left-color:#3b82f6;}
+.notif-item.unread:hover{background:#dbeafe;}
+.notif-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.notif-scroll{max-height:340px;overflow-y:auto;}
+.notif-scroll::-webkit-scrollbar{width:3px;}
+.notif-scroll::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:99px;}
+@keyframes notifPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy3);color:#fff;padding:13px 18px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:.84rem;font-weight:500;box-shadow:0 10px 40px rgba(0,0,0,.3);transform:translateY(80px);opacity:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);z-index:9999;border-left:3px solid var(--blue4);max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}.toast i{color:var(--blue3);flex-shrink:0;}
+</style>
+</head>
+<body>
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head"><div class="sb-icon-wrap">S</div><div class="sb-brand"><div class="sb-name">Lumina School</div><div class="sb-sub">Language Institute</div></div></div>
+  <div class="sb-teacher"><div class="sb-teacher-av"><img src="https://i.pravatar.cc/150?img=47" alt="KB"></div><div class="sb-teacher-info"><div class="sb-teacher-name">Mr. Karim Bouzid</div><div class="sb-teacher-role">Languages Department</div></div></div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+    <a href="index.html" class="ni active"><div class="ni-icon"><i class="fas fa-house-chimney"></i></div><span class="ni-label">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a href="classes.html" class="ni"><div class="ni-icon"><i class="fas fa-chalkboard"></i></div><span class="ni-label">My Classes</span><div class="ni-tip">My Classes</div></a>
+    <a href="timetable.html" class="ni"><div class="ni-icon"><i class="fas fa-calendar-days"></i></div><span class="ni-label">Timetable</span><div class="ni-tip">Timetable</div></a>
+    <a href="grades.html" class="ni"><div class="ni-icon"><i class="fas fa-star"></i></div><span class="ni-label">Grades</span><div class="ni-tip">Grades</div></a>
+    <a href="attendance.html" class="ni"><div class="ni-icon"><i class="fas fa-user-check"></i></div><span class="ni-label">Attendance</span><div class="ni-tip">Attendance</div></a>
+    <div class="sb-divider"></div><div class="sb-lbl">Teaching</div>
+    <a href="homework.html" class="ni"><div class="ni-icon"><i class="fas fa-book"></i></div><span class="ni-label">Homework</span><div class="ni-tip">Homework</div></a>
+    <a href="exam.html" class="ni"><div class="ni-icon"><i class="fas fa-pen"></i></div><span class="ni-label">Evaluations</span><div class="ni-tip">Evaluations</div></a>
+    <a href="materials.html" class="ni"><div class="ni-icon"><i class="fas fa-file-arrow-up"></i></div><span class="ni-label">Materials</span><div class="ni-tip">Materials</div></a>
+    <a href="progress.html" class="ni"><div class="ni-icon"><i class="fas fa-chart-line"></i></div><span class="ni-label">Progress</span><div class="ni-tip">Progress</div></a>
+    <div class="sb-divider"></div>
+    <a href="messages.html" class="ni"><div class="ni-icon"><i class="fas fa-envelope"></i></div><span class="ni-label">Messages</span><div class="ni-tip">Messages</div></a>
+    <a href="annonce.html" class="ni"><div class="ni-icon"><i class="fas fa-bullhorn"></i></div><span class="ni-label">Announcements</span><div class="ni-tip">Announcements</div></a>
+    <a href="teacher-profile .html" class="ni">
+      <div class="ni-icon"><i class="fas fa-circle-user"></i></div>
+      <span class="ni-label">My Profile</span>
+      <div class="ni-tip">My Profile</div>
+    </a>
+  </div>
+  <div class="sb-foot"><div class="sb-av">KB</div><div class="sb-foot-info"><div class="sb-foot-name">Mr. Karim Bouzid</div><div class="sb-foot-role">Teacher · Active</div></div><div class="sb-foot-actions"><button class="sb-foot-btn" onclick="toast('Logged out.','fa-arrow-right-from-bracket','var(--blue3)')"><i class="fas fa-arrow-right-from-bracket"></i></button></div></div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><div class="topbar-greeting">Good morning, <span>Mr. Bouzid 👋</span></div></div>
+    <div class="topbar-right">
+      <div style="position:relative;" id="notifWrapper">
+        <button class="notif-btn" onclick="toggleNotifPanel()"><i class="fas fa-bell"></i><span class="notif-badge" id="notifBadge">4</span></button>
+        <div id="notifPanel">
+          <div style="padding:16px 16px 12px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <p style="font-weight:700;font-size:14px;color:#0f172a;margin:0;">Notifications</p>
+              <p id="notifSubtitle" style="font-size:11px;color:#94a3b8;margin-top:1px;">4 unread</p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="markAllRead()" style="font-size:11px;font-weight:600;color:#3b82f6;background:#eff6ff;border:none;border-radius:10px;padding:4px 10px;cursor:pointer;">Mark all read</button>
+              <button onclick="clearAll()" style="font-size:11px;font-weight:600;color:#ef4444;background:#fef2f2;border:none;border-radius:10px;padding:4px 10px;cursor:pointer;">Clear all</button>
+            </div>
+          </div>
+          <div class="notif-scroll" id="notifList"></div>
+          <div style="padding:10px 16px;border-top:1px solid #f1f5f9;text-align:center;">
+            <a href="#" style="font-size:12px;font-weight:600;color:#3b82f6;text-decoration:none;">View all notifications →</a>
+          </div>
+        </div>
+      </div>
+      <div class="profile-chip"><div class="chip-av">KB</div><div><div class="chip-name">Mr. Karim Bouzid</div><div class="chip-role">Teacher</div></div></div>
+    </div>
+  </header>
+  <div class="content">
+    <div class="stat-row">
+      <div class="scard"><div class="scard-icon si-b"><i class="fas fa-chalkboard"></i></div><div><div class="scard-num">5</div><div class="scard-lbl">Classes Assigned</div></div><div class="scard-accent" style="background:var(--blue5)"></div></div>
+      <div class="scard"><div class="scard-icon si-g"><i class="fas fa-users"></i></div><div><div class="scard-num">138</div><div class="scard-lbl">Total Students</div></div><div class="scard-accent" style="background:var(--green)"></div></div>
+      <div class="scard"><div class="scard-icon si-r"><i class="fas fa-user-xmark"></i></div><div><div class="scard-num">5</div><div class="scard-lbl">Absences Today</div></div><div class="scard-accent" style="background:var(--red)"></div></div>
+      <div class="scard"><div class="scard-icon si-a"><i class="fas fa-clipboard-list"></i></div><div><div class="scard-num">4</div><div class="scard-lbl">Pending Homeworks</div></div><div class="scard-accent" style="background:var(--amber)"></div></div>
+    </div>
+    <div class="dash-grid">
+      <div class="panel">
+        <div class="panel-hdr"><div class="panel-title"><div class="p-icon pi-b"><i class="fas fa-chalkboard"></i></div>My Classes</div><span style="font-size:.72rem;color:var(--muted)">5 classes</span></div>
+        <div class="class-list">
+          <div class="class-item"><div style="display:flex;align-items:flex-start"><div class="class-dot" style="background:var(--blue6);margin-top:4px"></div><div><div class="class-name">1AS — 28 students</div><div class="class-meta">Sun/Tue · 08:00</div><div class="flag-chips"><span class="flag-chip fc-fr">🇫🇷 French</span><span class="flag-chip fc-en">🇬🇧 English</span></div></div></div><div><div class="class-count">28</div><div class="class-count-lbl">students</div></div></div>
+          <div class="class-item"><div style="display:flex;align-items:flex-start"><div class="class-dot" style="background:var(--green);margin-top:4px"></div><div><div class="class-name">2AS — 30 students</div><div class="class-meta">Mon/Wed · 10:00</div><div class="flag-chips"><span class="flag-chip fc-fr">🇫🇷 French</span><span class="flag-chip fc-es">🇪🇸 Spanish</span></div></div></div><div><div class="class-count">30</div><div class="class-count-lbl">students</div></div></div>
+          <div class="class-item"><div style="display:flex;align-items:flex-start"><div class="class-dot" style="background:var(--amber);margin-top:4px"></div><div><div class="class-name">3AS — 27 students</div><div class="class-meta">Mon/Thu · 13:00</div><div class="flag-chips"><span class="flag-chip fc-en">🇬🇧 English</span><span class="flag-chip fc-it">🇮🇹 Italian</span></div></div></div><div><div class="class-count">27</div><div class="class-count-lbl">students</div></div></div>
+          <div class="class-item"><div style="display:flex;align-items:flex-start"><div class="class-dot" style="background:var(--red);margin-top:4px"></div><div><div class="class-name">1ES — 26 students</div><div class="class-meta">Wed/Fri · 15:00</div><div class="flag-chips"><span class="flag-chip fc-tr">🇹🇷 Turkish</span><span class="flag-chip fc-es">🇪🇸 Spanish</span></div></div></div><div><div class="class-count">26</div><div class="class-count-lbl">students</div></div></div>
+          <div class="class-item"><div style="display:flex;align-items:flex-start"><div class="class-dot" style="background:var(--purple);margin-top:4px"></div><div><div class="class-name">TM — 27 students</div><div class="class-meta">Tue/Thu · 09:00</div><div class="flag-chips"><span class="flag-chip fc-fr">🇫🇷 French</span><span class="flag-chip fc-it">🇮🇹 Italian</span><span class="flag-chip fc-tr">🇹🇷 Turkish</span></div></div></div><div><div class="class-count">27</div><div class="class-count-lbl">students</div></div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr"><div class="panel-title"><div class="p-icon pi-a"><i class="fas fa-calendar-days"></i></div>Upcoming Events</div></div>
+        <div class="event-list">
+          <div class="event-item"><div class="event-date">07</div><div><div class="event-title">🇫🇷 French Oral Assessment — 2AS</div><div class="event-sub">Tuesday · 10:00</div></div></div>
+          <div class="event-item"><div class="event-date">09</div><div><div class="event-title">🇬🇧 English Writing Workshop — 3AS</div><div class="event-sub">Thursday · 13:00</div></div></div>
+          <div class="event-item"><div class="event-date">12</div><div><div class="event-title">Parent-Teacher Meeting</div><div class="event-sub">Sunday · 10:00 — Conference Room</div></div></div>
+          <div class="event-item"><div class="event-date">16</div><div><div class="event-title">🇮🇹 Italian Vocabulary Test — TM</div><div class="event-sub">Thursday · 09:00</div></div></div>
+          <div class="event-item"><div class="event-date">20</div><div><div class="event-title">🇬🇧 English Mid-Term Exam — 1AS</div><div class="event-sub">Monday · 08:00</div></div></div>
+          <div class="event-item"><div class="event-date">28</div><div><div class="event-title">🌍 Language Showcase — All Classes</div><div class="event-sub">Tuesday · 14:00 — Main Hall</div></div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Quick Actions -->
+    <div class="panel" style="margin-top:0;padding:1.5rem">
+      <div style="font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem">Quick Actions</div>
+      <div class="qa-grid">
+        <div class="qa-item" onclick="location.href='homework.html'"><div class="qa-top"><i class="fas fa-book-open"></i></div><div class="qa-body"><div class="qa-title">Add Homework</div><div class="qa-sub">Assign new exercise</div></div></div>
+        <div class="qa-item" onclick="location.href='exam.html'"><div class="qa-top" style="background:linear-gradient(135deg,var(--navy3),var(--blue8))"><i class="fas fa-pen-ruler"></i></div><div class="qa-body"><div class="qa-title">New Evaluation</div><div class="qa-sub">Schedule a test</div></div></div>
+        <div class="qa-item" onclick="location.href='attendance.html'"><div class="qa-top" style="background:linear-gradient(135deg,#3b0764,#6b21a8)"><i class="fas fa-user-check" style="color:#c084fc"></i></div><div class="qa-body"><div class="qa-title">Mark Attendance</div><div class="qa-sub">Record today's roll</div></div></div>
+        <div class="qa-item" onclick="location.href='messages.html'"><div class="qa-top" style="background:linear-gradient(135deg,#0d3b2e,#1a6b52)"><i class="fas fa-envelope" style="color:#34d399"></i></div><div class="qa-body"><div class="qa-title">Message Parent</div><div class="qa-sub">Send communication</div></div></div>
+       <div class="qa-item" onclick="location.href='teacher-profile .html'"><div class="qa-top" style="background:linear-gradient(135deg,#0d3b2e,#1a6b52)"><i class="fas fa-envelope" style="color:#34d399"></i></div><div class="qa-body">profile teacher<div class="qa-title"></div><div class="qa-sub">information of the teacher</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="toastIcon"></i><span id="toastMsg">Done!</span></div>
+<script>
+let shut=false;
+function toggleSB(){shut=!shut;document.getElementById('sb').classList.toggle('shut',shut);}
+function toast(msg,icon,color){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;const ic=document.getElementById('toastIcon');ic.className='fas '+(icon||'fa-check-circle');ic.style.color=color||'var(--blue3)';t.style.borderLeftColor=color||'var(--blue4)';t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3400);}
+
+/* ── Notifications ── */
+const NOTIFS=[
+  {id:1,icon:'fa-book',iconBg:'#dbeafe',iconColor:'#1d4ed8',title:'New homework submitted',body:'3 students from 2AS submitted the French essay.',time:'5 min ago',unread:true},
+  {id:2,icon:'fa-user-xmark',iconBg:'#fef2f2',iconColor:'#ef4444',title:'Absence reported',body:'Yacine Benali (1AS) is absent today.',time:'20 min ago',unread:true},
+  {id:3,icon:'fa-pen',iconBg:'#fef9c3',iconColor:'#854d0e',title:'Evaluation due soon',body:'Italian Vocabulary Test for TM is on Thursday.',time:'1 hr ago',unread:true},
+  {id:4,icon:'fa-envelope',iconBg:'#ede9fe',iconColor:'#6d28d9',title:'Message from parent',body:'Parent of Amira Kaci sent a message about attendance.',time:'2 hr ago',unread:true},
+  {id:5,icon:'fa-star',iconBg:'#dcfce7',iconColor:'#15803d',title:'Grade submitted',body:'3AS mid-term grades have been recorded.',time:'Yesterday',unread:false},
+  {id:6,icon:'fa-bullhorn',iconBg:'#eff6ff',iconColor:'#1d4ed8',title:'New announcement posted',body:'Language Showcase date confirmed — April 28.',time:'Yesterday',unread:false},
+];
+let notifData=[...NOTIFS];
+
+function renderNotifs(){
+  const list=document.getElementById('notifList');
+  if(!notifData.length){list.innerHTML=`<div style="padding:40px 16px;text-align:center;color:#94a3b8;"><i class="fas fa-bell-slash" style="font-size:28px;margin-bottom:8px;display:block;"></i><p style="font-size:13px;font-weight:500;">No notifications</p></div>`;return;}
+  list.innerHTML=notifData.map(n=>`
+    <div class="notif-item ${n.unread?'unread':''}" onclick="readNotif(${n.id})">
+      <div class="notif-icon" style="background:${n.iconBg};color:${n.iconColor};"><i class="fas ${n.icon}"></i></div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <p style="font-size:12px;font-weight:${n.unread?'700':'600'};color:#1e293b;margin:0;">${n.title}</p>
+          ${n.unread?'<span style="width:7px;height:7px;background:#3b82f6;border-radius:50%;flex-shrink:0;display:inline-block;"></span>':''}
+        </div>
+        <p style="font-size:11px;color:#64748b;margin:2px 0 0;line-height:1.4;">${n.body}</p>
+        <p style="font-size:10px;color:#94a3b8;margin-top:4px;">${n.time}</p>
+      </div>
+    </div>`).join('');
+  updateBadge();
+}
+
+function updateBadge(){
+  const count=notifData.filter(n=>n.unread).length;
+  const badge=document.getElementById('notifBadge');
+  const sub=document.getElementById('notifSubtitle');
+  badge.textContent=count;
+  badge.style.display=count>0?'flex':'none';
+  if(sub)sub.textContent=count>0?`${count} unread`:'All caught up';
+}
+
+function readNotif(id){notifData=notifData.map(n=>n.id===id?{...n,unread:false}:n);renderNotifs();}
+function markAllRead(){notifData=notifData.map(n=>({...n,unread:false}));renderNotifs();}
+function clearAll(){notifData=[];renderNotifs();}
+
+function toggleNotifPanel(){
+  const p=document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open'))renderNotifs();
+}
+document.addEventListener('click',e=>{
+  const w=document.getElementById('notifWrapper');
+  if(w&&!w.contains(e.target))document.getElementById('notifPanel').classList.remove('open');
+});
+</script>
+</body>
+</html>

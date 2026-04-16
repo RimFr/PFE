@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — Mr. Karim Bouzid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--navy:#05111F;--navy2:#081929;--navy3:#0C2140;--blue8:#0D3A68;--blue7:#114F90;--blue6:#1666BC;--blue5:#2080D8;--blue4:#4298E8;--blue3:#74B8F0;--blue2:#AACFF5;--blue1:#D4E9FA;--surface:#F2F7FC;--white:#FFFFFF;--text:#0C2140;--muted:#6B8AA8;--border:#D8E8F4;--green:#10B981;--red:#EF4444;--amber:#F59E0B;--purple:#8B5CF6;--sb-open:264px;--sb-shut:74px;--ease:cubic-bezier(.4,0,.2,1);}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;overflow:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);display:flex;}
+
+/* ── SIDEBAR ── */
+#sb{width:var(--sb-open);height:100vh;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;transition:width .4s var(--ease);overflow:visible;z-index:200;}
+#sb::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+#sb::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--blue5) 25%,var(--blue4) 60%,transparent 100%);z-index:3;}
+#sb.shut{width:var(--sb-shut);}
+.sb-chip{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--blue6);border:2.5px solid var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:background .25s,transform .4s var(--ease);color:#fff;font-size:.6rem;}
+.sb-chip:hover{background:var(--blue5);}#sb.shut .sb-chip{transform:translateY(-50%) rotate(180deg);}
+.sb-head{display:flex;align-items:center;gap:13px;padding:24px 18px 20px 20px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-icon-wrap{flex-shrink:0;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue7),var(--blue5));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,128,216,.4);transition:border-radius .4s var(--ease);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;}
+#sb.shut .sb-icon-wrap{border-radius:50%;}
+.sb-brand{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),transform .3s var(--ease),width .4s var(--ease);transform-origin:left;}
+#sb.shut .sb-brand{opacity:0;transform:scaleX(.85);width:0;}
+.sb-name{font-family:'Cormorant Garamond',serif;font-size:1.18rem;font-weight:600;color:#fff;letter-spacing:.03em;line-height:1.2;}
+.sb-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-top:1px;}
+.sb-teacher{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-teacher-av{width:40px;height:40px;border-radius:50%;border:2px solid rgba(59,130,246,.5);flex-shrink:0;overflow:hidden;}
+.sb-teacher-av img{width:100%;height:100%;object-fit:cover;}
+.sb-teacher-info{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-teacher-info{opacity:0;width:0;}
+.sb-teacher-name{font-size:.84rem;font-weight:600;color:#fff;}
+.sb-teacher-role{font-size:.65rem;color:rgba(255,255,255,.38);margin-top:1px;}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 10px;position:relative;z-index:1;}.sb-scroll::-webkit-scrollbar{width:0;}
+.sb-lbl{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .3s,max-height .3s,padding .3s;}
+#sb.shut .sb-lbl{opacity:0;max-height:0;padding-top:0;padding-bottom:0;}
+.sb-divider{height:1px;background:rgba(255,255,255,.05);margin:8px 14px;transition:opacity .3s;}
+#sb.shut .sb-divider{opacity:0;margin:4px 14px;}
+.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:12px;color:rgba(255,255,255,.48);text-decoration:none;font-size:.875rem;font-weight:400;transition:background .22s,color .22s,transform .22s,padding .4s var(--ease);white-space:nowrap;overflow:hidden;cursor:pointer;position:relative;margin-bottom:2px;}
+#sb.shut .ni{padding-left:0;padding-right:0;justify-content:center;}
+.ni-icon{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:rgba(255,255,255,.04);color:rgba(255,255,255,.42);transition:background .25s,color .25s,border-radius .4s var(--ease);}
+#sb.shut .ni-icon{border-radius:50%;}
+.ni-label{flex:1;overflow:hidden;transition:opacity .25s var(--ease),width .4s var(--ease),transform .25s var(--ease);white-space:nowrap;}
+#sb.shut .ni-label{opacity:0;width:0;transform:translateX(-8px);}
+.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);transform:translateX(3px);}
+#sb.shut .ni:hover{transform:none;}
+.ni:hover .ni-icon{background:rgba(32,128,216,.18);color:var(--blue3);}
+.ni.active{background:linear-gradient(135deg,rgba(22,102,188,.7),rgba(32,128,216,.5));color:#fff;box-shadow:0 4px 20px rgba(32,128,216,.25),inset 0 1px 0 rgba(255,255,255,.08);}
+.ni.active .ni-icon{background:rgba(255,255,255,.15);color:#fff;}
+.ni-tip{position:absolute;left:calc(100% + 16px);top:50%;transform:translateY(-50%);background:var(--navy3);color:#fff;font-size:.8rem;font-weight:500;padding:7px 14px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 6px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);z-index:999;}
+.ni-tip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:var(--navy3);}
+#sb.shut .ni:hover .ni-tip{opacity:1;}
+.sb-foot{padding:14px 12px;border-top:1px solid rgba(255,255,255,.055);display:flex;align-items:center;gap:11px;overflow:hidden;flex-shrink:0;position:relative;z-index:1;background:rgba(0,0,0,.18);}
+.sb-av{flex-shrink:0;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue8),var(--blue6));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:#fff;border:1.5px solid rgba(255,255,255,.12);transition:border-radius .4s var(--ease);}
+#sb.shut .sb-av{border-radius:50%;}
+.sb-foot-info{flex:1;min-width:0;overflow:hidden;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-foot-info{opacity:0;width:0;}
+.sb-foot-name{font-size:.85rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-foot-role{font-size:.68rem;color:rgba(255,255,255,.35);white-space:nowrap;}
+.sb-foot-actions{display:flex;gap:4px;flex-shrink:0;transition:opacity .3s;}
+#sb.shut .sb-foot-actions{opacity:0;pointer-events:none;}
+.sb-foot-btn{width:30px;height:30px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.78rem;transition:background .2s,color .2s;}
+.sb-foot-btn:hover{background:rgba(248,113,113,.15);color:#F87171;}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;padding:0 2.5rem;gap:1rem;flex-shrink:0;}
+.topbar-left{flex:1;display:flex;align-items:center;gap:8px;}
+.topbar-crumb{font-size:.8rem;color:var(--muted);}
+.topbar-sep{color:var(--border);font-size:.65rem;}
+.topbar-title{font-size:.9rem;font-weight:600;color:var(--text);}
+.topbar-right{display:flex;align-items:center;gap:1rem;}
+.notif-btn{position:relative;width:40px;height:40px;border-radius:11px;background:var(--surface);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:.95rem;transition:background .2s,border-color .2s;}
+.notif-btn:hover{background:var(--blue1);border-color:var(--blue3);color:var(--blue6);}
+.notif-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:.58rem;font-weight:700;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--white);}
+.profile-chip{display:flex;align-items:center;gap:.7rem;padding:6px 12px 6px 6px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;}
+.chip-av{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blue8),var(--blue6));display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:#fff;}
+.chip-name{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.2;}
+.chip-role{font-size:.68rem;color:var(--muted);}
+
+/* ── SAVE BTN ── */
+.save-btn{display:flex;align-items:center;gap:8px;padding:9px 20px;background:linear-gradient(135deg,var(--blue6),var(--blue5));color:#fff;border:none;border-radius:11px;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:opacity .2s,transform .2s;box-shadow:0 4px 14px rgba(32,128,216,.35);}
+.save-btn:hover{opacity:.9;transform:translateY(-1px);}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:2rem 2.5rem;}
+.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:var(--blue2);border-radius:4px;}
+
+/* ── PROFILE HERO BANNER ── */
+.profile-banner{border-radius:18px;background:linear-gradient(135deg,var(--navy3) 0%,var(--blue7) 60%,var(--blue6) 100%);padding:2rem 2.5rem;display:flex;align-items:center;gap:2rem;margin-bottom:1.8rem;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(12,33,64,.18);}
+.profile-banner::before{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.05);}
+.profile-banner::after{content:'';position:absolute;right:100px;bottom:-50px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.04);}
+.banner-gold-bar{position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,var(--blue3),transparent);}
+.banner-avatar{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.25);overflow:hidden;flex-shrink:0;position:relative;z-index:1;}
+.banner-avatar img{width:100%;height:100%;object-fit:cover;}
+.banner-info{position:relative;z-index:1;}
+.banner-name{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;color:#fff;line-height:1.2;}
+.banner-role{font-size:.82rem;color:rgba(255,255,255,.6);margin-top:4px;}
+.banner-chips{display:flex;gap:.5rem;margin-top:10px;flex-wrap:wrap;}
+.banner-chip{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:600;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);backdrop-filter:blur(4px);}
+.banner-stats{margin-left:auto;display:flex;gap:2rem;position:relative;z-index:1;}
+.bstat{text-align:center;}
+.bstat-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:#fff;line-height:1;}
+.bstat-lbl{font-size:.65rem;color:rgba(255,255,255,.5);margin-top:2px;text-transform:uppercase;letter-spacing:.08em;}
+
+/* ── PROFILE GRID ── */
+.profile-grid{display:grid;grid-template-columns:1fr 340px;gap:1.4rem;align-items:start;}
+
+/* ── PANEL ── */
+.pnl{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.pnl-hdr{padding:1.2rem 1.6rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.pnl-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.82rem;}
+.pnl-title{font-size:.92rem;font-weight:600;color:var(--text);}
+.pnl-body{padding:1.6rem;}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.form-full{grid-column:1/-1;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.field input,.field select{height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 13px;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--text);background:var(--surface);outline:none;transition:border-color .2s,background .2s;width:100%;}
+.field input:focus,.field select:focus{border-color:var(--blue5);background:#fff;box-shadow:0 0 0 3px rgba(32,128,216,.1);}
+.field input[readonly]{background:#f0f4f8;color:var(--muted);cursor:default;}
+.field input[type="date"]{color:var(--text);}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B8AA8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-size:12px;}
+
+/* ── SECURITY ── */
+.sec-field{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem;}
+.sec-field label{font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+.sec-field input{height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 13px;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--text);background:var(--surface);outline:none;transition:border-color .2s,background .2s;width:100%;}
+.sec-field input:focus{border-color:var(--blue5);background:#fff;box-shadow:0 0 0 3px rgba(32,128,216,.1);}
+.sec-hint{font-size:.7rem;color:var(--muted);margin-top:2px;}
+.pw-strength{height:4px;border-radius:99px;background:var(--border);margin-top:6px;overflow:hidden;}
+.pw-strength-bar{height:100%;border-radius:99px;width:0;transition:width .4s,background .4s;}
+.pw-strength-lbl{font-size:.65rem;margin-top:4px;font-weight:600;}
+.update-btn{width:100%;height:46px;background:linear-gradient(135deg,var(--green),#059669);color:#fff;border:none;border-radius:11px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .2s;box-shadow:0 4px 14px rgba(16,185,129,.35);margin-top:.5rem;}
+.update-btn:hover{opacity:.9;transform:translateY(-1px);}
+
+/* ── AVATAR SECTION ── */
+.avatar-section{display:flex;flex-direction:column;align-items:center;gap:.8rem;padding:1.4rem;border-bottom:1px solid var(--border);}
+.avatar-big{width:90px;height:90px;border-radius:50%;border:3px solid var(--blue3);overflow:hidden;position:relative;}
+.avatar-big img{width:100%;height:100%;object-fit:cover;}
+.avatar-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(22,102,188,.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;cursor:pointer;font-size:.8rem;color:#fff;gap:6px;}
+.avatar-big:hover .avatar-overlay{opacity:1;}
+.avatar-name{font-size:.95rem;font-weight:600;color:var(--text);}
+.avatar-role{font-size:.72rem;color:var(--muted);}
+.status-dot{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;font-weight:600;color:var(--green);}
+.status-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── LANGUAGES TAUGHT ── */
+.lang-taught{padding:1.2rem 1.6rem;}
+.lang-tag{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:600;margin:.25rem;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy3);color:#fff;padding:13px 18px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:.84rem;font-weight:500;box-shadow:0 10px 40px rgba(0,0,0,.3);transform:translateY(80px);opacity:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);z-index:9999;border-left:3px solid var(--blue4);max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}.toast i{color:var(--blue3);flex-shrink:0;}
+
+/* ── NOTIFICATION PANEL ── */
+#notifPanel{display:none;position:absolute;top:calc(100% + 10px);right:0;width:360px;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.12),0 0 0 1px rgba(12,33,64,.06);z-index:9999;overflow:hidden;animation:notifFadeIn .2s ease;}
+#notifPanel.open{display:block;}
+@keyframes notifFadeIn{from{opacity:0;transform:translateY(-8px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;cursor:pointer;transition:background .15s;border-left:3px solid transparent;}
+.notif-item:hover{background:#f8fafc;}
+.notif-item.unread{background:#eff6ff;border-left-color:#3b82f6;}
+.notif-icon-n{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.notif-scroll{max-height:340px;overflow-y:auto;}
+.notif-scroll::-webkit-scrollbar{width:3px;}
+.notif-scroll::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:99px;}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand"><div class="sb-name">Lumina School</div><div class="sb-sub">Language Institute</div></div>
+  </div>
+  <div class="sb-teacher">
+    <div class="sb-teacher-av"><img src="https://i.pravatar.cc/150?img=47" alt="KB"></div>
+    <div class="sb-teacher-info"><div class="sb-teacher-name">Mr. Karim Bouzid</div><div class="sb-teacher-role">Languages Department</div></div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+    <a href="index.html" class="ni"><div class="ni-icon"><i class="fas fa-house-chimney"></i></div><span class="ni-label">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a href="classes.html" class="ni"><div class="ni-icon"><i class="fas fa-chalkboard"></i></div><span class="ni-label">My Classes</span><div class="ni-tip">My Classes</div></a>
+    <a href="timetable.html" class="ni"><div class="ni-icon"><i class="fas fa-calendar-days"></i></div><span class="ni-label">Timetable</span><div class="ni-tip">Timetable</div></a>
+    <a href="grades.html" class="ni"><div class="ni-icon"><i class="fas fa-star"></i></div><span class="ni-label">Grades</span><div class="ni-tip">Grades</div></a>
+    <a href="attendance.html" class="ni"><div class="ni-icon"><i class="fas fa-user-check"></i></div><span class="ni-label">Attendance</span><div class="ni-tip">Attendance</div></a>
+    <div class="sb-divider"></div>
+    <div class="sb-lbl">Teaching</div>
+    <a href="homework.html" class="ni"><div class="ni-icon"><i class="fas fa-book"></i></div><span class="ni-label">Homework</span><div class="ni-tip">Homework</div></a>
+    <a href="exam.html" class="ni"><div class="ni-icon"><i class="fas fa-pen"></i></div><span class="ni-label">Evaluations</span><div class="ni-tip">Evaluations</div></a>
+    <a href="materials.html" class="ni"><div class="ni-icon"><i class="fas fa-file-arrow-up"></i></div><span class="ni-label">Materials</span><div class="ni-tip">Materials</div></a>
+    <a href="progress.html" class="ni"><div class="ni-icon"><i class="fas fa-chart-line"></i></div><span class="ni-label">Progress</span><div class="ni-tip">Progress</div></a>
+    <div class="sb-divider"></div>
+    <a href="messages.html" class="ni"><div class="ni-icon"><i class="fas fa-envelope"></i></div><span class="ni-label">Messages</span><div class="ni-tip">Messages</div></a>
+    <a href="annonce.html" class="ni"><div class="ni-icon"><i class="fas fa-bullhorn"></i></div><span class="ni-label">Announcements</span><div class="ni-tip">Announcements</div></a>
+    <a href="teacher-{% url 'core:login' %}" class="ni active">
+      <div class="ni-icon"><i class="fas fa-circle-user"></i></div>
+      <span class="ni-label">My Profile</span>
+      <div class="ni-tip">My Profile</div>
+    </a>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-av">KB</div>
+    <div class="sb-foot-info"><div class="sb-foot-name">Mr. Karim Bouzid</div><div class="sb-foot-role">Teacher · Active</div></div>
+    <div class="sb-foot-actions">
+      <button class="sb-foot-btn" onclick="showToast('Logged out.','fa-arrow-right-from-bracket','var(--blue3)')"><i class="fas fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-crumb">Lumina School</span>
+      <span class="topbar-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="topbar-title">My Profile</span>
+    </div>
+    <div class="topbar-right">
+      <button class="save-btn" onclick="saveChanges()"><i class="fas fa-floppy-disk"></i> SAVE CHANGES</button>
+      <div style="position:relative;" id="notifWrapper">
+        <button class="notif-btn" onclick="toggleNotifPanel()"><i class="fas fa-bell"></i><span class="notif-badge" id="notifBadge">4</span></button>
+        <div id="notifPanel">
+          <div style="padding:16px 16px 12px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <p style="font-weight:700;font-size:14px;color:#0f172a;margin:0;">Notifications</p>
+              <p id="notifSubtitle" style="font-size:11px;color:#94a3b8;margin-top:1px;">4 unread</p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="markAllRead()" style="font-size:11px;font-weight:600;color:#3b82f6;background:#eff6ff;border:none;border-radius:10px;padding:4px 10px;cursor:pointer;">Mark all read</button>
+              <button onclick="clearAll()" style="font-size:11px;font-weight:600;color:#ef4444;background:#fef2f2;border:none;border-radius:10px;padding:4px 10px;cursor:pointer;">Clear all</button>
+            </div>
+          </div>
+          <div class="notif-scroll" id="notifList"></div>
+          <div style="padding:10px 16px;border-top:1px solid #f1f5f9;text-align:center;">
+            <a href="#" style="font-size:12px;font-weight:600;color:#3b82f6;text-decoration:none;">View all notifications →</a>
+          </div>
+        </div>
+      </div>
+      <div class="profile-chip">
+        <div class="chip-av">KB</div>
+        <div><div class="chip-name">Mr. Karim Bouzid</div><div class="chip-role">Teacher</div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Hero Banner -->
+    <div class="profile-banner">
+      <div class="banner-gold-bar"></div>
+      <div class="banner-avatar">
+        <img src="https://i.pravatar.cc/150?img=47" alt="Mr. Karim Bouzid">
+      </div>
+      <div class="banner-info">
+        <div class="banner-name">Mr. Karim Bouzid</div>
+        <div class="banner-role">Modern Languages Department · Lumina School</div>
+        <div class="banner-chips">
+          <span class="banner-chip">🇫🇷 French</span>
+          <span class="banner-chip">🇬🇧 English</span>
+          <span class="banner-chip">🇪🇸 Spanish</span>
+          <span class="banner-chip">🇮🇹 Italian</span>
+          <span class="banner-chip">🇹🇷 Turkish</span>
+        </div>
+      </div>
+      <div class="banner-stats">
+        <div class="bstat"><div class="bstat-num">5</div><div class="bstat-lbl">Classes</div></div>
+        <div class="bstat"><div class="bstat-num">138</div><div class="bstat-lbl">Students</div></div>
+        <div class="bstat"><div class="bstat-num">7</div><div class="bstat-lbl">Years Exp.</div></div>
+      </div>
+    </div>
+
+    <!-- Profile Grid -->
+    <div class="profile-grid">
+
+      <!-- LEFT: Personal Information -->
+      <div class="pnl">
+        <div class="pnl-hdr">
+          <div class="pnl-icon" style="background:rgba(22,102,188,.1);color:var(--blue6)"><i class="fas fa-user"></i></div>
+          <span class="pnl-title">Personal Information</span>
+        </div>
+        <div class="pnl-body">
+          <div class="form-grid">
+            <div class="field">
+              <label>First Name</label>
+              <input type="text" value="Karim" id="firstName">
+            </div>
+            <div class="field">
+              <label>Last Name</label>
+              <input type="text" value="Bouzid" id="lastName">
+            </div>
+            <div class="field">
+              <label>Email Address</label>
+              <input type="email" value="k.bouzid@Luminaschool.dz" id="email">
+            </div>
+            <div class="field">
+              <label>Phone Number</label>
+              <input type="tel" value="+213 661 234 567" id="phone">
+            </div>
+            <div class="field">
+              <label>Date of Birth</label>
+              <input type="date" value="1988-04-14" id="dob">
+            </div>
+            <div class="field">
+              <label>Gender</label>
+              <select id="gender">
+                <option selected>Male</option>
+                <option>Female</option>
+                <option>Prefer not to say</option>
+              </select>
+            </div>
+            <div class="field form-full">
+              <label>Role</label>
+              <input type="text" value="Language Teacher" readonly>
+            </div>
+            <div class="field form-full">
+              <label>Department</label>
+              <input type="text" value="Modern Languages Department" readonly>
+            </div>
+            <div class="field form-full">
+              <label>Address</label>
+              <input type="text" value="12 Rue des Oliviers, Aïn Benian, Algiers" id="address">
+            </div>
+            <div class="field">
+              <label>National ID</label>
+              <input type="text" value="88041412345" id="nid">
+            </div>
+            <div class="field">
+              <label>Hire Date</label>
+              <input type="date" value="2017-09-01" readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Avatar + Security + Languages -->
+      <div style="display:flex;flex-direction:column;gap:1.2rem;">
+
+        <!-- Avatar Card -->
+        <div class="pnl">
+          <div class="avatar-section">
+            <div class="avatar-big">
+              <img src="https://i.pravatar.cc/150?img=47" alt="KB">
+              <div class="avatar-overlay"><i class="fas fa-camera"></i> Change</div>
+            </div>
+            <div class="avatar-name">Mr. Karim Bouzid</div>
+            <div class="avatar-role">Language Teacher</div>
+            <span class="status-dot">Active</span>
+          </div>
+          <div class="lang-taught">
+            <div style="font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Languages Taught</div>
+            <span class="lang-tag" style="background:rgba(22,102,188,.1);color:var(--blue7)">🇫🇷 French</span>
+            <span class="lang-tag" style="background:rgba(16,185,129,.1);color:#059669">🇬🇧 English</span>
+            <span class="lang-tag" style="background:rgba(245,158,11,.1);color:#B45309">🇪🇸 Spanish</span>
+            <span class="lang-tag" style="background:rgba(139,92,246,.1);color:#6D28D9">🇮🇹 Italian</span>
+            <span class="lang-tag" style="background:rgba(239,68,68,.08);color:#B91C1C">🇹🇷 Turkish</span>
+          </div>
+        </div>
+
+        <!-- Security -->
+        <div class="pnl">
+          <div class="pnl-hdr">
+            <div class="pnl-icon" style="background:rgba(16,185,129,.1);color:var(--green)"><i class="fas fa-lock"></i></div>
+            <span class="pnl-title">Security</span>
+          </div>
+          <div class="pnl-body">
+            <div class="sec-field">
+              <label>Current Password</label>
+              <input type="password" value="password123" id="currentPw" placeholder="Current password">
+            </div>
+            <div class="sec-field">
+              <label>New Password</label>
+              <input type="password" id="newPw" placeholder="Enter new password" oninput="checkStrength(this.value)">
+              <div class="sec-hint">Enter a strong password</div>
+              <div class="pw-strength"><div class="pw-strength-bar" id="pwBar"></div></div>
+              <div class="pw-strength-lbl" id="pwLbl" style="color:var(--muted)"></div>
+            </div>
+            <div class="sec-field">
+              <label>Confirm Password</label>
+              <input type="password" id="confirmPw" placeholder="Confirm new password">
+            </div>
+            <button class="update-btn" onclick="updatePassword()">
+              <i class="fas fa-key"></i> UPDATE PASSWORD
+            </button>
+          </div>
+        </div>
+
+      </div><!-- end right col -->
+    </div><!-- end profile-grid -->
+  </div><!-- end content -->
+</div><!-- end main -->
+
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="toastIcon"></i><span id="toastMsg">Done!</span></div>
+
+<script>
+let shut = false;
+function toggleSB() { shut = !shut; document.getElementById('sb').classList.toggle('shut', shut); }
+
+function showToast(msg, icon, color) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  const ic = document.getElementById('toastIcon');
+  ic.className = 'fas ' + (icon || 'fa-check-circle');
+  ic.style.color = color || 'var(--blue3)';
+  t.style.borderLeftColor = color || 'var(--blue4)';
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3400);
+}
+
+function saveChanges() {
+  showToast('Profile updated Luminafully!', 'fa-check-circle', 'var(--green)');
+}
+
+function checkStrength(val) {
+  const bar = document.getElementById('pwBar');
+  const lbl = document.getElementById('pwLbl');
+  let score = 0;
+  if (val.length >= 8) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    { w: '0%', bg: 'transparent', txt: '' },
+    { w: '25%', bg: '#EF4444', txt: 'Weak' },
+    { w: '50%', bg: '#F59E0B', txt: 'Fair' },
+    { w: '75%', bg: '#3B82F6', txt: 'Good' },
+    { w: '100%', bg: '#10B981', txt: 'Strong' },
+  ];
+  const lvl = val.length === 0 ? levels[0] : levels[Math.min(score, 4)];
+  bar.style.width = lvl.w;
+  bar.style.background = lvl.bg;
+  lbl.textContent = lvl.txt;
+  lbl.style.color = lvl.bg;
+}
+
+function updatePassword() {
+  const np = document.getElementById('newPw').value;
+  const cp = document.getElementById('confirmPw').value;
+  if (!np) { showToast('Please enter a new password.', 'fa-triangle-exclamation', 'var(--amber)'); return; }
+  if (np !== cp) { showToast('Passwords do not match.', 'fa-xmark-circle', 'var(--red)'); return; }
+  showToast('Password updated Luminafully!', 'fa-lock', 'var(--green)');
+  document.getElementById('newPw').value = '';
+  document.getElementById('confirmPw').value = '';
+  checkStrength('');
+}
+
+/* ── Notifications ── */
+const NOTIFS = [
+  {id:1,icon:'fa-book',iconBg:'#dbeafe',iconColor:'#1d4ed8',title:'New homework submitted',body:'3 students from 2AS submitted the French essay.',time:'5 min ago',unread:true},
+  {id:2,icon:'fa-user-xmark',iconBg:'#fef2f2',iconColor:'#ef4444',title:'Absence reported',body:'Yacine Benali (1AS) is absent today.',time:'20 min ago',unread:true},
+  {id:3,icon:'fa-pen',iconBg:'#fef9c3',iconColor:'#854d0e',title:'Evaluation due soon',body:'Italian Vocabulary Test for TM is on Thursday.',time:'1 hr ago',unread:true},
+  {id:4,icon:'fa-envelope',iconBg:'#ede9fe',iconColor:'#6d28d9',title:'Message from parent',body:'Parent of Amira Kaci sent a message about attendance.',time:'2 hr ago',unread:true},
+  {id:5,icon:'fa-star',iconBg:'#dcfce7',iconColor:'#15803d',title:'Grade submitted',body:'3AS mid-term grades have been recorded.',time:'Yesterday',unread:false},
+  {id:6,icon:'fa-bullhorn',iconBg:'#eff6ff',iconColor:'#1d4ed8',title:'New announcement posted',body:'Language Showcase date confirmed — April 28.',time:'Yesterday',unread:false},
+];
+let notifData = [...NOTIFS];
+
+function renderNotifs() {
+  const list = document.getElementById('notifList');
+  if (!notifData.length) { list.innerHTML = `<div style="padding:40px 16px;text-align:center;color:#94a3b8;"><i class="fas fa-bell-slash" style="font-size:28px;margin-bottom:8px;display:block;"></i><p style="font-size:13px;font-weight:500;">No notifications</p></div>`; return; }
+  list.innerHTML = notifData.map(n => `
+    <div class="notif-item ${n.unread?'unread':''}" onclick="readNotif(${n.id})">
+      <div class="notif-icon-n" style="background:${n.iconBg};color:${n.iconColor};"><i class="fas ${n.icon}"></i></div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <p style="font-size:12px;font-weight:${n.unread?'700':'600'};color:#1e293b;margin:0;">${n.title}</p>
+          ${n.unread ? '<span style="width:7px;height:7px;background:#3b82f6;border-radius:50%;flex-shrink:0;display:inline-block;"></span>' : ''}
+        </div>
+        <p style="font-size:11px;color:#64748b;margin:2px 0 0;line-height:1.4;">${n.body}</p>
+        <p style="font-size:10px;color:#94a3b8;margin-top:4px;">${n.time}</p>
+      </div>
+    </div>`).join('');
+  updateBadge();
+}
+
+function updateBadge() {
+  const count = notifData.filter(n => n.unread).length;
+  const badge = document.getElementById('notifBadge');
+  const sub = document.getElementById('notifSubtitle');
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'flex' : 'none';
+  if (sub) sub.textContent = count > 0 ? `${count} unread` : 'All caught up';
+}
+
+function readNotif(id) { notifData = notifData.map(n => n.id === id ? {...n, unread: false} : n); renderNotifs(); }
+function markAllRead() { notifData = notifData.map(n => ({...n, unread: false})); renderNotifs(); }
+function clearAll() { notifData = []; renderNotifs(); }
+
+function toggleNotifPanel() {
+  const p = document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) renderNotifs();
+}
+document.addEventListener('click', e => {
+  const w = document.getElementById('notifWrapper');
+  if (w && !w.contains(e.target)) document.getElementById('notifPanel').classList.remove('open');
+});
+</script>
+</body>
+</html>

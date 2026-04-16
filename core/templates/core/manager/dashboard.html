@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina School — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ═══════════════════ TOKENS ═══════════════════ */
+:root {
+  --navy:     #05111F;
+  --navy2:    #081929;
+  --navy3:    #0C2140;
+  --blue8:    #0D3A68;
+  --blue7:    #114F90;
+  --blue6:    #1666BC;
+  --blue5:    #2080D8;
+  --blue4:    #4298E8;
+  --blue3:    #74B8F0;
+  --blue2:    #AACFF5;
+  --blue1:    #D4E9FA;
+  --ice:      #EBF5FD;
+  --surface:  #F2F7FC;
+  --white:    #FFFFFF;
+  --text:     #0C2140;
+  --muted:    #6B8AA8;
+  --border:   #D8E8F4;
+  --gold:     #D4AF37;
+  --gold-bg:  rgba(212,175,55,.12);
+  --gold-lite:#F5E9A4;
+  --sb-open:  264px;
+  --sb-shut:  74px;
+  --ease:     cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--surface);
+  color: var(--text);
+  display: flex;
+}
+
+/* ═══════════════════ SIDEBAR ═══════════════════ */
+#sb {
+  width: var(--sb-open);
+  height: 100vh;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  transition: width .4s var(--ease);
+  overflow: visible;
+  z-index: 200;
+}
+#sb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+#sb::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, transparent 0%, var(--gold) 25%, var(--blue4) 60%, transparent 100%);
+  z-index: 3;
+}
+#sb.shut { width: var(--sb-shut); }
+
+.sb-chip {
+  position: absolute;
+  top: 50%; right: -14px;
+  transform: translateY(-50%);
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--blue6);
+  border: 2.5px solid var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 400;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+  transition: background .25s, transform .4s var(--ease);
+  color: #fff; font-size: .6rem;
+}
+.sb-chip:hover { background: var(--blue5); }
+#sb.shut .sb-chip { transform: translateY(-50%) rotate(180deg); }
+
+.sb-head {
+  display: flex; align-items: center; gap: 13px;
+  padding: 24px 18px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.055);
+  flex-shrink: 0; overflow: hidden;
+  position: relative; z-index: 1;
+}
+.sb-icon-wrap {
+  flex-shrink: 0;
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--blue7), var(--blue5));
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(32,128,216,.4);
+  transition: border-radius .4s var(--ease);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 600; color: #fff; letter-spacing: -.02em;
+}
+#sb.shut .sb-icon-wrap { border-radius: 50%; }
+
+.sb-brand {
+  overflow: hidden; white-space: nowrap;
+  transition: opacity .3s var(--ease), transform .3s var(--ease), width .4s var(--ease);
+  transform-origin: left;
+}
+#sb.shut .sb-brand { opacity: 0; transform: scaleX(.85); width: 0; }
+
+.sb-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.18rem; font-weight: 600; color: var(--white);
+  letter-spacing: .03em; line-height: 1.2;
+}
+.sb-sub {
+  font-size: .62rem; letter-spacing: .2em;
+  text-transform: uppercase; color: rgba(255,255,255,.32); margin-top: 1px;
+}
+
+.sb-scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 14px 10px; position: relative; z-index: 1;
+}
+.sb-scroll::-webkit-scrollbar { width: 0; }
+
+.sb-lbl {
+  font-size: .58rem; letter-spacing: .28em;
+  text-transform: uppercase; color: rgba(255,255,255,.2);
+  padding: 10px 16px 5px; white-space: nowrap; overflow: hidden;
+  transition: opacity .3s, max-height .3s, padding .3s;
+}
+#sb.shut .sb-lbl { opacity:0; max-height:0; padding-top:0; padding-bottom:0; }
+
+.sb-divider {
+  height: 1px; background: rgba(255,255,255,.05); margin: 8px 14px;
+  transition: opacity .3s;
+}
+#sb.shut .sb-divider { opacity: 0; margin: 4px 14px; }
+
+.ni {
+  display: flex; align-items: center; gap: 13px;
+  padding: 11px 14px; border-radius: 12px;
+  color: rgba(255,255,255,.48); text-decoration: none;
+  font-size: .875rem; font-weight: 400;
+  transition: background .22s, color .22s, transform .22s, padding .4s var(--ease);
+  white-space: nowrap; overflow: hidden; cursor: pointer;
+  position: relative; margin-bottom: 2px;
+}
+#sb.shut .ni { padding-left:0; padding-right:0; justify-content: center; }
+
+.ni-icon {
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: .88rem;
+  background: rgba(255,255,255,.04);
+  transition: background .25s, color .25s, border-radius .4s var(--ease);
+  color: rgba(255,255,255,.42);
+}
+#sb.shut .ni-icon { border-radius: 50%; }
+
+.ni-label {
+  flex: 1; overflow: hidden;
+  transition: opacity .25s var(--ease), width .4s var(--ease), transform .25s var(--ease);
+  white-space: nowrap;
+}
+#sb.shut .ni-label { opacity: 0; width: 0; transform: translateX(-8px); }
+
+.ni-badge {
+  flex-shrink: 0; background: var(--blue6); color: var(--white);
+  font-size: .6rem; font-weight: 600; padding: 2px 7px;
+  border-radius: 100px; line-height: 1.4;
+  transition: opacity .25s, width .4s var(--ease);
+}
+#sb.shut .ni-badge { opacity: 0; width: 0; overflow: hidden; padding: 0; }
+
+.ni-tip {
+  position: absolute; left: calc(100% + 16px); top: 50%; transform: translateY(-50%);
+  background: var(--navy3); color: var(--white);
+  font-size: .8rem; font-weight: 500; padding: 7px 14px; border-radius: 8px;
+  white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .18s;
+  box-shadow: 0 6px 24px rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.07); z-index: 999;
+}
+.ni-tip::before {
+  content: ''; position: absolute; right: 100%; top: 50%; transform: translateY(-50%);
+  border: 6px solid transparent; border-right-color: var(--navy3);
+}
+#sb.shut .ni:hover .ni-tip { opacity: 1; }
+
+.ni:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.9); transform: translateX(3px); }
+#sb.shut .ni:hover { transform: none; }
+.ni:hover .ni-icon { background: rgba(32,128,216,.18); color: var(--blue3); }
+.ni.active {
+  background: linear-gradient(135deg, rgba(22,102,188,.7), rgba(32,128,216,.5));
+  color: var(--white);
+  box-shadow: 0 4px 20px rgba(32,128,216,.25), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.ni.active .ni-icon { background: rgba(255,255,255,.15); color: var(--white); }
+
+.sb-foot {
+  padding: 14px 12px; border-top: 1px solid rgba(255,255,255,.055);
+  display: flex; align-items: center; gap: 11px; overflow: hidden;
+  background: rgba(0,0,0,.18); flex-shrink: 0; position: relative; z-index: 1;
+}
+.sb-av {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold), #B8860B);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700; font-size: .85rem; flex-shrink: 0;
+  transition: border-radius .4s var(--ease);
+}
+#sb.shut .sb-av { border-radius: 50%; }
+
+.sb-foot-info {
+  flex: 1; overflow: hidden;
+  transition: opacity .3s var(--ease), width .4s var(--ease);
+}
+#sb.shut .sb-foot-info { opacity: 0; width: 0; }
+
+.sb-foot-name { font-weight: 600; color: white; font-size: .85rem; white-space: nowrap; }
+.sb-foot-role { font-size: .68rem; color: rgba(255,255,255,.35); white-space: nowrap; }
+
+.sb-foot-actions { display: flex; gap: 6px; flex-shrink: 0; transition: opacity .3s; }
+#sb.shut .sb-foot-actions { opacity: 0; pointer-events: none; }
+
+.sb-foot-btn {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.4); font-size: .75rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.sb-foot-btn:hover { background: rgba(255,255,255,.12); color: white; }
+
+/* ═══════════════════ MAIN ═══════════════════ */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* ── TOPBAR ── */
+.topbar {
+  height: 64px; background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 1.75rem; gap: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(12,33,64,.06);
+}
+.topbar-left { display: flex; align-items: center; gap: 8px; flex: 1; }
+.topbar-crumb { font-size: .8rem; color: var(--muted); }
+.topbar-sep { color: var(--border); font-size: .65rem; }
+.topbar-title { font-size: .9rem; font-weight: 600; color: var(--text); }
+.topbar-date { font-size: .75rem; color: var(--muted); }
+
+.topbar-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 7px 14px; width: 220px;
+}
+.topbar-search input {
+  border: none; background: transparent; outline: none;
+  font-size: .82rem; font-family: 'Outfit', sans-serif;
+  color: var(--text); width: 100%;
+}
+.topbar-search input::placeholder { color: var(--muted); }
+.topbar-search i { color: var(--muted); font-size: .75rem; }
+
+.topbar-icon-btn {
+  width: 38px; height: 38px; border-radius: 12px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); cursor: pointer; font-size: .82rem;
+  transition: all .2s; position: relative;
+}
+.topbar-icon-btn:hover { background: var(--ice); color: var(--blue5); }
+
+.notif-dot {
+  position: absolute; top: -4px; right: -4px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #ef4444; color: white;
+  font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+.topbar-user {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 6px 14px 6px 8px;
+}
+.topbar-avatar {
+  width: 30px; height: 30px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--gold), #B8860B);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: .7rem; font-weight: 700;
+}
+.topbar-user-name { font-size: .78rem; font-weight: 600; color: var(--text); line-height: 1.2; }
+.topbar-user-role { font-size: .68rem; color: var(--muted); }
+
+/* ── NOTIFICATION PANEL ── */
+#notifPanel {
+  display:none; position:absolute; top:calc(100% + 10px); right:0;
+  width:360px; background:white; border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.12), 0 0 0 1px rgba(12,33,64,.06);
+  z-index:999; overflow:hidden;
+  animation: notifFadeIn 0.2s ease;
+}
+#notifPanel.open { display:block; }
+@keyframes notifFadeIn {
+  from { opacity:0; transform:translateY(-8px) scale(0.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.notif-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:12px 16px; cursor:pointer; transition:background 0.15s;
+  border-left:3px solid transparent;
+}
+.notif-item:hover { background:#f8fafc; }
+.notif-item.unread { background:#eff6ff; border-left-color:#3b82f6; }
+.notif-item.unread:hover { background:#dbeafe; }
+.notif-icon {
+  width:36px; height:36px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; font-size:14px;
+}
+.notif-scroll { max-height:340px; overflow-y:auto; }
+.notif-scroll::-webkit-scrollbar { width:3px; }
+.notif-scroll::-webkit-scrollbar-thumb { background:#e2e8f0; border-radius:99px; }
+
+/* ═══════════════════ CONTENT ═══════════════════ */
+.content {
+  flex: 1; overflow-y: auto; padding: 1.5rem;
+  display: flex; flex-direction: column; gap: 1.25rem;
+}
+.content::-webkit-scrollbar { width: 6px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ── WELCOME BANNER ── */
+.welcome-banner {
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--navy3) 0%, var(--blue7) 60%, var(--blue6) 100%);
+  padding: 2.2rem 2.5rem;
+  min-height: 130px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(12,33,64,.18);
+}
+.welcome-banner::before {
+  content: '';
+  position: absolute; right: -60px; top: -60px;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: rgba(255,255,255,.05);
+}
+.welcome-banner::after {
+  content: '';
+  position: absolute; right: 80px; bottom: -50px;
+  width: 130px; height: 130px; border-radius: 50%;
+  background: rgba(255,255,255,.04);
+}
+.welcome-banner-gold {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+}
+.welcome-sup { font-size: .78rem; color: rgba(255,255,255,.6); margin-bottom: 4px; }
+.welcome-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.65rem; font-weight: 600; color: var(--white);
+  line-height: 1.2; margin-bottom: 6px;
+}
+.welcome-sub { font-size: .82rem; color: rgba(255,255,255,.55); }
+
+.clock-box {
+  position: relative; z-index: 1;
+  text-align: center;
+  flex-shrink: 0;
+}
+.clock-time {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.8rem; font-weight: 600; color: white; line-height: 1;
+  letter-spacing: .04em;
+  text-shadow: 0 2px 20px rgba(0,0,0,.2);
+}
+.clock-date { font-size: .75rem; color: rgba(255,255,255,.55); margin-top: 4px; letter-spacing: .14em; text-transform: uppercase; }
+
+/* ── KPI CARDS ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.kpi-card {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 1.4rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(12,33,64,.05);
+  transition: transform .2s, box-shadow .2s;
+}
+.kpi-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(12,33,64,.1); }
+
+.kpi-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .9rem; }
+.kpi-icon {
+  width: 42px; height: 42px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .95rem;
+}
+.kpi-badge {
+  font-size: .62rem; font-weight: 700; padding: 3px 9px;
+  border-radius: 100px; display: inline-flex; align-items: center; gap: 3px;
+}
+.kpi-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem; font-weight: 600; color: var(--text); line-height: 1;
+}
+.kpi-label { font-size: .8rem; color: var(--muted); margin-top: 3px; }
+.kpi-bar {
+  margin-top: .9rem; height: 4px; background: var(--border);
+  border-radius: 99px; overflow: hidden;
+}
+.kpi-bar-fill { height: 100%; border-radius: 99px; }
+
+/* ── ROW 2 ── */
+.row2 { display: grid; grid-template-columns: 1fr 320px; gap: 1.25rem; }
+
+/* ── CHART CARD ── */
+.card {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(12,33,64,.05);
+}
+.card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+.card-title { font-size: .95rem; font-weight: 600; color: var(--text); }
+.card-sub { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+.card-select {
+  font-size: .75rem; color: var(--muted); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; padding: 5px 10px;
+  outline: none; font-family: 'Outfit', sans-serif; cursor: pointer;
+}
+
+.chart-bars { display: flex; align-items: flex-end; gap: .6rem; height: 120px; }
+.chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.chart-val { font-size: .65rem; color: var(--muted); }
+.chart-val.active { color: var(--blue6); font-weight: 700; }
+.chart-bar { width: 100%; border-radius: 6px 6px 0 0; transition: opacity .2s; }
+.chart-bar:hover { opacity: .8; }
+.chart-mo { font-size: .65rem; color: var(--muted); }
+.chart-mo.active { color: var(--blue6); font-weight: 700; }
+
+/* ── LANGUAGE CARD ── */
+.lang-row { margin-bottom: 1rem; }
+.lang-meta { display: flex; justify-content: space-between; font-size: .78rem; margin-bottom: 5px; }
+.lang-name { font-weight: 600; color: var(--text); }
+.lang-count { color: var(--muted); }
+.lang-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.lang-fill { height: 100%; border-radius: 99px; }
+.lang-stats { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+.lang-stat-box { background: var(--surface); border-radius: 12px; padding: 10px; text-align: center; }
+.lang-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--text); }
+.lang-stat-lbl { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+
+/* ── ROW 3 ── */
+.row3 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+/* ── QUICK ACTIONS ── */
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.quick-card {
+  border-radius: 14px; padding: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-align: center; text-decoration: none; cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+  font-size: .75rem; font-weight: 600;
+}
+.quick-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.08); }
+.quick-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: .9rem; }
+
+/* ── TODAY'S CLASSES ── */
+.class-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px; border-radius: 14px; margin-bottom: 8px;
+}
+.class-time { text-align: center; flex-shrink: 0; width: 40px; }
+.class-time-val { font-size: .78rem; font-weight: 700; line-height: 1; }
+.class-time-dur { font-size: .62rem; margin-top: 2px; }
+.class-info { flex: 1; min-width: 0; }
+.class-name { font-size: .8rem; font-weight: 700; color: var(--text); }
+.class-teacher { font-size: .7rem; color: var(--muted); margin-top: 2px; }
+.class-badge {
+  font-size: .62rem; font-weight: 700; padding: 3px 8px; border-radius: 99px;
+}
+
+/* ── BADGE ── */
+.badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 10px; border-radius: 99px; font-size: .62rem; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand">
+      <div class="sb-name">Lumina School</div>
+      <div class="sb-sub">Language Institute</div>
+    </div>
+  </div>
+
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+
+    <a href="dashboard.html" class="ni active">
+      <div class="ni-icon"><i class="fas fa-tachometer-alt"></i></div>
+      <span class="ni-label">Dashboard</span>
+      <div class="ni-tip">Dashboard</div>
+    </a>
+    <a href="groupes.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-users-rectangle"></i></div>
+      <span class="ni-label">Groupes Management</span>
+      <div class="ni-tip">Groupes</div>
+    </a>
+    <a href="teachers.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+      <span class="ni-label">Teachers Management</span>
+      <div class="ni-tip">Teachers</div>
+    </a>
+    <a href="students.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-users"></i></div>
+      <span class="ni-label">Students Management</span>
+      <div class="ni-tip">Students</div>
+    </a>
+    <a href="timetables.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-clock"></i></div>
+      <span class="ni-label">Timetables</span>
+      <div class="ni-tip">Timetables</div>
+    </a>
+
+    <div class="sb-divider"></div>
+    <div class="sb-lbl">Administration</div>
+
+    <a href="accounts.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-user-cog"></i></div>
+      <span class="ni-label">Accounts &amp; Roles</span>
+      <div class="ni-tip">Accounts</div>
+    </a>
+    <a href="financial.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+      <span class="ni-label">Financial Overview</span>
+      <span class="ni-badge">New</span>
+      <div class="ni-tip">Financial</div>
+    </a>
+
+    <div class="sb-divider"></div>
+
+    <a href="{% url 'core:login' %}" class="ni">
+      <div class="ni-icon"><i class="fas fa-circle-user"></i></div>
+      <span class="ni-label">My Profile</span>
+      <div class="ni-tip">My Profile</div>
+    </a>
+  </div>
+
+  <div class="sb-foot">
+    <div class="sb-av">MA</div>
+    <div class="sb-foot-info">
+      <div class="sb-foot-name">Manager Admin</div>
+      <div class="sb-foot-role">Director · Active</div>
+    </div>
+    <div class="sb-foot-actions">
+      <button class="sb-foot-btn" title="Logout" onclick="handleLogout()"><i class="fas fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </div>
+</aside>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<div class="main">
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-crumb">Lumina School</span>
+      <span class="topbar-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="topbar-title">Dashboard</span>
+      <span style="display:flex;align-items:center;gap:6px;margin-left:8px;">
+        <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse 2s infinite;"></span>
+        <span class="topbar-date" id="headerDate"></span>
+      </span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="topbar-search">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search…">
+      </div>
+
+      <div class="relative" id="notifWrapper" style="position:relative;">
+        <button class="topbar-icon-btn" onclick="toggleNotifPanel()">
+          <i class="fas fa-bell"></i>
+          <span class="notif-dot" id="notifBadge">3</span>
+        </button>
+        <div id="notifPanel">
+          <div style="padding:16px 16px 12px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <p style="font-weight:700;font-size:14px;color:#0f172a;">Notifications</p>
+              <p id="notifSubtitle" style="font-size:11px;color:#94a3b8;margin-top:1px;">3 unread</p>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="markAllRead()" style="font-size:11px;font-weight:600;color:#3b82f6;background:#eff6ff;border:none;border-radius:10px;padding:4px 10px;cursor:pointer;">Mark all read</button>
+              <button onclick="clearAll()" style="font-size:11px;font-weight:600;color:#ef4444;background:#fef2f2;border:none;border-radius:10px;padding:4px 10px;cursor:pointer;">Clear all</button>
+            </div>
+          </div>
+          <div class="notif-scroll" id="notifList"></div>
+          <div style="padding:10px 16px;border-top:1px solid #f1f5f9;text-align:center;">
+            <a href="#" style="font-size:12px;font-weight:600;color:#3b82f6;text-decoration:none;">View all notifications →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-user">
+        <div class="topbar-avatar">MA</div>
+        <div>
+          <div class="topbar-user-name">Manager Admin</div>
+          <div class="topbar-user-role">Director</div>
+        </div>
+      </div>
+
+      <button class="topbar-icon-btn" title="Logout" onclick="handleLogout()" style="color:#e11d48;background:#fff1f2;border-color:#fecdd3;">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── CONTENT ── -->
+  <div class="content">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+      <div class="welcome-banner-gold"></div>
+      <div style="position:relative;z-index:1;">
+        <div class="welcome-sup">Good morning 👋</div>
+        <div class="welcome-title">Welcome back, Manager!</div>
+        <div class="welcome-sub">Dreams School • 4 languages • 8 rooms • All levels (A1-C2) <strong style="color:rgba(255,255,255,.85);">Lumina School</strong> today.</div>
+      </div>
+      <div class="clock-box">
+        <div class="clock-time" id="clockTime">--:--</div>
+        <div class="clock-date" id="clockDate">--</div>
+      </div>
+    </div>
+
+    <!-- KPI Grid -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#EBF5FD;color:var(--blue6)"><i class="fas fa-users"></i></div>
+          <span class="kpi-badge" style="background:#dcfce7;color:#15803d"><i class="fas fa-arrow-up" style="font-size:.5rem"></i>+12%</span>
+        </div>
+        <div class="kpi-value">248</div>
+        <div class="kpi-label">Total Students</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:78%;background:var(--blue5)"></div></div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-chalkboard-teacher"></i></div>
+          <span class="kpi-badge" style="background:#dcfce7;color:#15803d"><i class="fas fa-arrow-up" style="font-size:.5rem"></i>+2</span>
+        </div>
+        <div class="kpi-value">18</div>
+        <div class="kpi-label">Active Teachers</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:90%;background:#22c55e"></div></div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#fffbeb;color:#d97706"><i class="fas fa-door-open"></i></div>
+          <span class="kpi-badge" style="background:#fef9c3;color:#854d0e">6 / 8</span>
+        </div>
+        <div class="kpi-value">75%</div>
+        <div class="kpi-label">Rooms Occupied</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:75%;background:#f59e0b"></div></div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#f0fdf4;color:#16a34a"><i class="fas fa-money-bill-wave"></i></div>
+          <span class="kpi-badge" style="background:#dcfce7;color:#15803d"><i class="fas fa-arrow-up" style="font-size:.5rem"></i>+8%</span>
+        </div>
+        <div class="kpi-value" style="color:#16a34a">$12,450</div>
+        <div class="kpi-label">Monthly Income</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:83%;background:#22c55e"></div></div>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="row2">
+
+      <!-- Enrollment Chart -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Student Enrollment</div>
+            <div class="card-sub">Last 6 months</div>
+          </div>
+          <select class="card-select">
+            <option>2026</option><option>2025</option>
+          </select>
+        </div>
+        <div class="chart-bars">
+          <div class="chart-col">
+            <span class="chart-val">198</span>
+            <div class="chart-bar" style="height:70%;background:var(--blue2)"></div>
+            <span class="chart-mo">Nov</span>
+          </div>
+          <div class="chart-col">
+            <span class="chart-val">215</span>
+            <div class="chart-bar" style="height:78%;background:var(--blue3)"></div>
+            <span class="chart-mo">Dec</span>
+          </div>
+          <div class="chart-col">
+            <span class="chart-val">209</span>
+            <div class="chart-bar" style="height:74%;background:var(--blue3)"></div>
+            <span class="chart-mo">Jan</span>
+          </div>
+          <div class="chart-col">
+            <span class="chart-val">228</span>
+            <div class="chart-bar" style="height:83%;background:var(--blue4)"></div>
+            <span class="chart-mo">Feb</span>
+          </div>
+          <div class="chart-col">
+            <span class="chart-val">237</span>
+            <div class="chart-bar" style="height:90%;background:var(--blue5)"></div>
+            <span class="chart-mo">Mar</span>
+          </div>
+          <div class="chart-col">
+            <span class="chart-val active">248</span>
+            <div class="chart-bar" style="height:100%;background:var(--blue6)"></div>
+            <span class="chart-mo active">Apr</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Languages -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">Languages</div>
+            <div class="card-sub">Students per language</div>
+          </div>
+        </div>
+
+        <div class="lang-row">
+          <div class="lang-meta"><span class="lang-name">English</span><span class="lang-count">112</span></div>
+          <div class="lang-track"><div class="lang-fill" style="width:45%;background:var(--blue5)"></div></div>
+        </div>
+        <div class="lang-row">
+          <div class="lang-meta"><span class="lang-name">French</span><span class="lang-count">74</span></div>
+          <div class="lang-track"><div class="lang-fill" style="width:30%;background:#8b5cf6"></div></div>
+        </div>
+        <div class="lang-row">
+          <div class="lang-meta"><span class="lang-name">Spanish</span><span class="lang-count">37</span></div>
+          <div class="lang-track"><div class="lang-fill" style="width:15%;background:#f97316"></div></div>
+        </div>
+        <div class="lang-row">
+          <div class="lang-meta"><span class="lang-name">German</span><span class="lang-count">25</span></div>
+          <div class="lang-track"><div class="lang-fill" style="width:10%;background:#22c55e"></div></div>
+        </div>
+
+        <div class="lang-stats">
+          <div class="lang-stat-box">
+            <div class="lang-stat-val">12</div>
+            <div class="lang-stat-lbl">Groups</div>
+          </div>
+          <div class="lang-stat-box">
+            <div class="lang-stat-val">4</div>
+            <div class="lang-stat-lbl">Languages</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="row3">
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Quick Actions</div>
+        </div>
+        <div class="quick-grid">
+          <a href="students.html" class="quick-card" style="background:#eff6ff;color:#2563eb;">
+            <div class="quick-icon" style="background:#dbeafe"><i class="fas fa-user-plus"></i></div>
+            <span>Add Student</span>
+          </a>
+          <a href="teachers.html" class="quick-card" style="background:#f0fdf4;color:#16a34a;">
+            <div class="quick-icon" style="background:#dcfce7"><i class="fas fa-chalkboard-teacher"></i></div>
+            <span>Add Teacher</span>
+          </a>
+          <a href="timetables.html" class="quick-card" style="background:#fffbeb;color:#d97706;">
+            <div class="quick-icon" style="background:#fef9c3"><i class="fas fa-calendar-alt"></i></div>
+            <span>Timetables</span>
+          </a>
+          <a href="accounts.html" class="quick-card" style="background:#f5f3ff;color:#7c3aed;">
+            <div class="quick-icon" style="background:#ede9fe"><i class="fas fa-user-cog"></i></div>
+            <span>Accounts</span>
+          </a>
+          <a href="financial.html" class="quick-card" style="background:#fff1f2;color:#e11d48;">
+            <div class="quick-icon" style="background:#ffe4e6"><i class="fas fa-file-invoice-dollar"></i></div>
+            <span>Financials</span>
+          </a>
+          <a href="groupes.html" class="quick-card" style="background:#f0fdf4;color:#0891b2;">
+            <div class="quick-icon" style="background:#e0f2fe"><i class="fas fa-users-rectangle"></i></div>
+            <span>Groups</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Today's Classes -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Today's Classes</div>
+          <a href="timetables.html" style="font-size:.75rem;color:var(--blue5);font-weight:600;text-decoration:none;">View all</a>
+        </div>
+
+        <div class="class-item" style="background:#eff6ff;border:1px solid #dbeafe;">
+          <div class="class-time">
+            <div class="class-time-val" style="color:#1d4ed8;">08:00</div>
+            <div class="class-time-dur" style="color:#93c5fd;">90m</div>
+          </div>
+          <div class="class-info">
+            <div class="class-name"><span style="color:#2563eb;">English</span></div>
+            <div class="class-teacher">Sophie Martin · Rm 101</div>
+          </div>
+          <span class="class-badge" style="background:#dbeafe;color:#1d4ed8;">Grp A</span>
+        </div>
+
+        <div class="class-item" style="background:#f0fdf4;border:1px solid #dcfce7;">
+          <div class="class-time">
+            <div class="class-time-val" style="color:#15803d;">09:30</div>
+            <div class="class-time-dur" style="color:#86efac;">90m</div>
+          </div>
+          <div class="class-info">
+            <div class="class-name"><span style="color:#16a34a;">English</span></div>
+            <div class="class-teacher">Karim Mansouri · Rm 103</div>
+          </div>
+          <span class="class-badge" style="background:#dcfce7;color:#15803d;">Grp A</span>
+        </div>
+
+        <div class="class-item" style="background:#f5f3ff;border:1px solid #ede9fe;">
+          <div class="class-time">
+            <div class="class-time-val" style="color:#6d28d9;">14:00</div>
+            <div class="class-time-dur" style="color:#c4b5fd;">90m</div>
+          </div>
+          <div class="class-info">
+            <div class="class-name"><span style="color:#7c3aed;">French</span></div>
+            <div class="class-teacher">Ahmed Benali · Rm 102</div>
+          </div>
+          <span class="class-badge" style="background:#ede9fe;color:#6d28d9;">Grp B</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end .content -->
+</div><!-- end .main -->
+
+<script>
+/* ── Sidebar ── */
+let shut = false;
+function toggleSB() {
+  shut = !shut;
+  document.getElementById('sb').classList.toggle('shut', shut);
+}
+
+/* ── Clock ── */
+function updateClock() {
+  const now = new Date();
+  const t = document.getElementById('clockTime');
+  const d = document.getElementById('clockDate');
+  const h = document.getElementById('headerDate');
+  if (t) t.textContent = now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  if (d) d.textContent = now.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  if (h) h.textContent = now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ── Logout ── */
+function handleLogout() {
+  if (confirm('Log out of Lumina School?')) window.location.href = 'index.html';
+}
+
+/* ── Notifications ── */
+const NOTIFS = [
+  { id:1, type:'payment',  icon:'fa-money-bill-wave',    iconBg:'#dcfce7', iconColor:'#15803d', title:'New payment received',      body:'Ahmed Benali paid 4,500 DA for April.',     time:'2 min ago',  unread:true  },
+  { id:2, type:'student',  icon:'fa-user-plus',          iconBg:'#dbeafe', iconColor:'#1d4ed8', title:'New student enrolled',       body:'Amina Rahmani joined Group B — French A2.', time:'15 min ago', unread:true  },
+  { id:3, type:'schedule', icon:'fa-clock',              iconBg:'#fef9c3', iconColor:'#854d0e', title:'Timetable conflict detected', body:'Room 101 is double-booked on Monday 10:00.',time:'1 hr ago',   unread:true  },
+  { id:4, type:'teacher',  icon:'fa-chalkboard-teacher', iconBg:'#ede9fe', iconColor:'#6d28d9', title:'Teacher absence reported',   body:'Karim Mansouri is absent today.',           time:'2 hr ago',   unread:false },
+  { id:5, type:'payment',  icon:'fa-exclamation-circle', iconBg:'#fef2f2', iconColor:'#ef4444', title:'Overdue payment alert',      body:'3 students have unpaid fees this month.',   time:'Yesterday',  unread:false },
+  { id:6, type:'student',  icon:'fa-users',              iconBg:'#dbeafe', iconColor:'#1d4ed8', title:'Group C reached capacity',   body:'Group C (English C1) is now full — 20/20.', time:'Yesterday',  unread:false },
+];
+
+let notifData = [...NOTIFS];
+
+function renderNotifs() {
+  const list = document.getElementById('notifList');
+  if (!notifData.length) {
+    list.innerHTML = `<div style="padding:40px 16px;text-align:center;color:#94a3b8;"><i class="fas fa-bell-slash" style="font-size:28px;margin-bottom:8px;display:block;"></i><p style="font-size:13px;font-weight:500;">No notifications</p></div>`;
+    return;
+  }
+  list.innerHTML = notifData.map(n => `
+    <div class="notif-item ${n.unread?'unread':''}" onclick="readNotif(${n.id})" id="notif-${n.id}">
+      <div class="notif-icon" style="background:${n.iconBg};color:${n.iconColor};"><i class="fas ${n.icon}"></i></div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <p style="font-size:12px;font-weight:${n.unread?'700':'600'};color:#1e293b;margin:0;">${n.title}</p>
+          ${n.unread?'<span style="width:7px;height:7px;background:#3b82f6;border-radius:50%;flex-shrink:0;display:inline-block;"></span>':''}
+        </div>
+        <p style="font-size:11px;color:#64748b;margin:2px 0 0;line-height:1.4;">${n.body}</p>
+        <p style="font-size:10px;color:#94a3b8;margin-top:4px;">${n.time}</p>
+      </div>
+    </div>
+  `).join('');
+  updateBadge();
+}
+
+function updateBadge() {
+  const count = notifData.filter(n => n.unread).length;
+  const badge = document.getElementById('notifBadge');
+  const subtitle = document.getElementById('notifSubtitle');
+  badge.textContent = count;
+  badge.style.display = count > 0 ? 'flex' : 'none';
+  if (subtitle) subtitle.textContent = count > 0 ? `${count} unread` : 'All caught up';
+}
+
+function readNotif(id) { notifData = notifData.map(n => n.id===id ? {...n,unread:false} : n); renderNotifs(); }
+function markAllRead() { notifData = notifData.map(n => ({...n,unread:false})); renderNotifs(); }
+function clearAll() { notifData = []; renderNotifs(); }
+
+function toggleNotifPanel() {
+  const p = document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) renderNotifs();
+}
+
+document.addEventListener('click', e => {
+  const w = document.getElementById('notifWrapper');
+  if (w && !w.contains(e.target)) document.getElementById('notifPanel').classList.remove('open');
+});
+</script>
+</body>
+</html>

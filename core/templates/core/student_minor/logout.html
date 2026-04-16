@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logged Out — Lumina Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--navy:#05111F;--b8:#0D3A68;--b7:#114F90;--b6:#1666BC;--b5:#2080D8;--b4:#4298E8;--b3:#74B8F0;--white:#FFF;--surf:#F2F7FC;--text:#0C2140;--muted:#6B8AA8;--border:#D8E8F4;--green:#10B981;--ease:cubic-bezier(.4,0,.2,1)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--navy);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lo-wrap{text-align:center;animation:fadeUp .5s var(--ease)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.lo-logo{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--white);margin-bottom:.4rem;letter-spacing:.04em}
+.lo-logo span{color:var(--b4)}
+.lo-tagline{font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:3rem}
+.lo-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:2.5rem 2.8rem;width:min(380px,92vw)}
+.lo-icon{width:64px;height:64px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid rgba(16,185,129,.25);display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--green);margin:0 auto 1.4rem;animation:glow 2.5s ease infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.3)}50%{box-shadow:0 0 0 10px rgba(16,185,129,0)}}
+.lo-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--white);margin-bottom:.6rem}
+.lo-sub{font-size:.84rem;color:rgba(255,255,255,.45);line-height:1.65;margin-bottom:2rem}
+.lo-btn{display:inline-flex;align-items:center;gap:9px;padding:13px 28px;border-radius:11px;background:linear-gradient(135deg,var(--b7),var(--b5));color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .25s;box-shadow:0 4px 20px rgba(22,102,188,.35)}
+.lo-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(22,102,188,.5);background:linear-gradient(135deg,var(--b6),var(--b4))}
+.lo-timer{font-size:.74rem;color:rgba(255,255,255,.2);margin-top:1.5rem}
+.lo-timer span{color:rgba(255,255,255,.45);font-weight:600}
+.deco{position:fixed;width:500px;height:500px;border-radius:50%;border:1px solid rgba(255,255,255,.03);pointer-events:none}
+.deco1{top:-150px;right:-150px}
+.deco2{bottom:-200px;left:-200px;border-color:rgba(32,128,216,.06)}
+</style>
+</head>
+<body>
+<div class="deco deco1"></div>
+<div class="deco deco2"></div>
+
+<div class="lo-wrap">
+  <div class="lo-logo">Lumina <span>Academy</span></div>
+  <div class="lo-tagline">Student Portal</div>
+  <div class="lo-card">
+    <div class="lo-icon"><i class="fas fa-check"></i></div>
+    <div class="lo-title">You've been logged out</div>
+    <div class="lo-sub">Your session has ended safely. All your progress has been saved. See you again soon, <strong style="color:rgba(255,255,255,.75)">Oumaima</strong>!</div>
+    <a class="lo-btn" href="dashboard.html"><i class="fas fa-arrow-right-to-bracket"></i> Log back in</a>
+    <div class="lo-timer">Redirecting automatically in <span id="sec">10</span>s…</div>
+  </div>
+</div>
+
+<script>
+let s=10;
+const el=document.getElementById('sec');
+const t=setInterval(()=>{s--;el.textContent=s;if(s<=0){clearInterval(t);window.location.href='dashboard.html';}},1000);
+</script>
+</body>
+</html>

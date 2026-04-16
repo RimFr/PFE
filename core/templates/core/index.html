@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina Languages — Premium Language School in Algiers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --b950: #010C1A;
+  --b900: #021526;
+  --b850: #051E36;
+  --b800: #0B2D50;
+  --b750: #0D3A68;
+  --b700: #104E8A;
+  --b600: #1565B8;
+  --b500: #1E7FD8;
+  --b400: #3D97E8;
+  --b300: #70B5EF;
+  --b200: #A8D2F5;
+  --b100: #D0E9FA;
+  --b50:  #EBF5FD;
+  --ink: #020810;
+  --mist: #F0F7FC;
+  --slate: #3A5068;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--mist);
+  color:var(--ink);
+  overflow-x:hidden;
+}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--b950)}
+::-webkit-scrollbar-thumb{background:var(--b600);border-radius:10px}
+
+/* ─────────────────── HEADER ─────────────────── */
+header{
+  position:fixed;top:0;width:100%;z-index:1000;
+  padding:1.4rem 6%;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:all .45s cubic-bezier(.4,0,.2,1);
+}
+header.scrolled{
+  background:rgba(1,12,26,.97);
+  backdrop-filter:blur(14px);
+  padding:1rem 6%;
+  border-bottom:1px solid rgba(61,151,232,.12);
+}
+
+.logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.85rem;font-weight:600;
+  color:#fff;letter-spacing:.04em;text-decoration:none;
+  display:flex;align-items:center;gap:4px;
+}
+.logo-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--b400);margin-bottom:12px;
+}
+
+nav ul{display:flex;list-style:none;gap:2.6rem}
+nav a{
+  color:rgba(255,255,255,.75);text-decoration:none;
+  font-size:.82rem;font-weight:400;
+  letter-spacing:.14em;text-transform:uppercase;
+  transition:color .3s;position:relative;
+}
+nav a::after{
+  content:'';position:absolute;bottom:-5px;left:0;
+  width:0;height:1px;background:var(--b300);
+  transition:width .3s ease;
+}
+nav a:hover{color:var(--b200)}
+nav a:hover::after{width:100%}
+
+.hdr-btns{display:flex;gap:.8rem;align-items:center}
+.btn-nav{
+  padding:9px 22px;font-size:.78rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;
+  border-radius:3px;cursor:pointer;text-decoration:none;
+  transition:all .25s;font-family:'Outfit',sans-serif;
+}
+.btn-nav-ghost{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.3);
+  color:rgba(255,255,255,.8);
+}
+.btn-nav-ghost:hover{border-color:var(--b300);color:var(--b100)}
+.btn-nav-fill{
+  background:var(--b600);border:1px solid var(--b600);color:#fff;
+}
+.btn-nav-fill:hover{background:var(--b500);transform:translateY(-1px)}
+
+/* ─────────────────── HERO ─────────────────── */
+.hero{
+  height:100vh;min-height:720px;
+  position:relative;display:flex;align-items:center;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(105deg, rgba(1,12,26,.95) 30%, rgba(5,30,54,.6) 65%, rgba(1,20,40,.3) 100%),
+    url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1920&q=85') center/cover no-repeat;
+}
+/* subtle blue vignette */
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 50%, rgba(30,127,216,.08) 0%, transparent 60%);
+}
+
+/* grid texture */
+.hero-grid{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(61,151,232,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61,151,232,.04) 1px, transparent 1px);
+  background-size:60px 60px;
+}
+
+.hero-content{
+  position:relative;z-index:2;
+  padding:0 6%;max-width:780px;
+  animation:heroIn .9s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes heroIn{
+  from{opacity:0;transform:translateY(36px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.eyebrow{
+  display:flex;align-items:center;gap:14px;
+  font-size:.7rem;font-weight:500;
+  letter-spacing:.3em;text-transform:uppercase;
+  color:var(--b300);margin-bottom:1.8rem;
+}
+.eyebrow-line{width:42px;height:1px;background:var(--b400)}
+
+.hero h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(3.5rem,7.5vw,6.4rem);
+  font-weight:300;line-height:1.04;
+  color:#fff;margin-bottom:2rem;
+  letter-spacing:-.01em;
+}
+.hero h1 em{font-style:italic;color:var(--b300)}
+
+.hero-lead{
+  font-size:1.05rem;font-weight:300;
+  color:rgba(255,255,255,.72);
+  line-height:1.85;margin-bottom:3rem;
+  max-width:520px;
+}
+
+.hero-btns{display:flex;gap:1.4rem;align-items:center}
+
+.btn-hero-fill{
+  padding:15px 38px;
+  background:var(--b600);color:#fff;
+  font-size:.8rem;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;
+  text-decoration:none;border-radius:3px;
+  transition:all .3s;display:inline-block;
+  position:relative;overflow:hidden;
+}
+.btn-hero-fill::before{
+  content:'';position:absolute;
+  top:0;bottom:0;left:-60px;width:40px;
+  background:linear-gradient(to right,transparent,rgba(255,255,255,.12),transparent);
+  transform:skewX(-20deg);opacity:0;
+}
+.btn-hero-fill:hover{background:var(--b500);transform:translateY(-2px)}
+.btn-hero-fill:hover::before{animation:sheen .55s ease forwards}
+@keyframes sheen{
+  0%{left:-60px;opacity:1}
+  100%{left:120%;opacity:0}
+}
+
+.btn-hero-ghost{
+  color:rgba(255,255,255,.7);
+  font-size:.8rem;font-weight:400;
+  letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;
+  display:inline-flex;align-items:center;gap:9px;
+  transition:color .25s;
+}
+.btn-hero-ghost i{font-size:.7rem;transition:transform .25s}
+.btn-hero-ghost:hover{color:var(--b200)}
+.btn-hero-ghost:hover i{transform:translateX(4px)}
+
+/* hero floating stat bar */
+.hero-statbar{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;z-index:2;
+}
+.hstat{
+  flex:1;padding:1.8rem 2.2rem;
+  background:rgba(1,15,30,.82);
+  backdrop-filter:blur(12px);
+  border-top:1px solid rgba(61,151,232,.15);
+  border-right:1px solid rgba(61,151,232,.08);
+  transition:background .3s;
+}
+.hstat:last-child{border-right:none}
+.hstat:hover{background:rgba(13,58,104,.6)}
+.hstat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.3rem;font-weight:600;
+  color:var(--b300);line-height:1;
+}
+.hstat-lbl{
+  font-size:.68rem;letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.42);margin-top:5px;
+}
+
+/* ─────────────────── SECTION DEFAULTS ─────────────────── */
+.section{padding:120px 6%}
+
+.sbadge{
+  display:flex;align-items:center;gap:12px;
+  font-size:.68rem;font-weight:500;
+  letter-spacing:.28em;text-transform:uppercase;
+  color:var(--b600);margin-bottom:1rem;
+}
+.sbadge::before{content:'';width:30px;height:1px;background:var(--b500)}
+
+.stitle{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.4rem,4.5vw,3.8rem);
+  font-weight:300;line-height:1.12;
+  color:var(--b900);margin-bottom:1.8rem;
+}
+
+/* scroll reveal */
+.reveal{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .75s ease,transform .75s ease;
+}
+.reveal.in{opacity:1;transform:none}
+.reveal-l{opacity:0;transform:translateX(-30px);transition:opacity .75s ease,transform .75s ease}
+.reveal-l.in{opacity:1;transform:none}
+.reveal-r{opacity:0;transform:translateX(30px);transition:opacity .75s ease,transform .75s ease}
+.reveal-r.in{opacity:1;transform:none}
+
+/* ─────────────────── ABOUT ─────────────────── */
+.about{background:#fff}
+.about-inner{
+  display:grid;grid-template-columns:1fr 1.1fr;
+  gap:8rem;align-items:center;
+}
+.img-block{position:relative}
+.img-main{
+  width:100%;aspect-ratio:4/5;
+  object-fit:cover;display:block;
+}
+.img-accent{
+  position:absolute;
+  width:54%;aspect-ratio:1;
+  object-fit:cover;
+  bottom:-10%;right:-12%;
+  border:8px solid #fff;
+  box-shadow:0 20px 60px rgba(1,20,50,.15);
+}
+.years-badge{
+  position:absolute;top:-6%;left:-8%;
+  width:118px;height:118px;
+  border-radius:50%;
+  background:var(--b750);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  box-shadow:0 12px 40px rgba(13,58,104,.4);
+  color:#fff;
+}
+.years-badge strong{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.5rem;font-weight:600;line-height:1;
+}
+.years-badge span{
+  font-size:.62rem;letter-spacing:.14em;
+  text-transform:uppercase;opacity:.8;
+}
+
+
+.about-lead{
+  font-size:1.12rem;font-weight:300;
+  color:var(--slate);line-height:1.9;
+  margin-bottom:2.5rem;
+}
+.feats{display:flex;flex-direction:column;gap:1.5rem;margin-bottom:2.8rem}
+.feat{display:flex;gap:1.2rem;align-items:flex-start}
+.feat-icon{
+  width:44px;height:44px;flex-shrink:0;
+  border-radius:50%;
+  background:rgba(30,127,216,.08);
+  border:1px solid rgba(30,127,216,.15);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--b500);font-size:.95rem;
+  transition:all .3s;
+}
+.feat:hover .feat-icon{
+  background:var(--b600);border-color:var(--b600);color:#fff;
+}
+.feat-body strong{display:block;font-size:.95rem;font-weight:500;margin-bottom:3px}
+.feat-body span{font-size:.84rem;color:var(--slate);line-height:1.6}
+
+.btn-main{
+  padding:15px 36px;
+  background:var(--b700);color:#fff;
+  font-size:.8rem;font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;border-radius:3px;
+  display:inline-block;transition:all .3s;
+  border:none;cursor:pointer;font-family:'Outfit',sans-serif;
+}
+.btn-main:hover{background:var(--b600);transform:translateY(-2px)}
+
+/* ─────────────────── LANGUAGES ─────────────────── */
+.languages{background:var(--mist)}
+.lang-hdr{
+  display:flex;justify-content:space-between;
+  align-items:flex-end;margin-bottom:4.5rem;
+}
+.lnk{
+  font-size:.8rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--slate);
+  text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:color .25s;
+}
+.lnk i{font-size:.7rem;transition:transform .25s}
+.lnk:hover{color:var(--b600)}
+.lnk:hover i{transform:translateX(4px)}
+
+.lang-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2px;
+  background:rgba(30,127,216,.1);
+}
+.lcard{
+  background:#fff;overflow:hidden;
+  cursor:pointer;position:relative;
+  transition:transform .35s ease;
+}
+.lcard:hover{transform:translateY(-6px);z-index:2}
+.lcard-img-wrap{overflow:hidden}
+.lcard-img{
+  width:100%;aspect-ratio:16/10;
+  object-fit:cover;display:block;
+  transition:transform .65s ease, filter .65s ease;
+  filter:saturate(.9);
+}
+.lcard:hover .lcard-img{transform:scale(1.07);filter:saturate(1.1)}
+
+.lcard-body{padding:1.8rem 1.7rem 1.8rem}
+.lcard-flag{font-size:1.8rem;margin-bottom:.6rem}
+.lcard-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.7rem;font-weight:600;
+  color:var(--b850);margin-bottom:.4rem;
+}
+.lcard-desc{
+  font-size:.83rem;color:var(--slate);
+  line-height:1.65;margin-bottom:1rem;
+}
+.lcard-price{
+  font-size:.82rem;font-weight:600;
+  color:var(--b600);letter-spacing:.04em;
+}
+.lcard-arr{
+  position:absolute;right:1.6rem;bottom:1.6rem;
+  width:30px;height:30px;border-radius:50%;
+  border:1px solid rgba(30,127,216,.2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--slate);font-size:.7rem;
+  transition:all .3s;
+}
+.lcard:hover .lcard-arr{
+  background:var(--b600);border-color:var(--b600);color:#fff;
+}
+
+/* wide card */
+.lcard-wide{
+  grid-column:span 3;
+  display:flex;align-items:stretch;
+}
+.lcard-wide .lcard-img{
+  width:38%;aspect-ratio:unset;
+  object-fit:cover;
+}
+.lcard-wide .lcard-body{
+  flex:1;display:flex;
+  align-items:center;padding:3.5rem 3rem;
+}
+.lcard-wide-inner{width:100%}
+.more-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem;font-weight:300;
+  color:var(--b850);margin-bottom:1.2rem;
+  line-height:1.3;
+}
+.lang-tags{
+  display:flex;flex-wrap:wrap;gap:.5rem;
+  margin-bottom:2rem;
+}
+.ltag{
+  padding:5px 15px;
+  border:1px solid rgba(30,127,216,.2);
+  border-radius:100px;
+  font-size:.78rem;color:var(--slate);
+  transition:all .25s;cursor:default;
+}
+.ltag:hover{border-color:var(--b500);color:var(--b700);background:rgba(30,127,216,.05)}
+
+/* ─────────────────── TESTIMONIALS ─────────────────── */
+.testi{
+  background:var(--b900);
+  padding:120px 6%;
+  position:relative;overflow:hidden;
+}
+/* giant decorative quote mark */
+.testi::before{
+  content:'"';
+  position:absolute;
+  font-family:'Cormorant Garamond',serif;
+  font-size:48rem;line-height:.65;
+  top:-2rem;left:-5%;
+  color:rgba(61,151,232,.03);
+  pointer-events:none;
+}
+.testi-grid{
+  display:grid;
+  grid-template-columns:1fr 1.8fr;
+  gap:8rem;align-items:start;
+}
+.testi-left .sbadge{color:var(--b300)}
+.testi-left .sbadge::before{background:var(--b400)}
+.testi-left .stitle{color:#fff}
+.testi-left p{
+  font-size:.88rem;color:rgba(255,255,255,.45);
+  line-height:1.85;margin-bottom:2.5rem;
+  max-width:340px;
+}
+
+.testi-cards{display:flex;flex-direction:column;gap:1.5rem}
+.tcard{
+  padding:2.2rem;
+  border:1px solid rgba(255,255,255,.06);
+  position:relative;transition:border-color .3s;
+  background:rgba(255,255,255,.02);
+}
+.tcard:hover{border-color:rgba(61,151,232,.25);background:rgba(61,151,232,.04)}
+.tcard-stars{
+  color:var(--b300);
+  font-size:.8rem;letter-spacing:3px;
+  margin-bottom:1.2rem;
+}
+.tcard-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.22rem;font-weight:300;font-style:italic;
+  color:rgba(255,255,255,.88);
+  line-height:1.72;margin-bottom:1.8rem;
+}
+.tcard-author{
+  display:flex;align-items:center;gap:1rem;
+}
+.tcard-avatar{
+  width:42px;height:42px;border-radius:50%;
+  object-fit:cover;filter:grayscale(20%);
+}
+.tcard-name{
+  font-size:.85rem;font-weight:500;color:var(--b200);
+  display:block;margin-bottom:2px;
+}
+.tcard-role{font-size:.74rem;color:rgba(255,255,255,.35)}
+
+/* ─────────────────── TEACHERS ─────────────────── */
+.teachers{background:#fff}
+.teachers-hdr{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:end;margin-bottom:4rem;
+}
+.teachers-hdr p{
+  font-size:.9rem;color:var(--slate);
+  line-height:1.8;
+}
+.tgrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2rem;
+}
+.tcard-person{cursor:pointer}
+.tcard-person-img{
+  overflow:hidden;aspect-ratio:3/4;
+  margin-bottom:1.2rem;position:relative;
+}
+.tcard-person-img img{
+  width:100%;height:100%;object-fit:cover;
+  filter:saturate(.8) brightness(.95);
+  transition:all .55s ease;
+}
+.tcard-person:hover .tcard-person-img img{
+  transform:scale(1.06);
+  filter:saturate(1) brightness(1);
+}
+.tcard-person-img::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(1,21,38,.5) 0%, transparent 45%);
+  opacity:0;transition:opacity .4s;
+}
+.tcard-person:hover .tcard-person-img::after{opacity:1}
+.tcard-person-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.3rem;font-weight:600;margin-bottom:3px;
+}
+.tcard-person-lang{
+  font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--b500);
+}
+
+/* ─────────────────── PROCESS ─────────────────── */
+.process{background:var(--b50)}
+.proc-inner{text-align:center;max-width:600px;margin:0 auto 5rem}
+.proc-steps{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  position:relative;
+}
+/* connector line */
+.proc-steps::before{
+  content:'';position:absolute;
+  top:30px;left:calc(12.5% + 28px);right:calc(12.5% + 28px);
+  height:1px;
+  background:linear-gradient(to right, var(--b200), var(--b200));
+  pointer-events:none;
+}
+.pstep{padding:0 1.5rem;text-align:center}
+.pstep-num{
+  width:60px;height:60px;
+  border-radius:50%;
+  border:1.5px solid var(--b600);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.45rem;color:var(--b700);
+  margin:0 auto 1.6rem;
+  background:var(--b50);
+  position:relative;z-index:1;
+  transition:all .3s;
+}
+.pstep:hover .pstep-num{background:var(--b700);color:#fff;border-color:var(--b700)}
+.pstep-title{
+  font-size:.9rem;font-weight:600;
+  margin-bottom:.5rem;color:var(--b900);
+}
+.pstep-desc{
+  font-size:.8rem;color:var(--slate);
+  line-height:1.65;
+}
+
+/* ─────────────────── CTA STRIP ─────────────────── */
+.cta-strip{
+  background:var(--b750);
+  padding:80px 6%;
+  display:flex;align-items:center;
+  justify-content:space-between;gap:3rem;
+  position:relative;overflow:hidden;
+}
+.cta-strip::before{
+  content:'';position:absolute;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle, rgba(30,127,216,.15) 0%,transparent 70%);
+  top:-200px;right:-100px;pointer-events:none;
+}
+.cta-strip h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2rem,4vw,3rem);
+  font-weight:300;color:#fff;line-height:1.2;
+  position:relative;z-index:1;
+}
+.cta-strip h2 em{font-style:italic;color:var(--b200)}
+.btn-cta{
+  padding:17px 44px;
+  background:#fff;color:var(--b850);
+  font-size:.82rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;border-radius:3px;
+  white-space:nowrap;transition:all .3s;
+  position:relative;z-index:1;
+}
+.btn-cta:hover{background:var(--b100);transform:translateY(-2px)}
+
+/* ─────────────────── FOOTER ─────────────────── */
+footer{
+  background:var(--b950);
+  color:rgba(255,255,255,.5);
+  padding:90px 6% 40px;
+}
+.foot-top{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:4rem;
+  padding-bottom:64px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.foot-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2rem;font-weight:600;color:#fff;
+  text-decoration:none;display:block;margin-bottom:1.2rem;
+}
+.foot-logo span{color:var(--b300)}
+.foot-desc{
+  font-size:.84rem;line-height:1.85;
+  margin-bottom:1.8rem;max-width:300px;
+}
+.foot-contact{font-size:.82rem}
+.foot-contact-row{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:.7rem;
+}
+.foot-contact-row i{color:var(--b400);width:14px;font-size:.8rem}
+
+.foot-col h4{
+  font-size:.68rem;letter-spacing:.22em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.75);
+  margin-bottom:1.5rem;font-weight:500;
+}
+.foot-links{list-style:none}
+.foot-links li{margin-bottom:.7rem}
+.foot-links a{
+  color:rgba(255,255,255,.42);
+  text-decoration:none;font-size:.84rem;
+  transition:color .25s;
+}
+.foot-links a:hover{color:var(--b300)}
+
+.socials{display:flex;gap:.8rem;margin-top:1.2rem}
+.social-btn{
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.4);font-size:.82rem;
+  text-decoration:none;transition:all .25s;
+}
+.social-btn:hover{border-color:var(--b400);color:var(--b300)}
+
+.foot-bottom{
+  padding-top:40px;
+  display:flex;justify-content:space-between;
+  align-items:center;font-size:.76rem;opacity:.5;
+}
+
+/* ─────────────────── RESPONSIVE ─────────────────── */
+@media(max-width:1000px){
+  nav,.hdr-btns{display:none}
+  .about-inner{grid-template-columns:1fr;gap:4rem}
+  .img-accent{display:none}
+  .years-badge{left:0;top:-5%}
+  .lang-grid,.tgrid,.proc-steps{grid-template-columns:1fr 1fr}
+  .lcard-wide{flex-direction:column}
+  .lcard-wide .lcard-img{width:100%;aspect-ratio:16/9}
+  .testi-grid,.teachers-hdr{grid-template-columns:1fr;gap:3rem}
+  .cta-strip{flex-direction:column;text-align:center}
+  .foot-top{grid-template-columns:1fr 1fr;gap:2.5rem}
+  .hero-statbar{position:static;flex-wrap:wrap}
+}
+@media(max-width:600px){
+  .section{padding:80px 5%}
+  .tgrid,.proc-steps{grid-template-columns:1fr}
+  .lang-grid{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ HEADER ══════════ -->
+<header id="hdr">
+  <a href="#" class="logo">
+    Lumina <span style="color:var(--b300)">Languages</span>
+    <div class="logo-dot"></div>
+  </a>
+  <nav>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#courses">Languages</a></li>
+      <li><a href="#teachers">Team</a></li>
+      <li><a href="#process">Method</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+<div class="hdr-btns">
+  <a href="{% url 'core:login' %}" class="btn-nav-fill">
+    <i class="fas fa-sign-in-alt"></i> Log In
+  </a>
+</div>
+</header>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow">
+      <div class="eyebrow-line"></div>
+      Algiers · Since 2018
+    </div>
+    <h1>Speak the world.<br><em>Transform<br>your future.</em></h1>
+    <p class="hero-lead">Algiers' premier language school — certified native teachers, immersive small-group sessions, and a proven method that delivers real results fast.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-hero-fill">Start Your Journey</a>
+      <a href="#courses" class="btn-hero-ghost">Discover courses <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+  <div class="hero-statbar">
+    <div class="hstat">
+      <div class="hstat-num">+500</div>
+      <div class="hstat-lbl">Students Trained</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">4</div>
+      <div class="hstat-lbl">Languages</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">97%</div>
+      <div class="hstat-lbl">Satisfaction Rate</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">3+</div>
+      <div class="hstat-lbl">Years of Excellence</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section class="about section" id="about">
+  <div class="about-inner">
+    <div class="img-block reveal-l">
+      <img class="img-main" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80" alt="Lumina Languages classroom">
+      <img class="img-accent" src="https://images.unsplash.com/photo-1513258496099-48168024aec0?w=500&q=80" alt="Student studying">
+      <div class="years-badge">
+        <strong>3+</strong>
+        <span>Years</span>
+      </div>
+    </div>
+    <div class="about-text reveal-r">
+      <div class="sbadge">Our Story</div>
+      <h2 class="stitle">A school built on<br>excellence & passion</h2>
+      <p class="about-lead">Since 2018, Lumina Languages has guided hundreds of students in Algiers to fluency — through human-centered, modern teaching that actually works.</p>
+      <div class="feats">
+        <div class="feat">
+          <div class="feat-icon"><i class="fas fa-user-graduate"></i></div>
+          <div class="feat-body">
+            <strong>Certified Native Teachers</strong>
+            <span>Handpicked educators with proven excellence in their language and pedagogy.</span>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon"><i class="fas fa-users"></i></div>
+          <div class="feat-body">
+            <strong>Small Groups — Max 8 Students</strong>
+            <span>Personalized attention and dramatically faster progress, guaranteed.</span>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon"><i class="fas fa-laptop"></i></div>
+          <div class="feat-body">
+            <strong>24/7 E-Learning Platform</strong>
+            <span>Access all your courses, exercises and resources from anywhere, anytime.</span>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon"><i class="fas fa-certificate"></i></div>
+          <div class="feat-body">
+            <strong>Recognized Certifications</strong>
+            <span>Expert preparation for DELF, DALF, TOEIC, IELTS and all official exams.</span>
+          </div>
+        </div>
+      </div>
+      <a href="#contact" class="btn-main">Take Our Free Placement Test</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ LANGUAGES ══════════ -->
+<section class="languages section" id="courses">
+  <div class="lang-hdr reveal">
+    <div>
+      <div class="sbadge">Our Programs</div>
+      <h2 class="stitle">Choose Your Language</h2>
+    </div>
+    <a href="#contact" class="lnk">View all programs <i class="fas fa-arrow-right"></i></a>
+  </div>
+  <div class="lang-grid reveal">
+
+    <div class="lcard">
+      <div class="lcard-img-wrap">
+        <img class="lcard-img" src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&q=80" alt="English">
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-flag">🇬🇧</div>
+        <div class="lcard-name">English</div>
+        <div class="lcard-desc">Business · Conversation · TOEIC · IELTS · All levels</div>
+        <div class="lcard-price">From 18,000 DA / month</div>
+        <div class="lcard-arr"><i class="fas fa-arrow-right"></i></div>
+      </div>
+    </div>
+
+    <div class="lcard">
+      <div class="lcard-img-wrap">
+        <img class="lcard-img" src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80" alt="French">
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-flag">🇫🇷</div>
+        <div class="lcard-name">French</div>
+        <div class="lcard-desc">DELF · DALF · Business French · General FLE</div>
+        <div class="lcard-price">From 16,000 DA / month</div>
+        <div class="lcard-arr"><i class="fas fa-arrow-right"></i></div>
+      </div>
+    </div>
+
+    <div class="lcard">
+      <div class="lcard-img-wrap">
+        <img class="lcard-img" src="https://images.unsplash.com/photo-1517971071642-34a2d3ecc9cd?w=900&q=80" alt="Spanish">
+      </div>
+      <div class="lcard-body">
+        <div class="lcard-flag">🇪🇸</div>
+        <div class="lcard-name">Spanish</div>
+        <div class="lcard-desc">DELE · Conversation · Travel · Latin American Spanish</div>
+        <div class="lcard-price">From 15,000 DA / month</div>
+        <div class="lcard-arr"><i class="fas fa-arrow-right"></i></div>
+      </div>
+    </div>
+
+   
+          
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ TESTIMONIALS ══════════ -->
+<section class="testi" id="testimonials">
+  <div class="testi-grid">
+    <div class="testi-left reveal-l">
+      <div class="sbadge">Testimonials</div>
+      <h2 class="stitle">What our students say</h2>
+      <p>Real stories from people who transformed their careers and lives at Lumina Languages.</p>
+      <a href="#contact" class="btn-main">Join Our Community</a>
+    </div>
+    <div class="testi-cards reveal-r">
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"I achieved 920/990 on my TOEIC in just 4 months. The teachers are outstanding and the method truly delivers."</p>
+        <div class="tcard-author">
+          <img class="tcard-avatar" src="https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=80&q=80" alt="Sarah B.">
+          <div>
+            <span class="tcard-name">Sarah Benali</span>
+            <span class="tcard-role">Marketing Manager, Algérie Télécom</span>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"Small classes, dynamic lessons and real progress every week. I highly recommend Lumina to anyone serious about learning."</p>
+        <div class="tcard-author">
+          <img class="tcard-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80" alt="Karim M.">
+          <div>
+            <span class="tcard-name">Karim Meziane</span>
+            <span class="tcard-role">Master Student, USTHB</span>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"I passed my DALF C1 on the first attempt. The exam preparation here is incredibly structured and thorough."</p>
+        <div class="tcard-author">
+          <img class="tcard-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80" alt="Nadia K.">
+          <div>
+            <span class="tcard-name">Nadia Kaci</span>
+            <span class="tcard-role">Teacher, Lycée El Idrissi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TEACHERS ══════════ -->
+<section class="teachers section" id="teachers">
+  <div class="teachers-hdr reveal">
+    <div>
+      <div class="sbadge">Our Team</div>
+      <h2 class="stitle">Passionate native<br>teachers</h2>
+    </div>
+    <p>Every teacher is carefully selected for their academic qualifications, classroom experience, and genuine passion for their language. They don't just teach — they inspire.</p>
+  </div>
+  <div class="tgrid reveal">
+    <div class="tcard-person">
+      <div class="tcard-person-img">
+        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80" alt="Emma Thornton">
+      </div>
+      <div class="tcard-person-name">Emma Thornton</div>
+      <div class="tcard-person-lang">English · Cambridge CELTA</div>
+    </div>
+    <div class="tcard-person">
+      <div class="tcard-person-img">
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80" alt="Chloé Dupont">
+      </div>
+      <div class="tcard-person-name">Chloé Dupont</div>
+      <div class="tcard-person-lang">French · FLE Certified</div>
+    </div>
+    <div class="tcard-person">
+      <div class="tcard-person-img">
+        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80" alt="Carlos Vega">
+      </div>
+      <div class="tcard-person-name">Carlos Vega</div>
+      <div class="tcard-person-lang">Spanish · Linguistics MA</div>
+    </div>
+    <div class="tcard-person">
+      <div class="tcard-person-img">
+        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80" alt="Dr. Lina Hoffmann">
+      </div>
+      <div class="tcard-person-name">Dr. Lina Hoffmann</div>
+      <div class="tcard-person-lang">German · PhD DaF</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PROCESS ══════════ -->
+<section class="process section" id="process">
+  <div class="proc-inner reveal">
+    <div class="sbadge" style="justify-content:center">Our Method</div>
+    <h2 class="stitle" style="color:var(--b900)">How it works</h2>
+    <p style="color:var(--slate);font-size:.9rem;line-height:1.8">Four clear steps from zero to certified — designed to be efficient, personal and effective.</p>
+  </div>
+  <div class="proc-steps reveal">
+    <div class="pstep">
+      <div class="pstep-num">01</div>
+      <div class="pstep-title">Free Placement Test</div>
+      <div class="pstep-desc">Accurate level assessment in 20 minutes, online or in-person.</div>
+    </div>
+    <div class="pstep">
+      <div class="pstep-num">02</div>
+      <div class="pstep-title">Personalized Program</div>
+      <div class="pstep-desc">A learning advisor builds your custom path based on goals and schedule.</div>
+    </div>
+    <div class="pstep">
+      <div class="pstep-num">03</div>
+      <div class="pstep-title">Intensive Practice</div>
+      <div class="pstep-desc">90-minute sessions, cultural immersion and targeted exercises every week.</div>
+    </div>
+    <div class="pstep">
+      <div class="pstep-num">04</div>
+      <div class="pstep-title">Official Certification</div>
+      <div class="pstep-desc">Sit your DELF, TOEIC or other exam with full confidence and preparation.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CTA STRIP ══════════ -->
+<div class="cta-strip" id="contact">
+  <h2>Ready to master a<br>new language? <em>Start today.</em></h2>
+  <a href="https://www.esl-languages.com/en/online-language-tests" class="btn-cta">Book Your Free Test →</a>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="foot-top">
+    <div>
+      <a href="#" class="foot-logo">Lumina <span>Languages</span></a>
+      <p class="foot-desc">Premium language school in Algiers offering high-quality in-person and online courses since 2018.</p>
+      <div class="foot-contact">
+        <div class="foot-contact-row"><i class="fas fa-map-marker-alt"></i> jijel, Algiers, Algeria</div>
+        <div class="foot-contact-row"><i class="fas fa-phone"></i> +213 555 12 34 56</div>
+        <div class="foot-contact-row"><i class="fas fa-envelope"></i> contact@luminalanguages.dz</div>
+        <div class="foot-contact-row"><i class="fas fa-clock"></i> Mon–Sat: 9am – 8pm</div>
+      </div>
+    </div>
+    <div>
+      <h4>Languages</h4>
+      <ul class="foot-links">
+        <li><a href="#">English</a></li>
+        <li><a href="#">French</a></li>
+        <li><a href="#">Spanish</a></li>
+        <li><a href="#">German</a></li>
+        <li><a href="#">Chinese</a></li>
+        <li><a href="#">Arabic</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>School</h4>
+      <ul class="foot-links">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Our Team</a></li>
+        <li><a href="#">Method</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Follow Us</h4>
+      <ul class="foot-links" style="margin-bottom:1rem">
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="#">YouTube</a></li>
+      </ul>
+      <div class="socials">
+        <a href="#" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="social-btn"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 Lumina Languages — Algiers, Algeria</span>
+    <span>Ministry of Education Accredited School</span>
+  </div>
+</footer>
+
+<script>
+// sticky header
+const hdr = document.getElementById('hdr');
+window.addEventListener('scroll', () => {
+  hdr.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if(e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('in'), i * 90);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

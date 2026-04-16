@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress — Lumina School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--navy:#05111F;--navy2:#081929;--navy3:#0C2140;--blue8:#0D3A68;--blue7:#114F90;--blue6:#1666BC;--blue5:#2080D8;--blue4:#4298E8;--blue3:#74B8F0;--blue2:#AACFF5;--blue1:#D4E9FA;--surface:#F2F7FC;--white:#FFFFFF;--text:#0C2140;--muted:#6B8AA8;--border:#D8E8F4;--green:#10B981;--red:#EF4444;--amber:#F59E0B;--purple:#8B5CF6;--sb-open:264px;--sb-shut:74px;--ease:cubic-bezier(.4,0,.2,1);}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;overflow:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);display:flex;}
+#sb{width:var(--sb-open);height:100vh;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;transition:width .4s var(--ease);overflow:visible;z-index:200;}
+#sb::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+#sb::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--blue5) 25%,var(--blue4) 60%,transparent 100%);z-index:3;}
+#sb.shut{width:var(--sb-shut);}.sb-chip{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--blue6);border:2.5px solid var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:background .25s,transform .4s var(--ease);color:#fff;font-size:.6rem;}
+.sb-chip:hover{background:var(--blue5);}#sb.shut .sb-chip{transform:translateY(-50%) rotate(180deg);}
+.sb-head{display:flex;align-items:center;gap:13px;padding:24px 18px 20px 20px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-icon-wrap{flex-shrink:0;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue7),var(--blue5));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,128,216,.4);transition:border-radius .4s var(--ease);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;}
+#sb.shut .sb-icon-wrap{border-radius:50%;}.sb-brand{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),transform .3s var(--ease),width .4s var(--ease);transform-origin:left;}
+#sb.shut .sb-brand{opacity:0;transform:scaleX(.85);width:0;}.sb-name{font-family:'Cormorant Garamond',serif;font-size:1.18rem;font-weight:600;color:#fff;letter-spacing:.03em;line-height:1.2;}.sb-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-top:1px;}
+.sb-teacher{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-teacher-av{width:40px;height:40px;border-radius:50%;border:2px solid rgba(59,130,246,.5);flex-shrink:0;overflow:hidden;}
+.sb-teacher-av img{width:100%;height:100%;object-fit:cover;}.sb-teacher-info{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-teacher-info{opacity:0;width:0;}.sb-teacher-name{font-size:.84rem;font-weight:600;color:#fff;}.sb-teacher-role{font-size:.65rem;color:rgba(255,255,255,.38);margin-top:1px;}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 10px;position:relative;z-index:1;}.sb-scroll::-webkit-scrollbar{width:0;}
+.sb-lbl{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .3s,max-height .3s,padding .3s;}
+#sb.shut .sb-lbl{opacity:0;max-height:0;padding-top:0;padding-bottom:0;}.sb-divider{height:1px;background:rgba(255,255,255,.05);margin:8px 14px;transition:opacity .3s;}
+#sb.shut .sb-divider{opacity:0;margin:4px 14px;}
+.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:12px;color:rgba(255,255,255,.48);text-decoration:none;font-size:.875rem;font-weight:400;transition:background .22s,color .22s,transform .22s,padding .4s var(--ease);white-space:nowrap;overflow:hidden;cursor:pointer;position:relative;margin-bottom:2px;}
+#sb.shut .ni{padding-left:0;padding-right:0;justify-content:center;}
+.ni-icon{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:rgba(255,255,255,.04);color:rgba(255,255,255,.42);transition:background .25s,color .25s,border-radius .4s var(--ease);}
+#sb.shut .ni-icon{border-radius:50%;}.ni-label{flex:1;overflow:hidden;transition:opacity .25s var(--ease),width .4s var(--ease),transform .25s var(--ease);white-space:nowrap;}
+#sb.shut .ni-label{opacity:0;width:0;transform:translateX(-8px);}.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);transform:translateX(3px);}
+#sb.shut .ni:hover{transform:none;}.ni:hover .ni-icon{background:rgba(32,128,216,.18);color:var(--blue3);}
+.ni.active{background:linear-gradient(135deg,rgba(22,102,188,.7),rgba(32,128,216,.5));color:#fff;box-shadow:0 4px 20px rgba(32,128,216,.25),inset 0 1px 0 rgba(255,255,255,.08);}
+.ni.active .ni-icon{background:rgba(255,255,255,.15);color:#fff;}
+.ni-tip{position:absolute;left:calc(100% + 16px);top:50%;transform:translateY(-50%);background:var(--navy3);color:#fff;font-size:.8rem;font-weight:500;padding:7px 14px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 6px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);z-index:999;}
+.ni-tip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:var(--navy3);}
+#sb.shut .ni:hover .ni-tip{opacity:1;}
+.sb-foot{padding:14px 12px;border-top:1px solid rgba(255,255,255,.055);display:flex;align-items:center;gap:11px;overflow:hidden;flex-shrink:0;position:relative;z-index:1;background:rgba(0,0,0,.18);}
+.sb-av{flex-shrink:0;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue8),var(--blue6));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:#fff;border:1.5px solid rgba(255,255,255,.12);transition:border-radius .4s var(--ease);}
+#sb.shut .sb-av{border-radius:50%;}.sb-foot-info{flex:1;min-width:0;overflow:hidden;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-foot-info{opacity:0;width:0;}.sb-foot-name{font-size:.85rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-foot-role{font-size:.68rem;color:rgba(255,255,255,.35);white-space:nowrap;}.sb-foot-actions{display:flex;gap:4px;flex-shrink:0;transition:opacity .3s;}
+#sb.shut .sb-foot-actions{opacity:0;pointer-events:none;}.sb-foot-btn{width:30px;height:30px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.78rem;transition:background .2s,color .2s;}
+.sb-foot-btn:hover{background:rgba(248,113,113,.15);color:#F87171;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;padding:0 2.5rem;gap:1rem;flex-shrink:0;}
+.topbar-left{flex:1;display:flex;align-items:center;gap:.8rem;}.topbar-crumb{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.topbar-sep{color:var(--border);font-size:.7rem;}.topbar-title{font-size:1rem;font-weight:600;color:var(--text);}
+.content{flex:1;overflow-y:auto;padding:2rem 2.5rem;}.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:var(--blue2);border-radius:4px;}
+.page-hero{background:linear-gradient(130deg,var(--blue8) 0%,var(--blue7) 40%,var(--purple) 100%);border-radius:16px;padding:1.8rem 2.2rem;display:flex;align-items:center;gap:1.5rem;margin-bottom:1.8rem;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;border:1px solid rgba(255,255,255,.06);top:-100px;right:-60px;pointer-events:none;}
+.ph-icon{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;flex-shrink:0;}
+.ph-title{font-size:1.5rem;font-weight:600;color:#fff;font-family:'Cormorant Garamond',serif;margin-bottom:3px;}.ph-sub{font-size:.82rem;color:rgba(255,255,255,.62);}
+/* mini stats */
+.mini-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:1.8rem;}
+.mc{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:1.2rem 1.4rem;display:flex;align-items:center;gap:.9rem;transition:box-shadow .25s;}
+.mc:hover{box-shadow:0 4px 20px rgba(12,33,64,.07);}
+.mc-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+.mc-ic.b{background:rgba(22,102,188,.1);color:var(--blue6);}.mc-ic.g{background:rgba(16,185,129,.1);color:var(--green);}
+.mc-ic.r{background:rgba(239,68,68,.1);color:var(--red);}.mc-ic.p{background:rgba(139,92,246,.1);color:var(--purple);}
+.mc-n{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;color:var(--text);line-height:1;}
+.mc-l{font-size:.68rem;color:var(--muted);letter-spacing:.05em;margin-top:2px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.card{background:var(--white);border-radius:16px;border:1px solid var(--border);padding:2rem;transition:box-shadow .25s;}
+.card:hover{box-shadow:0 6px 24px rgba(12,33,64,.06);}
+.card-head{display:flex;align-items:center;gap:.7rem;font-size:.95rem;font-weight:600;color:var(--text);padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem;}
+.ct-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.78rem;}
+.ct-ic.b{background:rgba(22,102,188,.1);color:var(--blue6);}.ct-ic.p{background:rgba(139,92,246,.1);color:var(--purple);}
+.prog-item{margin-bottom:1.2rem;}
+.prog-header{display:flex;justify-content:space-between;font-size:.85rem;font-weight:600;margin-bottom:.5rem;}
+.prog-header span:last-child{color:var(--blue6);}
+.prog-bar{height:8px;background:var(--border);border-radius:10px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:10px;transition:width 1s var(--ease);}
+.risk-table{width:100%;border-collapse:collapse;}
+.risk-table th{font-size:.67rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);}
+.risk-table td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:.85rem;}
+.risk-table tr:last-child td{border-bottom:none;}
+.risk-pill{display:inline-flex;padding:3px 10px;border-radius:100px;font-size:.72rem;font-weight:600;}
+.rp-high{background:rgba(239,68,68,.1);color:var(--red);}.rp-med{background:rgba(245,158,11,.1);color:var(--amber);}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy3);color:#fff;padding:13px 18px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:.84rem;font-weight:500;box-shadow:0 10px 40px rgba(0,0,0,.3);transform:translateY(80px);opacity:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);z-index:9999;border-left:3px solid var(--blue4);max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}.toast i{color:var(--blue3);flex-shrink:0;}
+</style>
+</head>
+<body>
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head"><div class="sb-icon-wrap">S</div><div class="sb-brand"><div class="sb-name">Lumina School</div><div class="sb-sub">Language Institute</div></div></div>
+  <div class="sb-teacher"><div class="sb-teacher-av"><img src="https://i.pravatar.cc/150?img=47" alt="KB"></div><div class="sb-teacher-info"><div class="sb-teacher-name">Mr. Karim Bouzid</div><div class="sb-teacher-role">Languages Department</div></div></div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+    <a href="index.html" class="ni"><div class="ni-icon"><i class="fas fa-house-chimney"></i></div><span class="ni-label">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a href="classes.html" class="ni"><div class="ni-icon"><i class="fas fa-chalkboard"></i></div><span class="ni-label">My Classes</span><div class="ni-tip">My Classes</div></a>
+    <a href="timetable.html" class="ni"><div class="ni-icon"><i class="fas fa-calendar-days"></i></div><span class="ni-label">Timetable</span><div class="ni-tip">Timetable</div></a>
+    <a href="grades.html" class="ni"><div class="ni-icon"><i class="fas fa-star"></i></div><span class="ni-label">Grades</span><div class="ni-tip">Grades</div></a>
+    <a href="attendance.html" class="ni"><div class="ni-icon"><i class="fas fa-user-check"></i></div><span class="ni-label">Attendance</span><div class="ni-tip">Attendance</div></a>
+    <div class="sb-divider"></div><div class="sb-lbl">Teaching</div>
+    <a href="homework.html" class="ni"><div class="ni-icon"><i class="fas fa-book"></i></div><span class="ni-label">Homework</span><div class="ni-tip">Homework</div></a>
+    <a href="exam.html" class="ni"><div class="ni-icon"><i class="fas fa-pen"></i></div><span class="ni-label">Evaluations</span><div class="ni-tip">Evaluations</div></a>
+    <a href="materials.html" class="ni"><div class="ni-icon"><i class="fas fa-file-arrow-up"></i></div><span class="ni-label">Materials</span><div class="ni-tip">Materials</div></a>
+    <a href="progress.html" class="ni active"><div class="ni-icon"><i class="fas fa-chart-line"></i></div><span class="ni-label">Progress</span><div class="ni-tip">Progress</div></a>
+    <div class="sb-divider"></div>
+    <a href="messages.html" class="ni"><div class="ni-icon"><i class="fas fa-envelope"></i></div><span class="ni-label">Messages</span><div class="ni-tip">Messages</div></a>
+    <a href="annonce.html" class="ni"><div class="ni-icon"><i class="fas fa-bullhorn"></i></div><span class="ni-label">Announcements</span><div class="ni-tip">Announcements</div></a>
+  </div>
+  <div class="sb-foot"><div class="sb-av">KB</div><div class="sb-foot-info"><div class="sb-foot-name">Mr. Karim Bouzid</div><div class="sb-foot-role">Teacher · Active</div></div><div class="sb-foot-actions"><button class="sb-foot-btn" onclick="toast('Logged out.','fa-arrow-right-from-bracket','var(--blue3)')"><i class="fas fa-arrow-right-from-bracket"></i></button></div></div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><span class="topbar-crumb">Lumina School</span><span class="topbar-sep"><i class="fas fa-chevron-right"></i></span><span class="topbar-title">Student Progress</span></div>
+  </header>
+  <div class="content">
+    <div class="page-hero">
+      <div class="ph-icon"><i class="fas fa-chart-line"></i></div>
+      <div><div class="ph-title">Student Progress</div><div class="ph-sub">Track performance across all five languages and classes</div></div>
+    </div>
+    <div class="mini-row">
+      <div class="mc"><div class="mc-ic b"><i class="fas fa-percent"></i></div><div><div class="mc-n">74%</div><div class="mc-l">Overall Average</div></div></div>
+      <div class="mc"><div class="mc-ic g"><i class="fas fa-trophy"></i></div><div><div class="mc-n">23</div><div class="mc-l">Top Performers</div></div></div>
+      <div class="mc"><div class="mc-ic r"><i class="fas fa-triangle-exclamation"></i></div><div><div class="mc-n">12</div><div class="mc-l">At Risk ≤ 8/20</div></div></div>
+      <div class="mc"><div class="mc-ic p"><i class="fas fa-arrow-trend-up"></i></div><div><div class="mc-n">+4%</div><div class="mc-l">vs. Last Term</div></div></div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-head"><div class="ct-ic b"><i class="fas fa-chalkboard"></i></div>Average Score by Class</div>
+        <div class="prog-item"><div class="prog-header"><span>1AS — French &amp; English</span><span>72%</span></div><div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--blue5)"></div></div></div>
+        <div class="prog-item"><div class="prog-header"><span>2AS — French &amp; Spanish</span><span>68%</span></div><div class="prog-bar"><div class="prog-fill" style="width:68%;background:var(--green)"></div></div></div>
+        <div class="prog-item"><div class="prog-header"><span>3AS — English &amp; Italian</span><span>80%</span></div><div class="prog-bar"><div class="prog-fill" style="width:80%;background:var(--amber)"></div></div></div>
+        <div class="prog-item"><div class="prog-header"><span>1ES — Turkish &amp; Spanish</span><span>65%</span></div><div class="prog-bar"><div class="prog-fill" style="width:65%;background:var(--red)"></div></div></div>
+        <div class="prog-item"><div class="prog-header"><span>TM — French, Italian &amp; Turkish</span><span>85%</span></div><div class="prog-bar"><div class="prog-fill" style="width:85%;background:var(--purple)"></div></div></div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:1.4rem">
+          <div class="card-head"><div class="ct-ic p"><i class="fas fa-language"></i></div>Performance by Language</div>
+          <div class="prog-item"><div class="prog-header"><span>🇫🇷 French</span><span>76%</span></div><div class="prog-bar"><div class="prog-fill" style="width:76%;background:var(--blue6)"></div></div></div>
+          <div class="prog-item"><div class="prog-header"><span>🇬🇧 English</span><span>74%</span></div><div class="prog-bar"><div class="prog-fill" style="width:74%;background:var(--green)"></div></div></div>
+          <div class="prog-item"><div class="prog-header"><span>🇪🇸 Spanish</span><span>69%</span></div><div class="prog-bar"><div class="prog-fill" style="width:69%;background:var(--red)"></div></div></div>
+          <div class="prog-item"><div class="prog-header"><span>🇮🇹 Italian</span><span>82%</span></div><div class="prog-bar"><div class="prog-fill" style="width:82%;background:var(--amber)"></div></div></div>
+          <div class="prog-item"><div class="prog-header"><span>🇹🇷 Turkish</span><span>63%</span></div><div class="prog-bar"><div class="prog-fill" style="width:63%;background:var(--purple)"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="ct-ic" style="background:rgba(239,68,68,.1);color:var(--red)"><i class="fas fa-triangle-exclamation"></i></div>At-Risk Students</div>
+          <table class="risk-table">
+            <thead><tr><th>Student</th><th>Language</th><th>Score</th><th>Risk</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Yacine Hamidi</td><td>🇬🇧 English</td><td>7/20</td><td><span class="risk-pill rp-high">High</span></td></tr>
+              <tr><td style="font-weight:600">Omar Khelif</td><td>🇹🇷 Turkish</td><td>8/20</td><td><span class="risk-pill rp-high">High</span></td></tr>
+              <tr><td style="font-weight:600">Sofiane Meddah</td><td>🇪🇸 Spanish</td><td>9/20</td><td><span class="risk-pill rp-med">Medium</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="toastIcon"></i><span id="toastMsg">Done!</span></div>
+<script>
+let shut=false;
+function toggleSB(){shut=!shut;document.getElementById('sb').classList.toggle('shut',shut);}
+function toast(msg,icon,color){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;const ic=document.getElementById('toastIcon');ic.className='fas '+(icon||'fa-check-circle');ic.style.color=color||'var(--blue3)';t.style.borderLeftColor=color||'var(--blue4)';t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3400);}
+// Animate bars on load
+window.addEventListener('load',()=>{document.querySelectorAll('.prog-fill').forEach(el=>{const w=el.style.width;el.style.width='0';setTimeout(()=>el.style.width=w,100);});});
+</script>
+</body>
+</html>

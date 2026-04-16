@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumina School - Financial Overview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════ PROFIL SIDEBAR TOKENS ═══════════════════ */
+    :root {
+      --navy:     #05111F;
+      --navy2:    #081929;
+      --navy3:    #0C2140;
+      --blue8:    #0D3A68;
+      --blue7:    #114F90;
+      --blue6:    #1666BC;
+      --blue5:    #2080D8;
+      --blue4:    #4298E8;
+      --blue3:    #74B8F0;
+      --blue2:    #AACFF5;
+      --blue1:    #D4E9FA;
+      --ice:      #EBF5FD;
+      --surface:  #F2F7FC;
+      --white:    #FFFFFF;
+      --text:     #0C2140;
+      --muted:    #6B8AA8;
+      --border:   #D8E8F4;
+      --gold:     #D4AF37;
+      --gold-bg:  rgba(212,175,55,.12);
+      --gold-lite:#F5E9A4;
+      --sb-open:  264px;
+      --sb-shut:  74px;
+      --ease:     cubic-bezier(.4,0,.2,1);
+    }
+
+    * { font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { background: #f1f5f9; display: flex; overflow: hidden; }
+
+    /* ═══════════════════ SIDEBAR ═══════════════════ */
+    #sb {
+      width: var(--sb-open);
+      height: 100vh;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: relative;
+      transition: width .4s var(--ease);
+      overflow: visible;
+      z-index: 200;
+    }
+    #sb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+    #sb::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, transparent 0%, var(--gold) 25%, var(--blue4) 60%, transparent 100%);
+      z-index: 3;
+    }
+    #sb.shut { width: var(--sb-shut); }
+
+    /* ── TOGGLE CHIP ── */
+    .sb-chip {
+      position: absolute;
+      top: 50%; right: -14px;
+      transform: translateY(-50%);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--blue6);
+      border: 2.5px solid var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 400;
+      box-shadow: 0 4px 14px rgba(0,0,0,.35);
+      transition: background .25s, transform .4s var(--ease);
+      color: #fff; font-size: .6rem;
+    }
+    .sb-chip:hover { background: var(--blue5); }
+    #sb.shut .sb-chip { transform: translateY(-50%) rotate(180deg); }
+
+    /* ── LOGO ── */
+    .sb-head {
+      display: flex; align-items: center; gap: 13px;
+      padding: 24px 18px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.055);
+      flex-shrink: 0; overflow: hidden;
+      position: relative; z-index: 1;
+    }
+    .sb-icon-wrap {
+      flex-shrink: 0;
+      width: 38px; height: 38px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--blue7), var(--blue5));
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(32,128,216,.4);
+      transition: border-radius .4s var(--ease);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 600; color: #fff; letter-spacing: -.02em;
+    }
+    #sb.shut .sb-icon-wrap { border-radius: 50%; }
+
+    .sb-brand {
+      overflow: hidden; white-space: nowrap;
+      transition: opacity .3s var(--ease), transform .3s var(--ease), width .4s var(--ease);
+      transform-origin: left;
+    }
+    #sb.shut .sb-brand { opacity: 0; transform: scaleX(.85); width: 0; }
+
+    .sb-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.18rem; font-weight: 600; color: var(--white);
+      letter-spacing: .03em; line-height: 1.2;
+    }
+    .sb-sub {
+      font-size: .62rem; letter-spacing: .2em;
+      text-transform: uppercase; color: rgba(255,255,255,.32); margin-top: 1px;
+    }
+
+    /* ── NAV SCROLL AREA ── */
+    .sb-scroll {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 14px 10px; position: relative; z-index: 1;
+    }
+    .sb-scroll::-webkit-scrollbar { width: 0; }
+
+    .sb-lbl {
+      font-size: .58rem; letter-spacing: .28em;
+      text-transform: uppercase; color: rgba(255,255,255,.2);
+      padding: 10px 16px 5px; white-space: nowrap; overflow: hidden;
+      transition: opacity .3s, max-height .3s, padding .3s;
+    }
+    #sb.shut .sb-lbl { opacity:0; max-height:0; padding-top:0; padding-bottom:0; }
+
+    .sb-divider {
+      height: 1px; background: rgba(255,255,255,.05); margin: 8px 14px;
+      transition: opacity .3s;
+    }
+    #sb.shut .sb-divider { opacity: 0; margin: 4px 14px; }
+
+    /* ── NAV ITEM ── */
+    .ni {
+      display: flex; align-items: center; gap: 13px;
+      padding: 11px 14px; border-radius: 12px;
+      color: rgba(255,255,255,.48); text-decoration: none;
+      font-size: .875rem; font-weight: 400;
+      transition: background .22s, color .22s, transform .22s, padding .4s var(--ease);
+      white-space: nowrap; overflow: hidden; cursor: pointer;
+      position: relative; margin-bottom: 2px;
+    }
+    #sb.shut .ni { padding-left:0; padding-right:0; justify-content: center; }
+
+    .ni-icon {
+      flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: .88rem;
+      background: rgba(255,255,255,.04);
+      transition: background .25s, color .25s, border-radius .4s var(--ease);
+      color: rgba(255,255,255,.42);
+    }
+    #sb.shut .ni-icon { border-radius: 50%; }
+
+    .ni-label {
+      flex: 1; overflow: hidden;
+      transition: opacity .25s var(--ease), width .4s var(--ease), transform .25s var(--ease);
+      white-space: nowrap;
+    }
+    #sb.shut .ni-label { opacity: 0; width: 0; transform: translateX(-8px); }
+
+    .ni-badge {
+      flex-shrink: 0; background: var(--blue6); color: var(--white);
+      font-size: .6rem; font-weight: 600; padding: 2px 7px;
+      border-radius: 100px; line-height: 1.4;
+      transition: opacity .25s, width .4s var(--ease);
+    }
+    #sb.shut .ni-badge { opacity: 0; width: 0; overflow: hidden; padding: 0; }
+
+    .ni:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.9); transform: translateX(3px); }
+    #sb.shut .ni:hover { transform: none; }
+    .ni:hover .ni-icon { background: rgba(32,128,216,.18); color: var(--blue3); }
+
+    .ni.active {
+      background: linear-gradient(135deg, rgba(22,102,188,.7), rgba(32,128,216,.5));
+      color: var(--white);
+      box-shadow: 0 4px 20px rgba(32,128,216,.25), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .ni.active .ni-icon { background: rgba(255,255,255,.15); color: var(--white); }
+
+    .ni-tip {
+      position: absolute; left: calc(100% + 16px); top: 50%; transform: translateY(-50%);
+      background: var(--navy3); color: var(--white);
+      font-size: .8rem; font-weight: 500; padding: 7px 14px; border-radius: 8px;
+      white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .18s;
+      box-shadow: 0 6px 24px rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.07); z-index: 999;
+    }
+    .ni-tip::before {
+      content: ''; position: absolute; right: 100%; top: 50%; transform: translateY(-50%);
+      border: 6px solid transparent; border-right-color: var(--navy3);
+    }
+    #sb.shut .ni:hover .ni-tip { opacity: 1; }
+
+    /* ── USER FOOTER ── */
+    .sb-foot {
+      padding: 14px 12px; border-top: 1px solid rgba(255,255,255,.055);
+      display: flex; align-items: center; gap: 11px; overflow: hidden;
+      flex-shrink: 0; position: relative; z-index: 1; background: rgba(0,0,0,.18);
+    }
+    .sb-av {
+      flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue7), var(--blue5));
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; font-weight: 600; color: var(--white);
+      border: 1.5px solid rgba(255,255,255,.18);
+      transition: border-radius .4s var(--ease);
+    }
+    #sb.shut .sb-av { border-radius: 50%; }
+
+    .sb-foot-info {
+      flex: 1; min-width: 0; overflow: hidden;
+      transition: opacity .3s var(--ease), width .4s var(--ease);
+    }
+    #sb.shut .sb-foot-info { opacity: 0; width: 0; }
+
+    .sb-foot-name { font-size: .85rem; font-weight: 600; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sb-foot-role { font-size: .68rem; color: rgba(255,255,255,.35); white-space: nowrap; }
+
+    .sb-foot-actions { display: flex; gap: 4px; flex-shrink: 0; transition: opacity .3s; }
+    #sb.shut .sb-foot-actions { opacity: 0; pointer-events: none; }
+
+    .sb-foot-btn {
+      width: 30px; height: 30px; border-radius: 8px; border: none;
+      background: rgba(255,255,255,.06); color: rgba(255,255,255,.4);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: .78rem; transition: background .2s, color .2s;
+    }
+    .sb-foot-btn:hover { background: rgba(248,113,113,.15); color: #F87171; }
+    .sb-foot-btn.settings:hover { background: rgba(32,128,216,.15); color: var(--blue3); }
+
+    /* ═══════════════════ FINANCIAL PAGE STYLES ═══════════════════ */
+    .main-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+    tbody tr { transition: background 0.15s; }
+    tbody tr:hover { background: #f8fafc; }
+
+    #payModal, #salaryModal, #confirmModal { backdrop-filter: blur(6px); }
+
+    .stat-card { border-radius:24px; padding:22px; transition:all 0.2s; }
+    .stat-card:hover { transform:translateY(-2px); box-shadow:0 16px 32px rgba(0,0,0,0.08); }
+
+    .avatar-sm { width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:white; flex-shrink:0; }
+
+    .paid-badge   { background:#dcfce7; color:#15803d; padding:3px 12px; border-radius:999px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:4px; }
+    .unpaid-badge { background:#fee2e2; color:#b91c1c; padding:3px 12px; border-radius:999px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:4px; }
+    .partial-badge{ background:#fef9c3; color:#854d0e; padding:3px 12px; border-radius:999px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:4px; }
+
+    .tab-btn { transition:all 0.2s; padding:10px 24px; border-radius:14px; font-size:14px; font-weight:600; }
+    .tab-btn.active-tab { background:#1e40af; color:white; box-shadow:0 4px 12px rgba(30,64,175,0.3); }
+    .tab-btn:not(.active-tab) { color:#64748b; }
+    .tab-btn:not(.active-tab):hover { background:#f1f5f9; color:#1e293b; }
+
+    .action-btn { width:32px; height:32px; border-radius:9px; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; cursor:pointer; border:none; }
+    .btn-pay    { background:#dcfce7; color:#15803d; }
+    .btn-pay:hover { background:#bbf7d0; }
+    .btn-unpay  { background:#fee2e2; color:#b91c1c; }
+    .btn-unpay:hover { background:#fecaca; }
+    .btn-view   { background:#eff6ff; color:#3b82f6; }
+    .btn-view:hover { background:#dbeafe; }
+
+    .prog-bar { height:6px; border-radius:999px; background:#e2e8f0; }
+    .prog-fill { height:100%; border-radius:999px; }
+
+    .month-chip { background:#eff6ff; color:#1d4ed8; border:1.5px solid #bfdbfe; padding:4px 14px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+    .month-chip.selected { background:#1e40af; color:white; border-color:#1e40af; }
+    .month-chip:hover:not(.selected) { background:#dbeafe; }
+
+    .stat-pill { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:5px 12px; font-size:12px; font-weight:600; color:#475569; }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fade-in { animation:fadeIn 0.3s ease; }
+
+    /* toast */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--navy3); color: var(--white);
+      padding: 13px 18px; border-radius: 10px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: .84rem; font-weight: 500;
+      box-shadow: 0 10px 40px rgba(0,0,0,.3);
+      transform: translateY(80px); opacity: 0;
+      transition: all .45s cubic-bezier(.34,1.56,.64,1);
+      z-index: 9999; border-left: 3px solid var(--blue4); max-width: 320px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast i { color: var(--blue3); flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand">
+      <div class="sb-name">Lumina School</div>
+      <div class="sb-sub">Language Institute</div>
+    </div>
+  </div>
+
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+
+    <a href="dashboard.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-tachometer-alt"></i></div>
+      <span class="ni-label">Dashboard</span>
+      <div class="ni-tip">Dashboard</div>
+    </a>
+
+    <a href="groupes.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-users-rectangle"></i></div>
+      <span class="ni-label">Groupes Management</span>
+      <div class="ni-tip">Groupes</div>
+    </a>
+
+    <a href="teachers.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+      <span class="ni-label">Teachers Management</span>
+      <div class="ni-tip">Teachers</div>
+    </a>
+
+    <a href="students.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-users"></i></div>
+      <span class="ni-label">Students Management</span>
+      <div class="ni-tip">Students</div>
+    </a>
+
+    <a href="timetables.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-clock"></i></div>
+      <span class="ni-label">Timetables</span>
+      <div class="ni-tip">Timetables</div>
+    </a>
+
+    <div class="sb-divider"></div>
+    <div class="sb-lbl">Administration</div>
+
+    <a href="accounts.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-user-cog"></i></div>
+      <span class="ni-label">Accounts &amp; Roles</span>
+      <div class="ni-tip">Accounts</div>
+    </a>
+
+    <a href="financial.html" class="ni active">
+      <div class="ni-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+      <span class="ni-label">Financial Overview</span>
+      <div class="ni-tip">Financial</div>
+    </a>
+
+    <div class="sb-divider"></div>
+
+    <a href="{% url 'core:login' %}" class="ni">
+      <div class="ni-icon"><i class="fas fa-circle-user"></i></div>
+      <span class="ni-label">My Profile</span>
+      <div class="ni-tip">My Profile</div>
+    </a>
+  </div>
+
+  <div class="sb-foot">
+    <div class="sb-av">MA</div>
+    <div class="sb-foot-info">
+      <div class="sb-foot-name">Manager Admin</div>
+      <div class="sb-foot-role">Director · Active</div>
+    </div>
+    <div class="sb-foot-actions">
+      <button class="sb-foot-btn" title="Logout"><i class="fas fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </div>
+</aside>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<div class="main-wrap">
+
+  <header class="bg-white shadow-sm border-b h-16 flex items-center px-8 gap-4" style="border-bottom:1px solid #e2e8f0; flex-shrink:0;">
+    <h2 class="text-xl font-bold text-slate-800 flex-1">Financial Overview</h2>
+    <span id="headerMonth" class="stat-pill"><i class="fas fa-calendar mr-1 text-blue-500"></i></span>
+    <span class="stat-pill"><i class="fas fa-arrow-up mr-1 text-emerald-500"></i>Income: <span id="hIncome" class="font-bold text-emerald-600 ml-1"></span></span>
+    <span class="stat-pill"><i class="fas fa-arrow-down mr-1 text-red-500"></i>Salaries: <span id="hSalaries" class="font-bold text-red-500 ml-1"></span></span>
+    <span class="stat-pill"><i class="fas fa-wallet mr-1 text-indigo-500"></i>Balance: <span id="hBalance" class="font-bold ml-1"></span></span>
+  </header>
+
+  <main style="flex:1; padding:1.5rem; overflow:auto; background:#f1f5f9;">
+
+    <!-- Month selector -->
+    <div class="flex items-center gap-2 mb-5 flex-wrap">
+      <span class="text-xs font-bold text-slate-500 uppercase tracking-wide mr-2">Month:</span>
+      <div id="monthChips" class="flex gap-2 flex-wrap"></div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="statCards"></div>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-5 bg-white rounded-2xl p-1.5 shadow-sm w-fit">
+      <button id="tabStudents" class="tab-btn active-tab" onclick="switchTab('students')">
+        <i class="fas fa-users mr-2"></i>Student Payments
+      </button>
+      <button id="tabTeachers" class="tab-btn" onclick="switchTab('teachers')">
+        <i class="fas fa-chalkboard-teacher mr-2"></i>Teacher Salaries
+      </button>
+    </div>
+
+    <!-- STUDENTS TABLE -->
+    <div id="sectionStudents" class="bg-white rounded-3xl shadow-xl overflow-hidden fade-in">
+      <div class="p-5 border-b bg-slate-50 flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="stat-pill"><i class="fas fa-check-circle mr-1 text-emerald-500"></i><span id="sPaidCount">0</span> paid</span>
+          <span class="stat-pill"><i class="fas fa-times-circle mr-1 text-red-500"></i><span id="sUnpaidCount">0</span> unpaid</span>
+          <span class="stat-pill font-bold text-emerald-600"><i class="fas fa-coins mr-1"></i><span id="sCollected">0</span> DZD collected</span>
+        </div>
+        <div class="relative">
+          <input id="searchStudents" type="text" placeholder="Search student..."
+                 class="bg-slate-50 border border-slate-200 rounded-2xl py-2 px-4 pl-9 text-sm focus:outline-none focus:border-blue-400 w-56"
+                 oninput="renderStudentTable()">
+          <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" style="min-width:700px">
+          <thead>
+            <tr class="bg-slate-50 border-b text-slate-500 font-semibold text-xs uppercase tracking-wide">
+              <th class="px-6 py-4 text-left">Student</th>
+              <th class="px-5 py-4 text-left">Group</th>
+              <th class="px-5 py-4 text-center">Amount</th>
+              <th class="px-5 py-4 text-center">Status</th>
+              <th class="px-5 py-4 text-center">Date Paid</th>
+              <th class="px-6 py-4 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="studentPayTable" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TEACHERS TABLE -->
+    <div id="sectionTeachers" class="hidden bg-white rounded-3xl shadow-xl overflow-hidden fade-in">
+      <div class="p-5 border-b bg-slate-50 flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="stat-pill"><i class="fas fa-check-circle mr-1 text-emerald-500"></i><span id="tPaidCount">0</span> paid</span>
+          <span class="stat-pill"><i class="fas fa-times-circle mr-1 text-red-500"></i><span id="tUnpaidCount">0</span> unpaid</span>
+          <span class="stat-pill font-bold text-red-500"><i class="fas fa-money-bill-wave mr-1"></i><span id="tDisbursed">0</span> DZD disbursed</span>
+        </div>
+        <div class="relative">
+          <input id="searchTeachers" type="text" placeholder="Search teacher..."
+                 class="bg-slate-50 border border-slate-200 rounded-2xl py-2 px-4 pl-9 text-sm focus:outline-none focus:border-blue-400 w-56"
+                 oninput="renderTeacherTable()">
+          <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" style="min-width:700px">
+          <thead>
+            <tr class="bg-slate-50 border-b text-slate-500 font-semibold text-xs uppercase tracking-wide">
+              <th class="px-6 py-4 text-left">Teacher</th>
+              <th class="px-5 py-4 text-left">Role / Languages</th>
+              <th class="px-5 py-4 text-center">Salary</th>
+              <th class="px-5 py-4 text-center">Status</th>
+              <th class="px-5 py-4 text-center">Date Paid</th>
+              <th class="px-6 py-4 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="teacherSalaryTable" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- CONFIRM PAYMENT MODAL -->
+<div id="confirmModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+  <div class="bg-white rounded-3xl w-full max-w-sm mx-4 shadow-2xl overflow-hidden">
+    <div id="confirmHeader" class="px-8 py-6 flex items-center gap-4">
+      <div id="confirmAvatar" class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0"></div>
+      <div>
+        <h3 id="confirmTitle" class="text-lg font-bold text-white"></h3>
+        <p id="confirmSub" class="text-sm text-white/75 mt-0.5"></p>
+      </div>
+      <button onclick="hideConfirm()" class="ml-auto text-white/70 hover:text-white text-2xl leading-none">×</button>
+    </div>
+    <div class="px-8 py-6">
+      <div id="confirmBody" class="space-y-3 mb-6"></div>
+      <div class="flex gap-3">
+        <button onclick="hideConfirm()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl text-sm">Cancel</button>
+        <button id="confirmBtn" class="flex-1 py-2.5 font-semibold rounded-2xl text-sm text-white"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- toast -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle" id="toastIcon"></i>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<script>
+  /* ── sidebar ── */
+  let shut = false;
+  function toggleSB() {
+    shut = !shut;
+    document.getElementById('sb').classList.toggle('shut', shut);
+  }
+
+  // ─── DATA ──────────────────────────────────────────────────
+  const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const COLORS  = ["#3b82f6","#8b5cf6","#22c55e","#f97316","#f43f5e","#0891b2","#d97706","#6366f1"];
+  const FEE     = 4500; // DZD per student per month
+  const now     = new Date();
+
+  function getColor(str) {
+    let h = 0;
+    for (let c of str) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
+    return COLORS[Math.abs(h) % COLORS.length];
+  }
+  function initials(f, l) { return (f[0] + l[0]).toUpperCase(); }
+  function fmtDZD(n) { return n.toLocaleString('fr-DZ') + ' DZD'; }
+
+  // Student payment data per month
+  const STUDENTS = [
+    { id:"S001", fname:"Amina",   lname:"Bounnah",  group:"Group A - Morning",   level:"B1 English" },
+    { id:"S002", fname:"Karim",   lname:"Khelifi",  group:"Group B - Evening",   level:"A2 French"  },
+    { id:"S003", fname:"Lina",    lname:"Hamdi",    group:"Group C - Intensive", level:"C1 English" },
+    { id:"S004", fname:"Younes",  lname:"Brahim",   group:"Group A - Morning",   level:"B1 English" },
+    { id:"S005", fname:"Sara",    lname:"Meziane",  group:"Group B - Evening",   level:"A2 French"  },
+    { id:"S006", fname:"Rym",     lname:"Tabet",    group:"Group C - Intensive", level:"C1 English" },
+    { id:"S007", fname:"Bilal",   lname:"Khaldi",   group:"Group A - Morning",   level:"B1 English" },
+    { id:"S008", fname:"Nour",    lname:"Saad",     group:"Group B - Evening",   level:"A2 French"  },
+  ];
+
+  const TEACHERS = [
+    { id:"T001", fname:"Sophie",  lname:"Martin",   langs:"English, French",  salary:45000 },
+    { id:"T002", fname:"Ahmed",   lname:"Benali",   langs:"French, German",   salary:42000 },
+    { id:"T003", fname:"Karim",   lname:"Mansouri", langs:"English",          salary:38000 },
+    { id:"T004", fname:"Nadia",   lname:"Bouchair", langs:"Arabic, French",   salary:35000 },
+    { id:"T005", fname:"Yasmine", lname:"Larbi",    langs:"Spanish, French",  salary:36000 },
+  ];
+
+  // payments[monthIndex][id] = { paid, date }
+  const payments  = {};
+  const salaries  = {};
+
+  // Pre-fill some realistic data
+  function seedData() {
+    const prevMonth = (now.getMonth() + 11) % 12;
+    const thisMonth = now.getMonth();
+
+    // Last month — most paid
+    payments[prevMonth] = {};
+    STUDENTS.forEach((s, i) => {
+      payments[prevMonth][s.id] = i < 6
+        ? { paid: true,  date: `${now.getFullYear()}-${String(prevMonth+1).padStart(2,'0')}-${String(5+i*2).padStart(2,'0')}` }
+        : { paid: false, date: null };
+    });
+
+    // This month — some paid
+    payments[thisMonth] = {};
+    STUDENTS.forEach((s, i) => {
+      payments[thisMonth][s.id] = i < 4
+        ? { paid: true,  date: `${now.getFullYear()}-${String(thisMonth+1).padStart(2,'0')}-0${i+1}` }
+        : { paid: false, date: null };
+    });
+
+    // Salaries — last month fully paid, this month partial
+    salaries[prevMonth] = {};
+    TEACHERS.forEach(t => {
+      salaries[prevMonth][t.id] = { paid: true, date: `${now.getFullYear()}-${String(prevMonth+1).padStart(2,'0')}-28` };
+    });
+    salaries[thisMonth] = {};
+    TEACHERS.forEach((t, i) => {
+      salaries[thisMonth][t.id] = i < 2
+        ? { paid: true,  date: `${now.getFullYear()}-${String(thisMonth+1).padStart(2,'0')}-05` }
+        : { paid: false, date: null };
+    });
+  }
+
+  function getPayment(monthIdx, id)  {
+    if (!payments[monthIdx])  payments[monthIdx]  = {};
+    if (!payments[monthIdx][id])  payments[monthIdx][id]  = { paid: false, date: null };
+    return payments[monthIdx][id];
+  }
+  function getSalary(monthIdx, id) {
+    if (!salaries[monthIdx])  salaries[monthIdx]  = {};
+    if (!salaries[monthIdx][id])  salaries[monthIdx][id]  = { paid: false, date: null };
+    return salaries[monthIdx][id];
+  }
+
+  let selectedMonth = now.getMonth();
+  let activeTab     = 'students';
+  let pendingAction = null; // { type, id }
+
+  // ─── MONTH CHIPS ───────────────────────────────────────────
+  function buildMonthChips() {
+    const container = document.getElementById('monthChips');
+    const visible   = [
+      (now.getMonth() + 10) % 12,
+      (now.getMonth() + 11) % 12,
+      now.getMonth(),
+      (now.getMonth() + 1)  % 12,
+    ];
+    container.innerHTML = visible.map(m => `
+      <button class="month-chip ${m === selectedMonth ? 'selected' : ''}" onclick="selectMonth(${m})">
+        ${MONTHS[m]}
+      </button>`).join('');
+    document.getElementById('headerMonth').innerHTML =
+      `<i class="fas fa-calendar mr-1 text-blue-500"></i>${MONTHS[selectedMonth]} ${now.getFullYear()}`;
+  }
+
+  function selectMonth(m) {
+    selectedMonth = m;
+    buildMonthChips();
+    renderAll();
+  }
+
+  // ─── STAT CARDS ────────────────────────────────────────────
+  function renderStats() {
+    const paidStudents = STUDENTS.filter(s => getPayment(selectedMonth, s.id).paid).length;
+    const collected    = paidStudents * FEE;
+    const paidTeachers = TEACHERS.filter(t => getSalary(selectedMonth, t.id).paid).length;
+    const disbursed    = TEACHERS.filter(t => getSalary(selectedMonth, t.id).paid).reduce((a,t) => a + t.salary, 0);
+    const pending      = STUDENTS.filter(s => !getPayment(selectedMonth, s.id).paid).length * FEE;
+    const balance      = collected - disbursed;
+
+    document.getElementById('hIncome').textContent    = fmtDZD(collected);
+    document.getElementById('hSalaries').textContent  = fmtDZD(disbursed);
+    document.getElementById('hBalance').textContent   = fmtDZD(balance);
+    document.getElementById('hBalance').className     = 'font-bold ml-1 ' + (balance >= 0 ? 'text-emerald-600' : 'text-red-600');
+
+    document.getElementById('statCards').innerHTML = `
+      <div class="stat-card bg-white shadow-sm">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-11 h-11 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 text-lg"><i class="fas fa-coins"></i></div>
+          <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">${paidStudents}/${STUDENTS.length} paid</span>
+        </div>
+        <p class="text-2xl font-bold text-slate-800">${fmtDZD(collected)}</p>
+        <p class="text-xs text-slate-500 mt-1">Student fees collected</p>
+        <div class="prog-bar mt-3"><div class="prog-fill bg-emerald-500" style="width:${Math.round(paidStudents/STUDENTS.length*100)}%"></div></div>
+      </div>
+
+      <div class="stat-card bg-white shadow-sm">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-11 h-11 bg-red-100 rounded-2xl flex items-center justify-center text-red-500 text-lg"><i class="fas fa-money-bill-wave"></i></div>
+          <span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded-lg">${paidTeachers}/${TEACHERS.length} paid</span>
+        </div>
+        <p class="text-2xl font-bold text-slate-800">${fmtDZD(disbursed)}</p>
+        <p class="text-xs text-slate-500 mt-1">Teacher salaries paid</p>
+        <div class="prog-bar mt-3"><div class="prog-fill bg-red-400" style="width:${Math.round(paidTeachers/TEACHERS.length*100)}%"></div></div>
+      </div>
+
+      <div class="stat-card bg-white shadow-sm">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-11 h-11 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 text-lg"><i class="fas fa-clock"></i></div>
+          <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg">${STUDENTS.length - paidStudents} students</span>
+        </div>
+        <p class="text-2xl font-bold text-slate-800">${fmtDZD(pending)}</p>
+        <p class="text-xs text-slate-500 mt-1">Pending fees</p>
+        <div class="prog-bar mt-3"><div class="prog-fill bg-amber-400" style="width:${Math.round((STUDENTS.length-paidStudents)/STUDENTS.length*100)}%"></div></div>
+      </div>
+
+      <div class="stat-card bg-white shadow-sm">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-11 h-11 ${balance>=0?'bg-indigo-100 text-indigo-600':'bg-red-100 text-red-500'} rounded-2xl flex items-center justify-center text-lg"><i class="fas fa-wallet"></i></div>
+          <span class="text-xs font-bold ${balance>=0?'text-indigo-600 bg-indigo-50':'text-red-600 bg-red-50'} px-2 py-1 rounded-lg">${balance>=0?'Surplus':'Deficit'}</span>
+        </div>
+        <p class="text-2xl font-bold ${balance>=0?'text-indigo-600':'text-red-600'}">${fmtDZD(Math.abs(balance))}</p>
+        <p class="text-xs text-slate-500 mt-1">Net balance this month</p>
+        <div class="prog-bar mt-3"><div class="prog-fill ${balance>=0?'bg-indigo-500':'bg-red-400'}" style="width:${Math.min(100,Math.abs(balance)/Math.max(collected,1)*100)}%"></div></div>
+      </div>`;
+  }
+
+  // ─── STUDENT TABLE ─────────────────────────────────────────
+  function renderStudentTable() {
+    const term    = (document.getElementById('searchStudents')?.value || '').toLowerCase();
+    const filtered = STUDENTS.filter(s =>
+      `${s.fname} ${s.lname} ${s.group} ${s.level}`.toLowerCase().includes(term)
+    );
+
+    document.getElementById('sPaidCount').textContent   = STUDENTS.filter(s => getPayment(selectedMonth,s.id).paid).length;
+    document.getElementById('sUnpaidCount').textContent = STUDENTS.filter(s => !getPayment(selectedMonth,s.id).paid).length;
+    document.getElementById('sCollected').textContent   = fmtDZD(STUDENTS.filter(s => getPayment(selectedMonth,s.id).paid).length * FEE);
+
+    const tbody = document.getElementById('studentPayTable');
+    tbody.innerHTML = '';
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-slate-400"><i class="fas fa-search text-3xl mb-2 block opacity-30"></i>No students found</td></tr>`;
+      return;
+    }
+
+    filtered.forEach(s => {
+      const p     = getPayment(selectedMonth, s.id);
+      const color = getColor(s.id);
+      const row   = document.createElement('tr');
+      row.innerHTML = `
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="avatar-sm" style="background:${color}">${initials(s.fname,s.lname)}</div>
+            <div>
+              <div class="font-semibold text-slate-800">${s.fname} ${s.lname}</div>
+              <div class="text-xs text-slate-400">${s.id}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-5 py-4">
+          <div class="text-xs font-semibold text-slate-700">${s.group}</div>
+          <div class="text-xs text-slate-400 mt-0.5">${s.level}</div>
+        </td>
+        <td class="px-5 py-4 text-center font-bold text-slate-700">${fmtDZD(FEE)}</td>
+        <td class="px-5 py-4 text-center">
+          ${p.paid
+            ? `<span class="paid-badge"><i class="fas fa-check text-[9px]"></i>Paid</span>`
+            : `<span class="unpaid-badge"><i class="fas fa-times text-[9px]"></i>Unpaid</span>`}
+        </td>
+        <td class="px-5 py-4 text-center text-xs text-slate-500">${p.date || '—'}</td>
+        <td class="px-6 py-4 text-center" style="white-space:nowrap">
+          ${p.paid
+            ? `<button onclick="confirmAction('unpay-student','${s.id}')" class="action-btn btn-unpay" title="Mark as unpaid"><i class="fas fa-undo text-xs"></i></button>`
+            : `<button onclick="confirmAction('pay-student','${s.id}')" class="action-btn btn-pay" title="Mark as paid"><i class="fas fa-check text-xs"></i></button>`}
+        </td>`;
+      tbody.appendChild(row);
+    });
+  }
+
+  // ─── TEACHER TABLE ─────────────────────────────────────────
+  function renderTeacherTable() {
+    const term     = (document.getElementById('searchTeachers')?.value || '').toLowerCase();
+    const filtered = TEACHERS.filter(t =>
+      `${t.fname} ${t.lname} ${t.langs}`.toLowerCase().includes(term)
+    );
+
+    document.getElementById('tPaidCount').textContent   = TEACHERS.filter(t => getSalary(selectedMonth,t.id).paid).length;
+    document.getElementById('tUnpaidCount').textContent = TEACHERS.filter(t => !getSalary(selectedMonth,t.id).paid).length;
+    document.getElementById('tDisbursed').textContent   = fmtDZD(TEACHERS.filter(t => getSalary(selectedMonth,t.id).paid).reduce((a,t)=>a+t.salary,0));
+
+    const tbody = document.getElementById('teacherSalaryTable');
+    tbody.innerHTML = '';
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-slate-400"><i class="fas fa-search text-3xl mb-2 block opacity-30"></i>No teachers found</td></tr>`;
+      return;
+    }
+
+    filtered.forEach(t => {
+      const s     = getSalary(selectedMonth, t.id);
+      const color = getColor(t.id);
+      const row   = document.createElement('tr');
+      row.innerHTML = `
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="avatar-sm" style="background:${color}">${initials(t.fname,t.lname)}</div>
+            <div>
+              <div class="font-semibold text-slate-800">${t.fname} ${t.lname}</div>
+              <div class="text-xs text-slate-400">${t.id}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-5 py-4">
+          <div class="text-xs font-semibold text-slate-700">Teacher</div>
+          <div class="text-xs text-slate-400 mt-0.5">${t.langs}</div>
+        </td>
+        <td class="px-5 py-4 text-center font-bold text-slate-700">${fmtDZD(t.salary)}</td>
+        <td class="px-5 py-4 text-center">
+          ${s.paid
+            ? `<span class="paid-badge"><i class="fas fa-check text-[9px]"></i>Paid</span>`
+            : `<span class="unpaid-badge"><i class="fas fa-times text-[9px]"></i>Unpaid</span>`}
+        </td>
+        <td class="px-5 py-4 text-center text-xs text-slate-500">${s.date || '—'}</td>
+        <td class="px-6 py-4 text-center" style="white-space:nowrap">
+          ${s.paid
+            ? `<button onclick="confirmAction('unpay-teacher','${t.id}')" class="action-btn btn-unpay" title="Mark as unpaid"><i class="fas fa-undo text-xs"></i></button>`
+            : `<button onclick="confirmAction('pay-teacher','${t.id}')" class="action-btn btn-pay" title="Mark as paid"><i class="fas fa-check text-xs"></i></button>`}
+        </td>`;
+      tbody.appendChild(row);
+    });
+  }
+
+  // ─── CONFIRM MODAL ─────────────────────────────────────────
+  function confirmAction(type, id) {
+    pendingAction = { type, id };
+    const isPay  = type.startsWith('pay-');
+    const isStu  = type.endsWith('student');
+    const person = isStu
+      ? STUDENTS.find(s => s.id === id)
+      : TEACHERS.find(t => t.id === id);
+    const amount = isStu ? FEE : TEACHERS.find(t => t.id === id)?.salary;
+    const color  = getColor(id);
+
+    const header = document.getElementById('confirmHeader');
+    header.style.background = `linear-gradient(135deg, ${color}bb, ${color})`;
+    document.getElementById('confirmAvatar').textContent      = initials(person.fname, person.lname);
+    document.getElementById('confirmAvatar').style.background = 'rgba(255,255,255,0.2)';
+    document.getElementById('confirmTitle').textContent = `${person.fname} ${person.lname}`;
+    document.getElementById('confirmSub').textContent   = isStu ? person.group : 'Teacher';
+
+    document.getElementById('confirmBody').innerHTML = `
+      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl">
+        <span class="text-sm text-slate-600">${isStu ? 'Monthly Fee' : 'Monthly Salary'}</span>
+        <span class="font-bold text-slate-800">${fmtDZD(amount)}</span>
+      </div>
+      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl">
+        <span class="text-sm text-slate-600">Month</span>
+        <span class="font-bold text-slate-800">${MONTHS[selectedMonth]} ${now.getFullYear()}</span>
+      </div>
+      <div class="flex items-center justify-between p-3 ${isPay ? 'bg-emerald-50' : 'bg-red-50'} rounded-2xl">
+        <span class="text-sm font-semibold ${isPay ? 'text-emerald-700' : 'text-red-600'}">
+          ${isPay ? '✅ Mark as PAID?' : '↩️ Mark as UNPAID?'}
+        </span>
+      </div>`;
+
+    const btn = document.getElementById('confirmBtn');
+    btn.textContent  = isPay ? 'Confirm Payment' : 'Mark as Unpaid';
+    btn.className    = `flex-1 py-2.5 font-semibold rounded-2xl text-sm text-white ${isPay ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`;
+    btn.onclick      = executeAction;
+
+    document.getElementById('confirmModal').classList.remove('hidden');
+  }
+
+  function executeAction() {
+    if (!pendingAction) return;
+    const { type, id } = pendingAction;
+    const today = new Date().toISOString().split('T')[0];
+
+    if (type === 'pay-student') {
+      getPayment(selectedMonth, id).paid = true;
+      getPayment(selectedMonth, id).date = today;
+    } else if (type === 'unpay-student') {
+      getPayment(selectedMonth, id).paid = false;
+      getPayment(selectedMonth, id).date = null;
+    } else if (type === 'pay-teacher') {
+      getSalary(selectedMonth, id).paid = true;
+      getSalary(selectedMonth, id).date = today;
+    } else if (type === 'unpay-teacher') {
+      getSalary(selectedMonth, id).paid = false;
+      getSalary(selectedMonth, id).date = null;
+    }
+
+    pendingAction = null;
+    hideConfirm();
+    renderAll();
+  }
+
+  function hideConfirm() {
+    document.getElementById('confirmModal').classList.add('hidden');
+    pendingAction = null;
+  }
+
+  // ─── TAB SWITCH ────────────────────────────────────────────
+  function switchTab(tab) {
+    activeTab = tab;
+    document.getElementById('tabStudents').classList.toggle('active-tab', tab === 'students');
+    document.getElementById('tabTeachers').classList.toggle('active-tab', tab === 'teachers');
+    document.getElementById('sectionStudents').classList.toggle('hidden', tab !== 'students');
+    document.getElementById('sectionTeachers').classList.toggle('hidden', tab !== 'teachers');
+    if (tab === 'students') renderStudentTable();
+    else renderTeacherTable();
+  }
+
+  function renderAll() {
+    renderStats();
+    renderStudentTable();
+    renderTeacherTable();
+  }
+
+  // ─── INIT ──────────────────────────────────────────────────
+  seedData();
+  buildMonthChips();
+  renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grades — Lumina Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="shared.css">
+<style>.page{animation:fadeUp .3s var(--ease)}</style>
+</head>
+<body>
+
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand"><div class="sb-name">Lumina Academy</div><div class="sb-sub">Student Portal</div></div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main</div>
+    <a class="ni" href="dashboard.html"><div class="ni-ic"><i class="fas fa-house-chimney"></i></div><span class="ni-lbl">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a class="ni" href="course.html"><div class="ni-ic"><i class="fas fa-book-open"></i></div><span class="ni-lbl">Courses</span><div class="ni-tip">Courses</div></a>
+    <a class="ni" href="homework.html"><div class="ni-ic"><i class="fas fa-pen-to-square"></i></div><span class="ni-lbl">Homework</span><span class="ni-bdg">3</span><div class="ni-tip">Homework</div></a>
+    <a class="ni active" href="Grades.html"><div class="ni-ic"><i class="fas fa-star-half-stroke"></i></div><span class="ni-lbl">Grades</span><div class="ni-tip">Grades</div></a>
+    <div class="sb-div"></div>
+    <div class="sb-lbl">Account</div>
+    <a class="ni" href="payment.html"><div class="ni-ic"><i class="fas fa-wallet"></i></div><span class="ni-lbl">Payments</span><div class="ni-tip">Payments</div></a>
+    <a class="ni" href="{% url 'core:login' %}"><div class="ni-ic"><i class="fas fa-circle-user"></i></div><span class="ni-lbl">My Profile</span><div class="ni-tip">My Profile</div></a>
+    <div class="sb-div"></div>
+    <button class="ni ni-logout" onclick="openLogout()"><div class="ni-ic"><i class="fas fa-right-from-bracket"></i></div><span class="ni-lbl">Log out</span><div class="ni-tip">Log out</div></button>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-av">O</div>
+    <div class="sb-fi"><div class="sb-fn">Oumaima B.</div><div class="sb-fr">B1 Intermediate</div></div>
+    <div class="sb-fa"><button class="sb-fb set"><i class="fas fa-gear"></i></button></div>
+    <div class="sb-online"></div>
+  </div>
+</aside>
+
+<div class="msg-overlay" id="msgOverlay" onclick="closeMsgModal()">
+  <div class="msg-modal" onclick="event.stopPropagation()">
+    <div class="mm-head"><div class="mm-av" id="mmAv">K</div><div><div class="mm-name" id="mmName"></div><div class="mm-role" id="mmRole"></div><div class="mm-time" id="mmTime"></div></div><button class="close-mm" onclick="closeMsgModal()"><i class="fas fa-xmark"></i></button></div>
+    <div class="mm-body" id="mmBody"></div>
+  </div>
+</div>
+
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogout()">
+  <div class="logout-modal" onclick="event.stopPropagation()">
+    <div class="lo-icon"><i class="fas fa-right-from-bracket"></i></div>
+    <div class="lo-title">Log out of Lumina Academy?</div>
+    <div class="lo-sub">Your progress is safely saved. See you next time, Oumaima!</div>
+    <div class="lo-btns">
+      <button class="lo-cancel" onclick="closeLogout()">Cancel</button>
+      <button class="lo-confirm" onclick="confirmLogout()">Log out</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="tb-crumb">Lumina Academy</span>
+      <span class="tb-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="tb-title">Grades & Results</span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-notif-wrap">
+        <button class="notif-btn" onclick="toggleNotif()"><i class="fas fa-bell"></i><span class="n-badge" id="bellBadge">5</span></button>
+        <div class="notif-drop" id="nDrop">
+          <div class="nd-head"><h4>Notifications</h4><span class="nd-mark" onclick="markRead()">Mark all read</span></div>
+          <div id="ndList"></div>
+          <div class="nd-foot"><a href="#">View all →</a></div>
+        </div>
+      </div>
+      <a class="prof-chip" href="{% url 'core:login' %}">
+        <div class="pc-av">O</div>
+        <div><div class="pc-name">Oumaima B.</div><div class="pc-role">B1 Student</div></div>
+      </a>
+      <div class="online-chip"><div class="online-dot-chip"></div> Online</div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page">
+      <div class="page-hero" style="background:linear-gradient(130deg,var(--b8) 0%,var(--b7) 40%,var(--purple) 100%)">
+        <div class="ph-deco"></div>
+        <div class="ph-icon"><i class="fas fa-star-half-stroke"></i></div>
+        <div><div class="ph-title">Grades & Results</div><div class="ph-sub">Your assessments, quizzes and final exam results</div></div>
+      </div>
+
+      <div class="ggrid">
+        <div class="card gcard"><div class="gval" style="color:var(--green)">17.5<span style="font-size:1rem;color:var(--muted)">/20</span></div><div class="gsub">Grammar Test #1</div><div class="gdate">March 2026</div><div class="gbar" style="background:linear-gradient(90deg,var(--green),var(--b4))"></div></div>
+        <div class="card gcard"><div class="gval" style="color:var(--b6)">16<span style="font-size:1rem;color:var(--muted)">/20</span></div><div class="gsub">English Oral Exam</div><div class="gdate">February 2026</div><div class="gbar" style="background:linear-gradient(90deg,var(--b6),var(--b4))"></div></div>
+        <div class="card gcard"><div class="gval" style="color:var(--amber)">14<span style="font-size:1rem;color:var(--muted)">/20</span></div><div class="gsub">French Dictée</div><div class="gdate">January 2026</div><div class="gbar" style="background:linear-gradient(90deg,var(--amber),var(--red))"></div></div>
+        <div class="card gcard"><div class="gval" style="color:var(--green)">18<span style="font-size:1rem;color:var(--muted)">/20</span></div><div class="gsub">Verb Conjugation Quiz</div><div class="gdate">March 2026</div><div class="gbar" style="background:linear-gradient(90deg,var(--green),var(--b5))"></div></div>
+        <div class="card gcard"><div class="gval" style="color:var(--b5)">15.5<span style="font-size:1rem;color:var(--muted)">/20</span></div><div class="gsub">Reading Comprehension</div><div class="gdate">Feb 2026</div><div class="gbar" style="background:linear-gradient(90deg,var(--b5),var(--green))"></div></div>
+        <div class="card gcard"><div class="gval" style="color:var(--b6)">16.5<span style="font-size:1rem;color:var(--muted)">/20</span></div><div class="gsub">Expression Écrite #2</div><div class="gdate">Jan 2026</div><div class="gbar" style="background:linear-gradient(90deg,var(--b6),var(--green))"></div></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
+        <div style="font-size:.95rem;font-weight:600;color:var(--text)">🎓 Final Promotion Exams</div>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:.63rem;font-weight:700;background:rgba(139,92,246,.08);color:var(--purple);border:1px solid rgba(139,92,246,.2)">B1 → B2</span>
+      </div>
+      <p style="color:var(--muted);font-size:.78rem;margin-bottom:1rem">The final exam covers all modules per language. Grade determines promotion to B2.</p>
+
+      <div class="final-grid">
+        <div class="card fexam-card">
+          <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:1rem">
+            <div class="fexam-flag" style="background:rgba(22,102,188,.08);border:1px solid rgba(22,102,188,.15)">🇬🇧</div>
+            <div><div style="font-size:.9rem;font-weight:600;color:var(--text)">English – Final Exam</div><div style="font-size:.68rem;color:var(--muted)">Grammar · Oral · Expression · Vocabulary</div></div>
+          </div>
+          <div class="plabel" style="font-size:.78rem;margin-bottom:.4rem"><span>Overall Grade</span><span style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--green)">16.5<span style="font-size:.75rem;color:var(--muted);font-weight:400">/20</span></span></div>
+          <div class="ptrack"><div class="pfill" style="width:82.5%;background:linear-gradient(90deg,var(--b6),var(--green))"></div></div>
+          <div class="fexam-pass">✅ Promotion to B2 validated</div>
+          <div style="margin-top:.7rem;font-size:.68rem;color:var(--muted);line-height:1.6">Prof. Laurent · March 2026 · Pass threshold: 12/20</div>
+        </div>
+        <div class="card fexam-card">
+          <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:1rem">
+            <div class="fexam-flag" style="background:rgba(32,128,216,.08);border:1px solid rgba(32,128,216,.15)">🇫🇷</div>
+            <div><div style="font-size:.9rem;font-weight:600;color:var(--text)">French – Final Exam</div><div style="font-size:.68rem;color:var(--muted)">Conjugation · Expression · Dictée · Grammar</div></div>
+          </div>
+          <div class="plabel" style="font-size:.78rem;margin-bottom:.4rem"><span>Overall Grade</span><span style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--amber)">13.5<span style="font-size:.75rem;color:var(--muted);font-weight:400">/20</span></span></div>
+          <div class="ptrack"><div class="pfill" style="width:67.5%;background:linear-gradient(90deg,var(--b5),var(--amber))"></div></div>
+          <div class="fexam-pass">✅ Promotion to B2 validated</div>
+          <div style="margin-top:.7rem;font-size:.68rem;color:var(--muted);line-height:1.6">Prof. Martin · March 2026 · Written expression to improve</div>
+        </div>
+      </div>
+
+      <div class="pass-banner">
+        <div style="display:flex;align-items:center;gap:1rem">
+          <span style="font-size:1.8rem">🏆</span>
+          <div>
+            <div style="font-size:.95rem;font-weight:600;color:var(--text)">Oumaima is ready for B2!</div>
+            <div style="font-size:.73rem;color:var(--muted);margin-top:2px">Both promotion exams validated — English & French.</div>
+          </div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.6rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px">Current level</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--b6)">B1 → <span style="color:var(--green)">B2</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="ti"></i><span id="tm"></span></div>
+<script src="shared.js"></script>
+</body>
+</html>

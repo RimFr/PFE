@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Re-enrollment — Success School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ═══════════════════ TOKENS ═══════════════════ */
+:root {
+  --navy:#05111F; --navy2:#081929; --navy3:#0C2140;
+  --b8:#0D3A68;   --b7:#114F90;   --b6:#1666BC;  --b5:#2080D8;
+  --b4:#4298E8;   --b3:#74B8F0;   --b2:#AACFF5;  --b1:#D4E9FA;
+  --ice:#EBF5FD;  --surf:#F2F7FC; --white:#FFF;
+  --text:#0C2140; --muted:#6B8AA8; --border:#D8E8F4;
+  --red:#EF4444;  --green:#10B981; --amber:#041f38;
+  --sb-open:264px; --sb-shut:74px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--surf);color:var(--text);display:flex}
+
+/* ═══════════════════ SIDEBAR ═══════════════════ */
+#sb{width:var(--sb-open);height:100vh;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;transition:width .4s var(--ease);overflow:visible;z-index:200}
+#sb::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+#sb::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--b5) 25%,var(--b4) 60%,transparent 100%);z-index:3}
+#sb.shut{width:var(--sb-shut)}
+
+.sb-chip{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--b6);border:2.5px solid var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:background .25s,transform .4s var(--ease);color:#fff;font-size:.6rem}
+.sb-chip:hover{background:var(--b5)}
+#sb.shut .sb-chip{transform:translateY(-50%) rotate(180deg)}
+
+.sb-head{display:flex;align-items:center;gap:13px;padding:24px 18px 20px 20px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1}
+.sb-icon-wrap{flex-shrink:0;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--b7),var(--b5));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,128,216,.4);transition:border-radius .4s var(--ease);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff}
+#sb.shut .sb-icon-wrap{border-radius:50%}
+.sb-brand{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),transform .3s var(--ease),width .4s var(--ease);transform-origin:left}
+#sb.shut .sb-brand{opacity:0;transform:scaleX(.85);width:0}
+.sb-name{font-family:'Cormorant Garamond',serif;font-size:1.18rem;font-weight:600;color:var(--white);letter-spacing:.03em;line-height:1.2}
+.sb-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-top:1px}
+
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 10px;position:relative;z-index:1}
+.sb-scroll::-webkit-scrollbar{width:0}
+.sb-lbl{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .3s,max-height .3s,padding .3s}
+#sb.shut .sb-lbl{opacity:0;max-height:0;padding-top:0;padding-bottom:0}
+.sb-div{height:1px;background:rgba(255,255,255,.05);margin:8px 14px;transition:opacity .3s}
+#sb.shut .sb-div{opacity:0;margin:4px 14px}
+
+.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:12px;color:rgba(255,255,255,.48);text-decoration:none;font-size:.875rem;font-weight:400;transition:background .22s,color .22s,transform .22s,padding .4s var(--ease);white-space:nowrap;overflow:hidden;cursor:pointer;position:relative;margin-bottom:2px}
+#sb.shut .ni{padding-left:0;padding-right:0;justify-content:center}
+.ni-ic{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:rgba(255,255,255,.04);transition:background .25s,color .25s,border-radius .4s var(--ease);color:rgba(255,255,255,.42)}
+#sb.shut .ni-ic{border-radius:50%}
+.ni-lbl{flex:1;overflow:hidden;transition:opacity .25s var(--ease),width .4s var(--ease),transform .25s var(--ease);white-space:nowrap}
+#sb.shut .ni-lbl{opacity:0;width:0;transform:translateX(-8px)}
+.ni-bdg{flex-shrink:0;background:var(--b6);color:#fff;font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:100px;line-height:1.4;transition:opacity .25s,width .4s var(--ease)}
+#sb.shut .ni-bdg{opacity:0;width:0;overflow:hidden;padding:0}
+.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);transform:translateX(3px)}
+#sb.shut .ni:hover{transform:none}
+.ni:hover .ni-ic{background:rgba(32,128,216,.18);color:var(--b3)}
+.ni.active{background:linear-gradient(135deg,rgba(22,102,188,.7),rgba(32,128,216,.5));color:#fff;box-shadow:0 4px 20px rgba(32,128,216,.25),inset 0 1px 0 rgba(255,255,255,.08)}
+.ni.active .ni-ic{background:rgba(255,255,255,.15);color:#fff}
+.ni-tip{position:absolute;left:calc(100% + 16px);top:50%;transform:translateY(-50%);background:var(--navy3);color:#fff;font-size:.8rem;font-weight:500;padding:7px 14px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 6px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);z-index:999}
+.ni-tip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:var(--navy3)}
+#sb.shut .ni:hover .ni-tip{opacity:1}
+
+.sb-foot{padding:14px 12px;border-top:1px solid rgba(255,255,255,.055);display:flex;align-items:center;gap:11px;overflow:hidden;flex-shrink:0;position:relative;z-index:1;background:rgba(0,0,0,.18)}
+.sb-av{flex-shrink:0;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--b8),var(--b6));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:#fff;border:1.5px solid rgba(255,255,255,.12);transition:border-radius .4s var(--ease)}
+#sb.shut .sb-av{border-radius:50%}
+.sb-fi{flex:1;min-width:0;overflow:hidden;transition:opacity .3s var(--ease),width .4s var(--ease)}
+#sb.shut .sb-fi{opacity:0;width:0}
+.sb-fn{font-size:.85rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-fr{font-size:.68rem;color:rgba(255,255,255,.35);white-space:nowrap}
+.sb-fa{display:flex;gap:4px;flex-shrink:0;transition:opacity .3s}
+#sb.shut .sb-fa{opacity:0;pointer-events:none}
+.sb-fb{width:30px;height:30px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.78rem;transition:background .2s,color .2s}
+.sb-fb:hover{background:rgba(248,113,113,.15);color:#a0c4f0}
+.sb-fb.set:hover{background:rgba(32,128,216,.15);color:var(--b3)}
+
+/* ═══════════════════ MAIN ═══════════════════ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+.topbar{background:var(--white);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;padding:0 2.5rem;gap:1rem;flex-shrink:0}
+.tb-left{flex:1;display:flex;align-items:center;gap:.7rem}
+.tb-crumb{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tb-sep{color:var(--border);font-size:.7rem}
+.tb-title{font-size:1rem;font-weight:600;color:var(--text)}
+.tb-right{display:flex;align-items:center;gap:.8rem}
+
+.notif-btn{position:relative;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.9rem;transition:all .2s}
+.notif-btn:hover{border-color:var(--b4);color:var(--b5)}
+.n-badge{position:absolute;top:-4px;right:-4px;width:17px;height:17px;border-radius:50%;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--white)}
+.prof-chip{display:flex;align-items:center;gap:.6rem;padding:6px 12px 6px 6px;border-radius:10px;border:1px solid var(--border);background:var(--white);cursor:pointer;transition:border-color .2s}
+.prof-chip:hover{border-color:var(--b3)}
+.pc-av{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--b7),var(--b5));display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:#fff}
+.pc-name{font-size:.82rem;font-weight:600;color:var(--text);line-height:1.1}
+.pc-role{font-size:.68rem;color:var(--muted)}
+
+.tb-notif-wrap{position:relative}
+.notif-drop{position:absolute;top:48px;right:0;width:320px;background:var(--white);border-radius:14px;border:1px solid var(--border);box-shadow:0 12px 40px rgba(12,33,64,.12);z-index:500;display:none}
+.notif-drop.open{display:block;animation:dropIn .2s var(--ease)}
+@keyframes dropIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.nd-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.nd-head h4{font-size:.88rem;font-weight:600;color:var(--text)}
+.nd-mark{font-size:.75rem;color:var(--b5);cursor:pointer;font-weight:500}
+.nd-item{display:flex;align-items:flex-start;gap:.8rem;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .2s;cursor:pointer}
+.nd-item:last-child{border-bottom:none}
+.nd-item:hover{background:var(--ice)}
+.nd-item.unread{background:rgba(32,128,216,.04)}
+.nd-dot{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0}
+.nd-dot.b{background:rgba(22,102,188,.1);color:var(--b6)}
+.nd-dot.r{background:rgba(239,68,68,.1);color:var(--red)}
+.nd-dot.g{background:rgba(16,185,129,.1);color:var(--green)}
+.nd-p{font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:2px}
+.nd-t{font-size:.7rem;color:var(--muted)}
+.nd-foot{padding:10px 16px;text-align:center}
+.nd-foot a{font-size:.78rem;color:var(--b5);text-decoration:none;font-weight:500}
+
+/* ═══════════════════ CONTENT ═══════════════════ */
+.content{flex:1;overflow-y:auto;padding:2.2rem 2.5rem}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+
+/* hero */
+.page-hero{background:linear-gradient(130deg,var(--b8) 0%,var(--b6) 50%,var(--amber) 100%);border-radius:16px;padding:1.8rem 2.2rem;display:flex;align-items:center;gap:1.5rem;margin-bottom:1.8rem;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;border:1px solid rgba(255,255,255,.06);top:-100px;right:-60px;pointer-events:none}
+.ph-icon{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;flex-shrink:0}
+.ph-info{flex:1;z-index:1}
+.ph-title{font-size:1.5rem;font-weight:600;color:#fff;font-family:'Cormorant Garamond',serif;letter-spacing:.01em;margin-bottom:3px}
+.ph-sub{font-size:.82rem;color:rgba(255,255,255,.65)}
+
+/* mini stats */
+.mini-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:1.8rem}
+.mc{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:1.2rem 1.4rem;display:flex;align-items:center;gap:.9rem;transition:box-shadow .25s}
+.mc:hover{box-shadow:0 4px 20px rgba(12,33,64,.07)}
+.mc-ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.mc-ic.b{background:rgba(22,102,188,.1);color:var(--b6)}
+.mc-ic.g{background:rgba(16,185,129,.1);color:var(--green)}
+.mc-ic.a{background:rgba(245,158,11,.1);color:var(--amber)}
+.mc-ic.r{background:rgba(239,68,68,.1);color:var(--red)}
+.mc-n{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;color:var(--text);line-height:1}
+.mc-l{font-size:.68rem;color:var(--muted);letter-spacing:.05em;margin-top:2px}
+
+/* two-col layout */
+.two-col{display:grid;grid-template-columns:1fr 1.2fr;gap:1.5rem;align-items:start}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}}
+
+/* card */
+.card{background:var(--white);border-radius:16px;border:1px solid var(--border);padding:2rem;transition:box-shadow .25s;margin-bottom:0}
+.card:hover{box-shadow:0 6px 24px rgba(12,33,64,.06)}
+.card-head{display:flex;align-items:center;gap:.7rem;font-size:.95rem;font-weight:600;color:var(--text);padding-bottom:1.2rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem}
+.ct-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.78rem}
+.ct-ic.b{background:rgba(22,102,188,.1);color:var(--b6)}
+.ct-ic.g{background:rgba(16,185,129,.1);color:var(--green)}
+.ct-ic.a{background:rgba(245,158,11,.1);color:var(--amber)}
+
+/* ── STEP INDICATOR ── */
+.steps{display:flex;align-items:center;margin-bottom:2rem;gap:0}
+.step{display:flex;align-items:center;flex:1}
+.step-circle{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:var(--muted);transition:all .3s;flex-shrink:0;z-index:1}
+.step-label{font-size:.7rem;font-weight:500;color:var(--muted);margin-left:.5rem;white-space:nowrap;transition:color .3s}
+.step-line{flex:1;height:1.5px;background:var(--border);margin:0 .5rem;transition:background .3s}
+.step.done .step-circle{background:var(--green);border-color:var(--green);color:#fff}
+.step.done .step-label{color:var(--green)}
+.step.done .step-line{background:var(--green)}
+.step.active .step-circle{background:var(--b6);border-color:var(--b6);color:#fff;box-shadow:0 0 0 4px rgba(22,102,188,.15)}
+.step.active .step-label{color:var(--b6);font-weight:600}
+
+/* ── SEARCH ── */
+.search-wrap{position:relative;margin-bottom:1.2rem}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.82rem;pointer-events:none;z-index:1}
+.search-input{width:100%;padding:12px 14px 12px 40px;background:var(--surf);border:1.5px solid var(--border);border-radius:10px;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .22s,background .22s,box-shadow .22s}
+.search-input:focus{border-color:var(--b5);background:var(--white);box-shadow:0 0 0 3px rgba(32,128,216,.1)}
+.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:.8rem;display:none;transition:color .2s;padding:4px}
+.search-clear:hover{color:var(--red)}
+
+.search-dropdown{display:none;position:absolute;width:100%;z-index:300;background:var(--white);border-radius:10px;box-shadow:0 12px 40px rgba(12,33,64,.12);border:1px solid var(--border);max-height:240px;overflow-y:auto;margin-top:4px;top:100%;left:0}
+.search-dropdown.open{display:block;animation:dropIn .18s var(--ease)}
+.sd-item{display:flex;align-items:center;gap:.8rem;padding:10px 14px;cursor:pointer;transition:background .18s;border-bottom:1px solid rgba(216,232,244,.4)}
+.sd-item:last-child{border-bottom:none}
+.sd-item:hover{background:var(--ice)}
+.sd-item.highlighted{background:var(--ice)}
+.sd-avatar{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--b7),var(--b5));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:#fff;flex-shrink:0}
+.sd-name{font-size:.85rem;font-weight:500;color:var(--text)}
+.sd-meta{font-size:.7rem;color:var(--muted)}
+.sd-empty{padding:14px;font-size:.84rem;color:var(--muted);text-align:center}
+mark{background:rgba(32,128,216,.12);color:var(--b6);border-radius:3px;padding:0 2px;font-style:normal}
+
+/* selected student card */
+.selected-student{display:none;background:linear-gradient(135deg,rgba(22,102,188,.06),rgba(32,128,216,.04));border:1.5px solid rgba(22,102,188,.2);border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;align-items:center;gap:1rem;animation:fadeIn .3s var(--ease)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.selected-student.show{display:flex}
+.sel-av{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--b7),var(--b5));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:600;color:#fff;flex-shrink:0}
+.sel-name{font-size:.95rem;font-weight:600;color:var(--b7)}
+.sel-sub{font-size:.74rem;color:var(--muted)}
+.sel-clear{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:.85rem;padding:4px;border-radius:6px;transition:all .2s}
+.sel-clear:hover{background:rgba(239,68,68,.1);color:var(--red)}
+
+/* form fields */
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-size:.68rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.45rem}
+.field select,.field input{width:100%;padding:11px 14px;background:var(--surf);border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.87rem;color:var(--text);outline:none;transition:border-color .22s,box-shadow .22s,background .22s;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B8AA8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.field select:focus,.field input:focus{border-color:var(--b5);background-color:var(--white);box-shadow:0 0 0 3px rgba(32,128,216,.1)}
+.field select.valid{border-color:var(--green);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1' stroke='%2310B981' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+
+/* submit btn */
+.btn-submit{width:100%;padding:13px;background:linear-gradient(135deg,var(--b7),var(--b5));color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:.84rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .3s;box-shadow:0 4px 14px rgba(22,102,188,.25);margin-top:1.4rem}
+.btn-submit:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 6px 20px rgba(22,102,188,.35)}
+.btn-submit:active{transform:none}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ── RECENT TABLE ── */
+.rtable{width:100%;border-collapse:collapse}
+.rtable th{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.rtable td{padding:12px 12px;border-bottom:1px solid rgba(216,232,244,.4);font-size:.84rem;vertical-align:middle}
+.rtable tr:last-child td{border-bottom:none}
+.rtable tr:hover td{background:var(--ice)}
+.rtag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:.68rem;font-weight:600}
+.rtag.done{background:rgba(16,185,129,.1);color:var(--green)}
+.rtag.pend{background:rgba(245,158,11,.1);color:var(--amber)}
+.rtag.lang{background:rgba(22,102,188,.08);color:var(--b6)}
+.rtable-avatar{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--b8),var(--b6));display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:600;color:#fff}
+
+/* confirmation overlay */
+.overlay{position:fixed;inset:0;background:rgba(5,17,31,.45);backdrop-filter:blur(4px);z-index:800;display:none;align-items:center;justify-content:center}
+.overlay.open{display:flex;animation:fadeIn .25s var(--ease)}
+.confirm-card{background:var(--white);border-radius:18px;padding:2.5rem;max-width:420px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(5,17,31,.25);animation:scaleIn .3s var(--ease)}
+@keyframes scaleIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.confirm-icon{width:64px;height:64px;border-radius:50%;background:rgba(16,185,129,.1);border:2px solid rgba(16,185,129,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;color:var(--green);font-size:1.6rem}
+.confirm-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--text);margin-bottom:.5rem}
+.confirm-sub{font-size:.84rem;color:var(--muted);line-height:1.7;margin-bottom:1.8rem}
+.confirm-student{background:var(--ice);border-radius:10px;padding:.9rem 1.2rem;margin-bottom:1.5rem;border:1px solid rgba(22,102,188,.12)}
+.cs-row{display:flex;justify-content:space-between;font-size:.84rem;padding:4px 0}
+.cs-label{color:var(--muted)}
+.cs-val{font-weight:600;color:var(--b7)}
+.confirm-btns{display:flex;gap:.8rem}
+.btn-conf-yes{flex:1;padding:12px;background:var(--green);color:#fff;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-conf-yes:hover{background:#059669}
+.btn-conf-no{flex:1;padding:12px;background:var(--white);color:var(--text);border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn-conf-no:hover{border-color:var(--red);color:var(--red)}
+
+/* toast */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy3);color:#fff;padding:13px 18px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:.84rem;font-weight:500;box-shadow:0 10px 40px rgba(0,0,0,.3);transform:translateY(80px);opacity:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);z-index:9999;border-left:3px solid var(--b4);max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast i{flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════ SIDEBAR ════════════════════════ -->
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand">
+      <div class="sb-name">Success School</div>
+      <div class="sb-sub">Language Institute</div>
+    </div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+    <a href="index.html" class="ni"><div class="ni-ic"><i class="fas fa-house-chimney"></i></div><span class="ni-lbl">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a href="add.html" class="ni"><div class="ni-ic"><i class="fas fa-user-plus"></i></div><span class="ni-lbl">Add Student</span><div class="ni-tip">Add Student</div></a>
+    <a href="reinscription.html" class="ni active"><div class="ni-ic"><i class="fas fa-rotate"></i></div><span class="ni-lbl">Re-enrollment</span><div class="ni-tip">Re-enrollment</div></a>
+    <a href="absence.html" class="ni"><div class="ni-ic"><i class="fas fa-clipboard-list"></i></div><span class="ni-lbl">Absences</span><div class="ni-tip">Absences</div></a>
+    <a href="dossier.html" class="ni"><div class="ni-ic"><i class="fas fa-folder-open"></i></div><span class="ni-lbl">Student File</span><div class="ni-tip">Student File</div></a>
+    <div class="sb-div"></div>
+    <div class="sb-lbl">Management</div>
+    <a href="documents.html" class="ni"><div class="ni-ic"><i class="fas fa-file-lines"></i></div><span class="ni-lbl">Documents</span><div class="ni-tip">Documents</div></a>
+    <a href="annonces.html" class="ni"><div class="ni-ic"><i class="fas fa-bullhorn"></i></div><span class="ni-lbl">Announcements</span><span class="ni-bdg">3</span><div class="ni-tip">Announcements</div></a>
+    <a href="paiement.html" class="ni"><div class="ni-ic"><i class="fas fa-credit-card"></i></div><span class="ni-lbl">Payments</span><div class="ni-tip">Payments</div></a>
+    <div class="sb-div"></div>
+    <a href="{% url 'core:login' %}" class="ni"><div class="ni-ic"><i class="fas fa-circle-user"></i></div><span class="ni-lbl">My Profile</span><div class="ni-tip">My Profile</div></a>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-av">MD</div>
+    <div class="sb-fi"><div class="sb-fn">Marie Dupont</div><div class="sb-fr">Secretary · Active</div></div>
+    <div class="sb-fa">
+      <button class="sb-fb set"><i class="fas fa-gear"></i></button>
+      <button class="sb-fb" onclick="handleLogout()"><i class="fas fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </div>
+</aside>
+
+<!-- ════════════════════════ MAIN ════════════════════════ -->
+<div class="main">
+
+  <!-- topbar -->
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="tb-crumb">Success School</span>
+      <span class="tb-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="tb-title">Re-enrollment</span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-notif-wrap">
+        <button class="notif-btn" onclick="toggleNotif()">
+          <i class="fas fa-bell"></i>
+          <span class="n-badge" id="nCount">4</span>
+        </button>
+        <div class="notif-drop" id="nDrop">
+          <div class="nd-head"><h4>Notifications</h4><span class="nd-mark" onclick="markRead()">Mark all read</span></div>
+          <div class="nd-item unread"><div class="nd-dot b"><i class="fas fa-user-plus"></i></div><div><div class="nd-p">New student: Karim Bensalah</div><div class="nd-t"><i class="fas fa-clock"></i> 10 min ago</div></div></div>
+          <div class="nd-item unread"><div class="nd-dot r"><i class="fas fa-user-times"></i></div><div><div class="nd-p">Absence: Prof. Emma Dubois</div><div class="nd-t"><i class="fas fa-clock"></i> 35 min ago</div></div></div>
+          <div class="nd-item"><div class="nd-dot g"><i class="fas fa-rotate"></i></div><div><div class="nd-p">Re-enrollment: Sara Meziane</div><div class="nd-t"><i class="fas fa-clock"></i> 1h ago</div></div></div>
+          <div class="nd-foot"><a href="#">View all notifications →</a></div>
+        </div>
+      </div>
+      <div class="prof-chip">
+        <div class="pc-av">MD</div>
+        <div><div class="pc-name">Marie Dupont</div><div class="pc-role">Secretary</div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- content -->
+  <div class="content">
+
+    <!-- hero -->
+    <div class="page-hero">
+      <div class="ph-icon"><i class="fas fa-rotate"></i></div>
+      <div class="ph-info">
+        <div class="ph-title">Re-enrollment</div>
+        <div class="ph-sub">Renew student registrations for the upcoming school year</div>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="mini-row">
+      <div class="mc"><div class="mc-ic b"><i class="fas fa-users"></i></div><div><div class="mc-n">248</div><div class="mc-l">Total students</div></div></div>
+      <div class="mc"><div class="mc-ic g"><i class="fas fa-check-circle"></i></div><div><div class="mc-n" id="confirmedCount">42</div><div class="mc-l">Confirmed</div></div></div>
+      <div class="mc"><div class="mc-ic a"><i class="fas fa-clock"></i></div><div><div class="mc-n">15</div><div class="mc-l">Pending</div></div></div>
+      <div class="mc"><div class="mc-ic r"><i class="fas fa-times-circle"></i></div><div><div class="mc-n">3</div><div class="mc-l">Not renewing</div></div></div>
+    </div>
+
+    <div class="two-col">
+
+      <!-- ── FORM ── -->
+      <div class="card">
+        <div class="card-head"><div class="ct-ic b"><i class="fas fa-pen-to-square"></i></div> New Re-enrollment</div>
+
+        <!-- step indicator -->
+        <div class="steps" id="steps">
+          <div class="step active" id="step1">
+            <div class="step-circle">1</div>
+            <span class="step-label">Student</span>
+            <div class="step-line"></div>
+          </div>
+          <div class="step" id="step2">
+            <div class="step-circle">2</div>
+            <span class="step-label">Program</span>
+            <div class="step-line"></div>
+          </div>
+          <div class="step" id="step3">
+            <div class="step-circle">3</div>
+            <span class="step-label">Confirm</span>
+          </div>
+        </div>
+
+        <!-- search -->
+        <div class="search-wrap">
+          <i class="fas fa-magnifying-glass search-icon"></i>
+          <input type="text" class="search-input" id="searchInput"
+            placeholder="Search student by name…"
+            autocomplete="off"
+            oninput="filterStudents(this.value)"
+            onfocus="filterStudents(this.value)">
+          <button class="search-clear" id="searchClear" onclick="clearSearch()">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="search-dropdown" id="searchDrop"></div>
+        </div>
+
+        <!-- selected student display -->
+        <div class="selected-student" id="selStudent">
+          <div class="sel-av" id="selAv">--</div>
+          <div>
+            <div class="sel-name" id="selName">—</div>
+            <div class="sel-sub">Previously: B1 English — Morning</div>
+          </div>
+          <button class="sel-clear" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- program fields -->
+        <div class="frow">
+          <div class="field">
+            <label>school Year</label>
+            <select id="yearSel" onchange="validateField(this)">
+              <option value="">Select year</option>
+              <option value="2025 - 2026">2025 — 2026</option>
+              <option value="2026 - 2027" selected>2026 — 2027</option>
+              <option value="2027 - 2028">2027 — 2028</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Language</label>
+            <select id="langSel" onchange="validateField(this)">
+              <option value="">Select language</option>
+              <option>English</option>
+              <option>French</option>
+              <option>Spanish</option>
+              <option>Arabic</option>
+              <option>German</option>
+              <option>Italian</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="frow">
+          <div class="field">
+            <label>Level</label>
+            <select id="levelSel" onchange="validateField(this)">
+              <option value="">Select level</option>
+              <option>A1 — Beginner</option>
+              <option>A2 — Elementary</option>
+              <option>B1 — Intermediate</option>
+              <option>B2 — Upper Intermediate</option>
+              <option>C1 — Advanced</option>
+              <option>C2 — Mastery</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Schedule</label>
+            <select id="schedSel" onchange="validateField(this)">
+              <option value="">Select schedule</option>
+              <option>Morning (8am – 12pm)</option>
+              <option>Afternoon (1pm – 5pm)</option>
+              <option>Evening (6pm – 9pm)</option>
+              <option>Weekend</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-submit" id="submitBtn" onclick="openConfirm()" disabled>
+          <i class="fas fa-rotate"></i> Confirm Re-enrollment
+        </button>
+      </div>
+
+      <!-- ── RECENT RE-ENROLLMENTS ── -->
+      <div class="card">
+        <div class="card-head"><div class="ct-ic a"><i class="fas fa-list-check"></i></div> Recent Re-enrollments</div>
+        <table class="rtable" id="recentTable">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Language</th>
+              <th>Level</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recentBody">
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:.6rem"><div class="rtable-avatar">SM</div><span>Sara Meziane</span></div></td>
+              <td><span class="rtag lang">English</span></td>
+              <td>B2</td>
+              <td><span class="rtag done"><i class="fas fa-check" style="font-size:.55rem"></i> Done</span></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:.6rem"><div class="rtable-avatar">YH</div><span>Yasmine Hadj</span></div></td>
+              <td><span class="rtag lang">French</span></td>
+              <td>A2</td>
+              <td><span class="rtag pend"><i class="fas fa-clock" style="font-size:.55rem"></i> Pending</span></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:.6rem"><div class="rtable-avatar">AB</div><span>Ahmed Benali</span></div></td>
+              <td><span class="rtag lang">Spanish</span></td>
+              <td>A1</td>
+              <td><span class="rtag done"><i class="fas fa-check" style="font-size:.55rem"></i> Done</span></td>
+            </tr>
+            <tr>
+              <td><div style="display:flex;align-items:center;gap:.6rem"><div class="rtable-avatar">BH</div><span>Bilal Hamidi</span></div></td>
+              <td><span class="rtag lang">English</span></td>
+              <td>C1</td>
+              <td><span class="rtag pend"><i class="fas fa-clock" style="font-size:.55rem"></i> Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════ CONFIRMATION OVERLAY ════════ -->
+<div class="overlay" id="overlay">
+  <div class="confirm-card">
+    <div class="confirm-icon"><i class="fas fa-rotate"></i></div>
+    <div class="confirm-title">Confirm Re-enrollment</div>
+    <div class="confirm-sub">Please review the details before confirming.</div>
+    <div class="confirm-student">
+      <div class="cs-row"><span class="cs-label">Student</span><span class="cs-val" id="confName">—</span></div>
+      <div class="cs-row"><span class="cs-label">school Year</span><span class="cs-val" id="confYear">—</span></div>
+      <div class="cs-row"><span class="cs-label">Language</span><span class="cs-val" id="confLang">—</span></div>
+      <div class="cs-row"><span class="cs-label">Level</span><span class="cs-val" id="confLevel">—</span></div>
+      <div class="cs-row"><span class="cs-label">Schedule</span><span class="cs-val" id="confSched">—</span></div>
+    </div>
+    <div class="confirm-btns">
+      <button class="btn-conf-no" onclick="closeConfirm()"><i class="fas fa-times"></i> Cancel</button>
+      <button class="btn-conf-yes" onclick="doReenroll()"><i class="fas fa-check"></i> Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- toast -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle" id="ti" style="color:var(--b3)"></i>
+  <span id="tm"></span>
+</div>
+
+<script>
+/* ── sidebar ── */
+let shut = false;
+function toggleSB() {
+  shut = !shut;
+  document.getElementById('sb').classList.toggle('shut', shut);
+}
+
+/* ── notif ── */
+function toggleNotif() { document.getElementById('nDrop').classList.toggle('open'); }
+document.addEventListener('click', e => {
+  if (!e.target.closest('.tb-notif-wrap')) document.getElementById('nDrop').classList.remove('open');
+});
+function markRead() {
+  document.querySelectorAll('.nd-item.unread').forEach(el => el.classList.remove('unread'));
+  document.getElementById('nCount').textContent = '0';
+}
+
+/* ── toast ── */
+function toast(msg, icon, color) {
+  document.getElementById('tm').textContent = msg;
+  const ic = document.getElementById('ti');
+  ic.className = 'fas ' + (icon || 'fa-check-circle');
+  ic.style.color = color || 'var(--b3)';
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ── student data ── */
+const students = [
+  { name: "Ahmed Benali",       prev: "B1 English — Morning" },
+  { name: "Karim Bensalah",     prev: "A2 French — Afternoon" },
+  { name: "Sara Meziane",       prev: "B2 English — Evening" },
+  { name: "Yasmine Hadj",       prev: "A1 French — Morning" },
+  { name: "Mohamed Amine Cherif", prev: "B1 Spanish — Afternoon" },
+  { name: "Lina Bouaziz",       prev: "C1 English — Evening" },
+  { name: "Omar Khelif",        prev: "A2 English — Morning" },
+  { name: "Nour El Houda Salhi",prev: "B2 French — Afternoon" },
+  { name: "Rayan Tebboune",     prev: "A1 English — Weekend" },
+  { name: "Imane Zouaoui",      prev: "B1 French — Evening" },
+  { name: "Bilal Hamidi",       prev: "C1 English — Afternoon" },
+  { name: "Amira Djebbar",      prev: "A2 Spanish — Morning" },
+  { name: "Nassim Berkani",     prev: "B2 German — Evening" },
+  { name: "Dina Mokhtar",       prev: "A1 Italian — Weekend" },
+  { name: "Anas Boudaoud",      prev: "B1 English — Morning" },
+  { name: "Hajar Oussama",      prev: "A2 French — Afternoon" },
+];
+
+let selectedStudent = null;
+let highlighted = -1;
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+function filterStudents(val) {
+  const drop = document.getElementById('searchDrop');
+  const q = val.trim().toLowerCase();
+  const matches = q.length === 0
+    ? students
+    : students.filter(s => s.name.toLowerCase().includes(q));
+
+  document.getElementById('searchClear').style.display = val ? 'block' : 'none';
+  highlighted = -1;
+
+  if (matches.length === 0) {
+    drop.innerHTML = '<div class="sd-empty"><i class="fas fa-search" style="opacity:.3;margin-bottom:4px;display:block"></i>No student found</div>';
+  } else {
+    drop.innerHTML = matches.map((s, i) => {
+      const hl = q ? s.name.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>') : s.name;
+      return `<div class="sd-item" onmousedown="selectStudent('${s.name.replace(/'/g,"\\'")}')">
+        <div class="sd-avatar">${initials(s.name)}</div>
+        <div>
+          <div class="sd-name">${hl}</div>
+          <div class="sd-meta">Prev: ${s.prev}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  drop.classList.add('open');
+}
+
+function selectStudent(name) {
+  const student = students.find(s => s.name === name);
+  if (!student) return;
+  selectedStudent = student;
+
+  document.getElementById('searchInput').value = name;
+  document.getElementById('searchDrop').classList.remove('open');
+  document.getElementById('searchClear').style.display = 'block';
+
+  // show selected pill
+  const el = document.getElementById('selStudent');
+  document.getElementById('selAv').textContent = initials(name);
+  document.getElementById('selName').textContent = name;
+  el.querySelector('.sel-sub').textContent = 'Previously: ' + student.prev;
+  el.classList.add('show');
+
+  // advance step 1
+  document.getElementById('step1').classList.add('done');
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+
+  validateSubmit();
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchDrop').classList.remove('open');
+  document.getElementById('searchClear').style.display = 'none';
+  document.getElementById('selStudent').classList.remove('show');
+  selectedStudent = null;
+  document.getElementById('step1').classList.remove('done');
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('step2').classList.remove('active', 'done');
+  document.getElementById('step3').classList.remove('active', 'done');
+  validateSubmit();
+}
+
+function validateField(sel) {
+  if (sel.value) sel.classList.add('valid');
+  else sel.classList.remove('valid');
+
+  // advance step 2 → 3 when all 4 fields are set
+  const allSet = ['yearSel','langSel','levelSel','schedSel'].every(id => document.getElementById(id).value);
+  if (allSet && selectedStudent) {
+    document.getElementById('step2').classList.add('done');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.add('active');
+  } else {
+    document.getElementById('step2').classList.remove('done');
+    if (selectedStudent) document.getElementById('step2').classList.add('active');
+    document.getElementById('step3').classList.remove('active', 'done');
+  }
+  validateSubmit();
+}
+
+function validateSubmit() {
+  const allSet = selectedStudent &&
+    document.getElementById('yearSel').value &&
+    document.getElementById('langSel').value &&
+    document.getElementById('levelSel').value &&
+    document.getElementById('schedSel').value;
+  document.getElementById('submitBtn').disabled = !allSet;
+}
+
+/* close dropdown on outside click */
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) {
+    document.getElementById('searchDrop').classList.remove('open');
+  }
+});
+
+/* ── confirm overlay ── */
+function openConfirm() {
+  if (!selectedStudent) return;
+  document.getElementById('confName').textContent  = selectedStudent.name;
+  document.getElementById('confYear').textContent  = document.getElementById('yearSel').value;
+  document.getElementById('confLang').textContent  = document.getElementById('langSel').value;
+  document.getElementById('confLevel').textContent = document.getElementById('levelSel').value;
+  document.getElementById('confSched').textContent = document.getElementById('schedSel').value;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeConfirm() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function doReenroll() {
+  const name  = selectedStudent.name;
+  const lang  = document.getElementById('langSel').value;
+  const level = document.getElementById('levelSel').value.split(' ')[0]; // "B2"
+
+  closeConfirm();
+
+  // add to table
+  const tbody = document.getElementById('recentBody');
+  const tr = document.createElement('tr');
+  const ini = initials(name);
+  tr.innerHTML = `
+    <td><div style="display:flex;align-items:center;gap:.6rem">
+      <div class="rtable-avatar">${ini}</div><span>${name}</span>
+    </div></td>
+    <td><span class="rtag lang">${lang}</span></td>
+    <td>${level}</td>
+    <td><span class="rtag done"><i class="fas fa-check" style="font-size:.55rem"></i> Done</span></td>`;
+  tbody.prepend(tr);
+
+  // update counter
+  const cc = document.getElementById('confirmedCount');
+  cc.textContent = parseInt(cc.textContent) + 1;
+
+  // mark step 3 done
+  document.getElementById('step3').classList.add('done');
+  document.getElementById('step3').classList.remove('active');
+
+  toast(`Re-enrollment confirmed for ${name}!`, 'fa-check-circle', 'var(--green)');
+
+  // reset form after delay
+  setTimeout(() => {
+    clearSearch();
+    ['yearSel','langSel','levelSel','schedSel'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+      el.classList.remove('valid');
+    });
+    document.getElementById('step1').classList.add('active');
+    document.getElementById('step2').classList.remove('done','active');
+    document.getElementById('step3').classList.remove('done','active');
+  }, 1200);
+}
+
+function handleLogout() {
+  if (confirm('Log out?')) toast('Logged out. Goodbye!', 'fa-arrow-right-from-bracket', 'var(--b3)');
+}
+</script>
+</body>
+</html>

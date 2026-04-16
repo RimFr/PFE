@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina School — Teachers Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --navy:#05111F;--navy2:#081929;--navy3:#0C2140;
+  --blue8:#0D3A68;--blue7:#114F90;--blue6:#1666BC;
+  --blue5:#2080D8;--blue4:#4298E8;--blue3:#74B8F0;
+  --blue2:#AACFF5;--blue1:#D4E9FA;
+  --ice:#EBF5FD;--surface:#F2F7FC;--white:#FFFFFF;
+  --text:#0C2140;--muted:#6B8AA8;--border:#D8E8F4;
+  --gold:#D4AF37;--gold-bg:rgba(212,175,55,.12);
+  --sb-open:264px;--sb-shut:74px;--ease:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);display:flex;}
+#sb{width:var(--sb-open);height:100vh;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;transition:width .4s var(--ease);overflow:visible;z-index:200;}
+#sb::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+#sb::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--gold) 25%,var(--blue4) 60%,transparent 100%);z-index:3;}
+#sb.shut{width:var(--sb-shut);}
+.sb-chip{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--blue6);border:2.5px solid var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:background .25s,transform .4s var(--ease);color:#fff;font-size:.6rem;}
+.sb-chip:hover{background:var(--blue5);}
+#sb.shut .sb-chip{transform:translateY(-50%) rotate(180deg);}
+.sb-head{display:flex;align-items:center;gap:13px;padding:24px 18px 20px 20px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-icon-wrap{flex-shrink:0;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue7),var(--blue5));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,128,216,.4);transition:border-radius .4s var(--ease);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;}
+#sb.shut .sb-icon-wrap{border-radius:50%;}
+.sb-brand{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),transform .3s var(--ease),width .4s var(--ease);transform-origin:left;}
+#sb.shut .sb-brand{opacity:0;transform:scaleX(.85);width:0;}
+.sb-name{font-family:'Cormorant Garamond',serif;font-size:1.18rem;font-weight:600;color:var(--white);letter-spacing:.03em;line-height:1.2;}
+.sb-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-top:1px;}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 10px;position:relative;z-index:1;}
+.sb-scroll::-webkit-scrollbar{width:0;}
+.sb-lbl{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .3s,max-height .3s,padding .3s;}
+#sb.shut .sb-lbl{opacity:0;max-height:0;padding-top:0;padding-bottom:0;}
+.sb-divider{height:1px;background:rgba(255,255,255,.05);margin:8px 14px;transition:opacity .3s;}
+#sb.shut .sb-divider{opacity:0;margin:4px 14px;}
+.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:12px;color:rgba(255,255,255,.48);text-decoration:none;font-size:.875rem;font-weight:400;transition:background .22s,color .22s,transform .22s,padding .4s var(--ease);white-space:nowrap;overflow:hidden;cursor:pointer;position:relative;margin-bottom:2px;}
+#sb.shut .ni{padding-left:0;padding-right:0;justify-content:center;}
+.ni-icon{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:rgba(255,255,255,.04);transition:background .25s,color .25s,border-radius .4s var(--ease);color:rgba(255,255,255,.42);}
+#sb.shut .ni-icon{border-radius:50%;}
+.ni-label{flex:1;overflow:hidden;transition:opacity .25s var(--ease),width .4s var(--ease),transform .25s var(--ease);white-space:nowrap;}
+#sb.shut .ni-label{opacity:0;width:0;transform:translateX(-8px);}
+.ni-tip{position:absolute;left:calc(100% + 16px);top:50%;transform:translateY(-50%);background:var(--navy3);color:var(--white);font-size:.8rem;font-weight:500;padding:7px 14px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 6px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);z-index:999;}
+.ni-tip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:var(--navy3);}
+#sb.shut .ni:hover .ni-tip{opacity:1;}
+.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);transform:translateX(3px);}
+#sb.shut .ni:hover{transform:none;}
+.ni:hover .ni-icon{background:rgba(32,128,216,.18);color:var(--blue3);}
+.ni.active{background:linear-gradient(135deg,rgba(22,102,188,.7),rgba(32,128,216,.5));color:var(--white);box-shadow:0 4px 20px rgba(32,128,216,.25),inset 0 1px 0 rgba(255,255,255,.08);}
+.ni.active .ni-icon{background:rgba(255,255,255,.15);color:var(--white);}
+.sb-foot{padding:14px 12px;border-top:1px solid rgba(255,255,255,.055);display:flex;align-items:center;gap:11px;overflow:hidden;background:rgba(0,0,0,.18);flex-shrink:0;position:relative;z-index:1;}
+.sb-av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#B8860B);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.85rem;flex-shrink:0;transition:border-radius .4s var(--ease);}
+#sb.shut .sb-av{border-radius:50%;}
+.sb-foot-info{flex:1;overflow:hidden;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-foot-info{opacity:0;width:0;}
+.sb-foot-name{font-weight:600;color:white;font-size:.85rem;white-space:nowrap;}
+.sb-foot-role{font-size:.68rem;color:rgba(255,255,255,.35);white-space:nowrap;}
+.sb-foot-actions{display:flex;gap:6px;flex-shrink:0;transition:opacity .3s;}
+#sb.shut .sb-foot-actions{opacity:0;pointer-events:none;}
+.sb-foot-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.sb-foot-btn:hover{background:rgba(255,255,255,.12);color:white;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:64px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.75rem;gap:1rem;flex-shrink:0;box-shadow:0 1px 4px rgba(12,33,64,.06);}
+.topbar-left{display:flex;align-items:center;gap:8px;flex:1;}
+.topbar-crumb{font-size:.8rem;color:var(--muted);}
+.topbar-sep{color:var(--border);font-size:.65rem;}
+.topbar-title{font-size:.9rem;font-weight:600;color:var(--text);}
+.topbar-search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:7px 14px;width:260px;}
+.topbar-search input{border:none;background:transparent;outline:none;font-size:.82rem;font-family:'Outfit',sans-serif;color:var(--text);width:100%;}
+.topbar-search input::placeholder{color:var(--muted);}
+.topbar-search i{color:var(--muted);font-size:.75rem;flex-shrink:0;}
+.stat-pill{background:var(--surface);border:1.5px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.75rem;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:6px;}
+.btn-add{display:flex;align-items:center;gap:8px;background:var(--blue6);color:white;border:none;border-radius:12px;padding:9px 18px;font-size:.82rem;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;transition:background .2s,transform .15s;}
+.btn-add:hover{background:var(--blue7);transform:translateY(-1px);}
+.table-wrap{flex:1;overflow:auto;padding:1.25rem;}
+.table-wrap::-webkit-scrollbar{width:6px;height:6px;}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+.table-card{background:var(--white);border-radius:20px;border:1px solid var(--border);box-shadow:0 4px 20px rgba(12,33,64,.06);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--surface);border-bottom:1px solid var(--border);}
+thead th{padding:14px 18px;text-align:left;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--ice);}
+tbody td{padding:13px 18px;font-size:.84rem;}
+.avatar-initials{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;color:white;flex-shrink:0;}
+/* Language tags */
+.lang-tag{display:inline-flex;align-items:center;padding:2px 9px;border-radius:100px;font-size:.65rem;font-weight:600;margin-right:3px;margin-bottom:2px;}
+.lang-fr{background:#dbeafe;color:#1d4ed8;}
+.lang-en{background:#dcfce7;color:#15803d;}
+.lang-de{background:#fef9c3;color:#854d0e;}
+.lang-it{background:#fce7f3;color:#be185d;}
+.lang-sp{background:#ffedd5;color:#c2410c;}
+.lang-ar{background:#ede9fe;color:#6d28d9;}
+/* Presence bar */
+.presence-bar{height:5px;border-radius:99px;background:var(--border);overflow:hidden;width:70px;}
+.presence-fill{height:100%;border-radius:99px;}
+.action-btn{width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:all .15s;font-size:.75rem;}
+.btn-view{background:#f5f3ff;color:#7c3aed;}.btn-view:hover{background:#ede9fe;}
+.btn-edit{background:#f0fdf4;color:#16a34a;}.btn-edit:hover{background:#dcfce7;}
+.btn-del{background:#fff1f2;color:#e11d48;}.btn-del:hover{background:#ffe4e6;}
+/* Modals */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,17,31,.55);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--white);border-radius:24px;width:100%;max-width:500px;margin:1rem;box-shadow:0 24px 80px rgba(5,17,31,.3);overflow:hidden;animation:modalPop .2s var(--ease);}
+@keyframes modalPop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-header{padding:1.5rem 1.75rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-header-title{font-size:1.05rem;font-weight:600;color:var(--text);}
+.modal-close{width:32px;height:32px;border-radius:9px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:var(--muted);transition:all .2s;}
+.modal-close:hover{background:#fff1f2;color:#e11d48;}
+.modal-body{padding:1.5rem 1.75rem;max-height:72vh;overflow-y:auto;}
+.modal-body::-webkit-scrollbar{width:4px;}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+.modal-footer{padding:1rem 1.75rem;border-top:1px solid var(--border);background:var(--surface);display:flex;justify-content:flex-end;gap:10px;}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.85rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .2s,background .2s;}
+.field input:focus{border-color:var(--blue4);background:var(--white);}
+.field input::placeholder{color:var(--muted);}
+.field-err{font-size:.72rem;color:#e11d48;margin-top:4px;display:none;}
+.field-err.show{display:block;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:12px;font-size:.84rem;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .2s;border:none;}
+.btn-blue{background:var(--blue6);color:white;}.btn-blue:hover{background:var(--blue7);}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border);}.btn-ghost:hover{background:var(--surface);}
+.btn-red{background:#e11d48;color:white;}.btn-red:hover{background:#be123c;}
+/* Lang checkboxes */
+.lang-check-item{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;cursor:pointer;transition:all .2s;font-size:.82rem;color:var(--text);}
+.lang-check-item:hover{border-color:var(--blue4);background:var(--ice);}
+.lang-check-item input{accent-color:var(--blue5);}
+/* View modal */
+.view-header{padding:1.75rem;display:flex;align-items:center;gap:16px;}
+.view-av{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;color:white;flex-shrink:0;background:rgba(255,255,255,.25);}
+.view-name{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:white;line-height:1.2;}
+.view-id{font-size:.75rem;color:rgba(255,255,255,.65);margin-top:2px;}
+.detail-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.detail-row:last-child{border-bottom:none;}
+.detail-icon{width:34px;height:34px;border-radius:10px;background:var(--ice);display:flex;align-items:center;justify-content:center;color:var(--blue5);flex-shrink:0;font-size:.8rem;}
+.detail-lbl{font-size:.65rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.detail-val{font-size:.85rem;font-weight:600;color:var(--text);margin-top:3px;}
+/* Presence view */
+.presence-view-bar{height:6px;border-radius:99px;background:var(--border);overflow:hidden;flex:1;}
+.presence-view-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue5),var(--blue3));}
+.del-icon{width:72px;height:72px;border-radius:20px;background:#fff1f2;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:#e11d48;margin:0 auto 1.25rem;}
+</style>
+</head>
+<body>
+
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand"><div class="sb-name">Lumina School</div><div class="sb-sub">Language Institute</div></div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+    <a href="dashboard.html" class="ni"><div class="ni-icon"><i class="fas fa-tachometer-alt"></i></div><span class="ni-label">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a href="groupes.html" class="ni"><div class="ni-icon"><i class="fas fa-users-rectangle"></i></div><span class="ni-label">Groupes Management</span><div class="ni-tip">Groupes</div></a>
+    <a href="teachers.html" class="ni active"><div class="ni-icon"><i class="fas fa-chalkboard-teacher"></i></div><span class="ni-label">Teachers Management</span><div class="ni-tip">Teachers</div></a>
+    <a href="students.html" class="ni"><div class="ni-icon"><i class="fas fa-users"></i></div><span class="ni-label">Students Management</span><div class="ni-tip">Students</div></a>
+    <a href="timetables.html" class="ni"><div class="ni-icon"><i class="fas fa-clock"></i></div><span class="ni-label">Timetables</span><div class="ni-tip">Timetables</div></a>
+    <div class="sb-divider"></div><div class="sb-lbl">Administration</div>
+    <a href="accounts.html" class="ni"><div class="ni-icon"><i class="fas fa-user-cog"></i></div><span class="ni-label">Accounts &amp; Roles</span><div class="ni-tip">Accounts</div></a>
+    <a href="financial.html" class="ni"><div class="ni-icon"><i class="fas fa-file-invoice-dollar"></i></div><span class="ni-label">Financial Overview</span><div class="ni-tip">Financial</div></a>
+    <div class="sb-divider"></div>
+    <a href="{% url 'core:login' %}" class="ni"><div class="ni-icon"><i class="fas fa-circle-user"></i></div><span class="ni-label">My Profile</span><div class="ni-tip">My Profile</div></a>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-av">MA</div>
+    <div class="sb-foot-info"><div class="sb-foot-name">Manager Admin</div><div class="sb-foot-role">Director · Active</div></div>
+    <div class="sb-foot-actions"><button class="sb-foot-btn" title="Logout" onclick="handleLogout()"><i class="fas fa-arrow-right-from-bracket"></i></button></div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-crumb">Lumina School</span>
+      <span class="topbar-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="topbar-title">Teachers Management</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="stat-pill"><i class="fas fa-chalkboard-teacher" style="color:var(--blue5)"></i><span id="statCount">0</span> teachers</span>
+      <div class="topbar-search">
+        <i class="fas fa-search"></i>
+        <input id="searchInput" type="text" placeholder="Search teachers…" oninput="filterTable()">
+      </div>
+      <button class="btn-add" onclick="showAddModal()"><i class="fas fa-plus"></i> Add Teacher</button>
+    </div>
+  </header>
+
+  <div class="table-wrap">
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Teacher</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th>Languages</th>
+            <th>Classes</th>
+            <th style="text-align:center">Presence</th>
+            <th style="text-align:center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="teachersTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div id="viewModal" class="modal-overlay">
+  <div class="modal-box" style="max-width:420px;">
+    <div id="viewModalHeader" class="view-header">
+      <div id="viewAvatar" class="view-av"></div>
+      <div><div id="viewName" class="view-name"></div><div id="viewId" class="view-id"></div></div>
+      <button class="modal-close" onclick="hideViewModal()" style="margin-left:auto;background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.2);color:white;">×</button>
+    </div>
+    <div class="modal-body" id="viewBody"></div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div id="modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-header-title" id="modalTitle">Add New Teacher</span><button class="modal-close" onclick="hideModal()">×</button></div>
+    <div class="modal-body">
+      <div class="frow">
+        <div class="field"><label>First Name</label><input id="fname" type="text" placeholder="e.g. Sophie"></div>
+        <div class="field"><label>Last Name</label><input id="lname" type="text" placeholder="e.g. Martin"></div>
+      </div>
+      <div class="field">
+        <label>Phone Number</label>
+        <input id="phone" type="tel" maxlength="10" placeholder="05XXXXXXXX">
+        <div id="phoneError" class="field-err">Phone must start with 05, 06 or 07 and be 10 digits</div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input id="email" type="email" placeholder="teacher@gmail.com">
+        <div id="emailError" class="field-err">Email must end with @gmail.com</div>
+      </div>
+      <div class="field"><label>Address</label><input id="address" type="text" placeholder="e.g. Algiers, Hydra"></div>
+      <div class="field">
+        <label>Languages Taught</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="langCheckboxes"></div>
+      </div>
+      <div class="field"><label>Classes / Levels</label><input id="classes" type="text" placeholder="e.g. A1 French, B2 English"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal()">Cancel</button>
+      <button class="btn btn-blue" onclick="saveTeacher()"><i class="fas fa-save"></i> Save Teacher</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal-box" style="max-width:380px;">
+    <div class="modal-body" style="text-align:center;padding:2rem 1.75rem 1.5rem;">
+      <div class="del-icon"><i class="fas fa-trash"></i></div>
+      <div style="font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:.6rem;">Delete Confirmation</div>
+      <p id="deleteMessage" style="font-size:.85rem;color:var(--muted);line-height:1.6;"></p>
+    </div>
+    <div class="modal-footer" style="justify-content:center;">
+      <button class="btn btn-ghost" onclick="cancelDelete()">Cancel</button>
+      <button class="btn btn-red" onclick="confirmDelete()"><i class="fas fa-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let shut=false;
+function toggleSB(){shut=!shut;document.getElementById('sb').classList.toggle('shut',shut);}
+function handleLogout(){if(confirm('Log out of Lumina School?'))window.location.href='index.html';}
+
+let teachers=[
+  {id:"T001",fname:"Sophie", lname:"Martin",  phone:"0555123456",email:"sophie.martin@gmail.com", address:"Algiers, Hydra",   languages:["French","English"], classes:"A1 French, B1 English",  presence:98},
+  {id:"T002",fname:"Ahmed",  lname:"Benali",  phone:"0677123456",email:"ahmed.benali@gmail.com",  address:"Oran, Hai El Badr",languages:["English","German"], classes:"B2 English, C1 German",  presence:95},
+  {id:"T003",fname:"Karim",  lname:"Mansouri",phone:"0661234567",email:"karim.mansouri@gmail.com",address:"Constantine",       languages:["English"],          classes:"A2 English, B1 English",presence:92},
+  {id:"T004",fname:"Nadia",  lname:"Bouchair",phone:"0551122334",email:"nadia.bouchair@gmail.com",address:"Annaba",            languages:["French","Arabic"],  classes:"A1 Arabic, A2 French",   presence:88},
+  {id:"T005",fname:"Yasmine",lname:"Larbi",   phone:"0771234567",email:"yasmine.larbi@gmail.com", address:"Tizi Ouzou",        languages:["Spanish","French"], classes:"A1 Spanish, A2 Spanish",presence:100},
+];
+let editingId=null,deleteId=null;
+const languagesList=["French","English","Italian","German","Spanish","Arabic"];
+const COLORS=["#3b82f6","#8b5cf6","#22c55e","#f97316","#f43f5e","#0891b2","#d97706"];
+const LANG_CLASS={French:"lang-fr",English:"lang-en",German:"lang-de",Italian:"lang-it",Spanish:"lang-sp",Arabic:"lang-ar"};
+function getColor(id){return COLORS[parseInt(id.replace(/\D/g,''))%COLORS.length];}
+function getInitials(t){return(t.fname[0]+t.lname[0]).toUpperCase();}
+
+function renderTable(data){
+  const tbody=document.getElementById('teachersTable');
+  tbody.innerHTML='';document.getElementById('statCount').textContent=data.length;
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:4rem;color:var(--muted);"><i class="fas fa-chalkboard-teacher" style="font-size:2.5rem;display:block;margin-bottom:.75rem;opacity:.25;"></i>No teachers found</td></tr>`;return;}
+  data.forEach(t=>{
+    const color=getColor(t.id),initials=getInitials(t);
+    const langTags=t.languages.map(l=>`<span class="lang-tag ${LANG_CLASS[l]||'lang-en'}">${l}</span>`).join('');
+    const pres=t.presence||0;
+    const presColor=pres>=90?'#22c55e':pres>=75?'#f97316':'#ef4444';
+    const row=document.createElement('tr');
+    row.innerHTML=`
+      <td><div style="display:flex;align-items:center;gap:12px;">
+        <div class="avatar-initials" style="background:${color}">${initials}</div>
+        <div><div style="font-weight:600;color:var(--text);">${t.fname} ${t.lname}</div><div style="font-size:.7rem;color:var(--muted);margin-top:2px;">${t.id}</div></div>
+      </div></td>
+      <td><div style="font-size:.82rem;color:var(--text);">${t.phone}</div><div style="font-size:.72rem;color:var(--blue5);margin-top:2px;">${t.email}</div></td>
+      <td style="font-size:.82rem;color:var(--muted);">${t.address||'—'}</td>
+      <td><div style="display:flex;flex-wrap:wrap;gap:3px;">${langTags}</div></td>
+      <td style="font-size:.78rem;color:var(--text);max-width:150px;">${t.classes}</td>
+      <td><div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
+        <span style="font-size:.8rem;font-weight:700;color:${presColor}">${pres}%</span>
+        <div class="presence-bar"><div class="presence-fill" style="width:${pres}%;background:${presColor}"></div></div>
+      </div></td>
+      <td><div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+        <button onclick="viewTeacher('${t.id}')" class="action-btn btn-view" title="View"><i class="fas fa-eye"></i></button>
+        <button onclick="editTeacher('${t.id}')" class="action-btn btn-edit" title="Edit"><i class="fas fa-pen"></i></button>
+        <button onclick="deleteTeacher('${t.id}')" class="action-btn btn-del" title="Delete"><i class="fas fa-trash"></i></button>
+      </div></td>`;
+    tbody.appendChild(row);
+  });
+}
+
+function viewTeacher(id){
+  const t=teachers.find(t=>t.id===id);if(!t)return;
+  const color=getColor(t.id);
+  document.getElementById('viewModalHeader').style.background=`linear-gradient(135deg,${color}dd,${color})`;
+  document.getElementById('viewAvatar').textContent=getInitials(t);
+  document.getElementById('viewName').textContent=`${t.fname} ${t.lname}`;
+  document.getElementById('viewId').textContent=t.id;
+  const pres=t.presence||0;
+  const presColor=pres>=90?'#22c55e':pres>=75?'#f97316':'#ef4444';
+  const langTags=t.languages.map(l=>`<span class="lang-tag ${LANG_CLASS[l]||'lang-en'}">${l}</span>`).join(' ');
+  document.getElementById('viewBody').innerHTML=`
+    <div class="detail-row"><div class="detail-icon"><i class="fas fa-phone"></i></div><div><div class="detail-lbl">Phone</div><div class="detail-val">${t.phone}</div></div></div>
+    <div class="detail-row"><div class="detail-icon"><i class="fas fa-envelope"></i></div><div><div class="detail-lbl">Email</div><div class="detail-val" style="color:var(--blue5)">${t.email}</div></div></div>
+    <div class="detail-row"><div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div><div><div class="detail-lbl">Address</div><div class="detail-val">${t.address||'—'}</div></div></div>
+    <div class="detail-row"><div class="detail-icon"><i class="fas fa-language"></i></div><div><div class="detail-lbl">Languages</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;">${langTags}</div></div></div>
+    <div class="detail-row"><div class="detail-icon"><i class="fas fa-book-open"></i></div><div><div class="detail-lbl">Classes</div><div class="detail-val">${t.classes}</div></div></div>
+    <div class="detail-row"><div class="detail-icon"><i class="fas fa-chart-line"></i></div><div style="flex:1"><div class="detail-lbl">Presence</div><div style="display:flex;align-items:center;gap:10px;margin-top:6px;"><div class="presence-view-bar"><div class="presence-view-fill" style="width:${pres}%;background:${presColor}"></div></div><span style="font-size:.85rem;font-weight:700;color:${presColor};white-space:nowrap;">${pres}%</span></div></div></div>`;
+  document.getElementById('viewModal').classList.add('open');
+}
+function hideViewModal(){document.getElementById('viewModal').classList.remove('open');}
+
+function buildLangCheckboxes(selected=[]){
+  document.getElementById('langCheckboxes').innerHTML=languagesList.map(lang=>`
+    <label class="lang-check-item">
+      <input type="checkbox" class="lang-check" value="${lang}" ${selected.includes(lang)?'checked':''}>
+      <span>${lang}</span>
+    </label>`).join('');
+}
+
+function showAddModal(){
+  editingId=null;document.getElementById('modalTitle').textContent='Add New Teacher';
+  ['fname','lname','phone','email','address','classes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('phoneError').classList.remove('show');
+  document.getElementById('emailError').classList.remove('show');
+  buildLangCheckboxes();document.getElementById('modal').classList.add('open');
+}
+function editTeacher(id){
+  const t=teachers.find(t=>t.id===id);if(!t)return;
+  editingId=id;document.getElementById('modalTitle').textContent='Edit Teacher';
+  document.getElementById('fname').value=t.fname;document.getElementById('lname').value=t.lname;
+  document.getElementById('phone').value=t.phone;document.getElementById('email').value=t.email;
+  document.getElementById('address').value=t.address||'';document.getElementById('classes').value=t.classes;
+  document.getElementById('phoneError').classList.remove('show');document.getElementById('emailError').classList.remove('show');
+  buildLangCheckboxes(t.languages);document.getElementById('modal').classList.add('open');
+}
+function hideModal(){document.getElementById('modal').classList.remove('open');editingId=null;}
+
+function validatePhone(p){return/^(05|06|07)\d{8}$/.test(p);}
+function validateEmail(e){return/^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(e);}
+
+function saveTeacher(){
+  const fname=document.getElementById('fname').value.trim();
+  const lname=document.getElementById('lname').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const address=document.getElementById('address').value.trim();
+  const classes=document.getElementById('classes').value.trim();
+  const langs=Array.from(document.querySelectorAll('.lang-check:checked')).map(c=>c.value);
+  if(!fname||!lname){alert('First Name and Last Name are required!');return;}
+  const pEl=document.getElementById('phoneError'),eEl=document.getElementById('emailError');
+  pEl.classList.remove('show');eEl.classList.remove('show');
+  if(phone&&!validatePhone(phone)){pEl.classList.add('show');return;}
+  if(email&&!validateEmail(email)){eEl.classList.add('show');return;}
+  if(editingId){
+    const t=teachers.find(t=>t.id===editingId);
+    if(t){t.fname=fname;t.lname=lname;t.phone=phone||'Not provided';t.email=email||'Not provided';t.address=address||'Not provided';t.languages=langs.length?langs:['English'];t.classes=classes||'Not assigned';}
+  }else{
+    teachers.unshift({id:'T'+String(100+teachers.length),fname,lname,phone:phone||'Not provided',email:email||'Not provided',address:address||'Not provided',languages:langs.length?langs:['English'],classes:classes||'Not assigned',presence:100});
+  }
+  renderTable(teachers);hideModal();
+}
+
+function filterTable(){
+  const term=document.getElementById('searchInput').value.toLowerCase();
+  renderTable(teachers.filter(t=>`${t.fname} ${t.lname}`.toLowerCase().includes(term)||t.email.toLowerCase().includes(term)));
+}
+
+function deleteTeacher(id){
+  deleteId=id;const t=teachers.find(t=>t.id===id);
+  document.getElementById('deleteMessage').innerHTML=`Are you sure you want to delete <strong>${t.fname} ${t.lname}</strong>'s account?<br>This action cannot be undone.`;
+  document.getElementById('deleteModal').classList.add('open');
+}
+function cancelDelete(){document.getElementById('deleteModal').classList.remove('open');deleteId=null;}
+function confirmDelete(){
+  if(!deleteId)return;teachers=teachers.filter(t=>t.id!==deleteId);renderTable(teachers);
+  document.getElementById('deleteModal').classList.remove('open');deleteId=null;
+}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+renderTable(teachers);
+</script>
+</body>
+</html>

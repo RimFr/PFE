@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance — Lumina School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --navy:#05111F;--navy2:#081929;--navy3:#0C2140;
+  --blue8:#0D3A68;--blue7:#114F90;--blue6:#1666BC;--blue5:#2080D8;
+  --blue4:#4298E8;--blue3:#74B8F0;--blue2:#AACFF5;--blue1:#D4E9FA;
+  --surface:#F2F7FC;--white:#FFFFFF;
+  --text:#0C2140;--muted:#6B8AA8;--border:#D8E8F4;
+  --green:#10B981;--red:#EF4444;--amber:#F59E0B;--purple:#8B5CF6;
+  --sb-open:264px;--sb-shut:74px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);display:flex;}
+
+/* ── SIDEBAR ── */
+#sb{width:var(--sb-open);height:100vh;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;transition:width .4s var(--ease);overflow:visible;z-index:200;}
+#sb::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+#sb::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--blue5) 25%,var(--blue4) 60%,transparent 100%);z-index:3;}
+#sb.shut{width:var(--sb-shut);}
+.sb-chip{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--blue6);border:2.5px solid var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:background .25s,transform .4s var(--ease);color:#fff;font-size:.6rem;}
+.sb-chip:hover{background:var(--blue5);}
+#sb.shut .sb-chip{transform:translateY(-50%) rotate(180deg);}
+.sb-head{display:flex;align-items:center;gap:13px;padding:24px 18px 20px 20px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-icon-wrap{flex-shrink:0;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue7),var(--blue5));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,128,216,.4);transition:border-radius .4s var(--ease);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;}
+#sb.shut .sb-icon-wrap{border-radius:50%;}
+.sb-brand{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),transform .3s var(--ease),width .4s var(--ease);transform-origin:left;}
+#sb.shut .sb-brand{opacity:0;transform:scaleX(.85);width:0;}
+.sb-name{font-family:'Cormorant Garamond',serif;font-size:1.18rem;font-weight:600;color:#fff;letter-spacing:.03em;line-height:1.2;}
+.sb-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-top:1px;}
+.sb-teacher{display:flex;align-items:center;gap:11px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-teacher-av{width:40px;height:40px;border-radius:50%;border:2px solid rgba(59,130,246,.5);flex-shrink:0;overflow:hidden;}
+.sb-teacher-av img{width:100%;height:100%;object-fit:cover;}
+.sb-teacher-info{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-teacher-info{opacity:0;width:0;}
+.sb-teacher-name{font-size:.84rem;font-weight:600;color:#fff;}
+.sb-teacher-role{font-size:.65rem;color:rgba(255,255,255,.38);margin-top:1px;}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 10px;position:relative;z-index:1;}
+.sb-scroll::-webkit-scrollbar{width:0;}
+.sb-lbl{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .3s,max-height .3s,padding .3s;}
+#sb.shut .sb-lbl{opacity:0;max-height:0;padding-top:0;padding-bottom:0;}
+.sb-divider{height:1px;background:rgba(255,255,255,.05);margin:8px 14px;transition:opacity .3s;}
+#sb.shut .sb-divider{opacity:0;margin:4px 14px;}
+.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:12px;color:rgba(255,255,255,.48);text-decoration:none;font-size:.875rem;font-weight:400;transition:background .22s,color .22s,transform .22s,padding .4s var(--ease);white-space:nowrap;overflow:hidden;cursor:pointer;position:relative;margin-bottom:2px;}
+#sb.shut .ni{padding-left:0;padding-right:0;justify-content:center;}
+.ni-icon{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:rgba(255,255,255,.04);color:rgba(255,255,255,.42);transition:background .25s,color .25s,border-radius .4s var(--ease);}
+#sb.shut .ni-icon{border-radius:50%;}
+.ni-label{flex:1;overflow:hidden;transition:opacity .25s var(--ease),width .4s var(--ease),transform .25s var(--ease);white-space:nowrap;}
+#sb.shut .ni-label{opacity:0;width:0;transform:translateX(-8px);}
+.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);transform:translateX(3px);}
+#sb.shut .ni:hover{transform:none;}
+.ni:hover .ni-icon{background:rgba(32,128,216,.18);color:var(--blue3);}
+.ni.active{background:linear-gradient(135deg,rgba(22,102,188,.7),rgba(32,128,216,.5));color:#fff;box-shadow:0 4px 20px rgba(32,128,216,.25),inset 0 1px 0 rgba(255,255,255,.08);}
+.ni.active .ni-icon{background:rgba(255,255,255,.15);color:#fff;}
+.ni-tip{position:absolute;left:calc(100% + 16px);top:50%;transform:translateY(-50%);background:var(--navy3);color:#fff;font-size:.8rem;font-weight:500;padding:7px 14px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 6px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);z-index:999;}
+.ni-tip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:var(--navy3);}
+#sb.shut .ni:hover .ni-tip{opacity:1;}
+.sb-foot{padding:14px 12px;border-top:1px solid rgba(255,255,255,.055);display:flex;align-items:center;gap:11px;overflow:hidden;flex-shrink:0;position:relative;z-index:1;background:rgba(0,0,0,.18);}
+.sb-av{flex-shrink:0;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue8),var(--blue6));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:#fff;border:1.5px solid rgba(255,255,255,.12);transition:border-radius .4s var(--ease);}
+#sb.shut .sb-av{border-radius:50%;}
+.sb-foot-info{flex:1;min-width:0;overflow:hidden;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-foot-info{opacity:0;width:0;}
+.sb-foot-name{font-size:.85rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-foot-role{font-size:.68rem;color:rgba(255,255,255,.35);white-space:nowrap;}
+.sb-foot-actions{display:flex;gap:4px;flex-shrink:0;transition:opacity .3s;}
+#sb.shut .sb-foot-actions{opacity:0;pointer-events:none;}
+.sb-foot-btn{width:30px;height:30px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.78rem;transition:background .2s,color .2s;}
+.sb-foot-btn:hover{background:rgba(248,113,113,.15);color:#F87171;}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center;padding:0 2.5rem;gap:1rem;flex-shrink:0;}
+.topbar-left{flex:1;display:flex;align-items:center;gap:.8rem;}
+.topbar-crumb{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.topbar-sep{color:var(--border);font-size:.7rem;}
+.topbar-title{font-size:1rem;font-weight:600;color:var(--text);}
+.tbar-btn{padding:8px 18px;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .22s;}
+.tbar-btn.blue{background:var(--blue6);color:#fff;box-shadow:0 2px 10px rgba(22,102,188,.3);}
+.tbar-btn.blue:hover{background:var(--blue5);transform:translateY(-1px);}
+.content{flex:1;overflow-y:auto;padding:2rem 2.5rem;}
+.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:var(--blue2);border-radius:4px;}
+
+/* ── STAT CARDS ── */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:1.8rem;}
+.scard{background:var(--white);border-radius:14px;border:1px solid var(--border);padding:1.3rem 1.5rem;display:flex;align-items:center;gap:1rem;transition:box-shadow .25s,transform .25s;position:relative;overflow:hidden;}
+.scard:hover{box-shadow:0 6px 24px rgba(12,33,64,.08);transform:translateY(-2px);}
+.scard-icon{width:46px;height:46px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.95rem;}
+.si-b{background:rgba(22,102,188,.1);color:var(--blue6);}
+.si-g{background:rgba(16,185,129,.1);color:var(--green);}
+.si-a{background:rgba(245,158,11,.1);color:var(--amber);}
+.si-r{background:rgba(239,68,68,.1);color:var(--red);}
+.scard-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:var(--text);line-height:1;}
+.scard-lbl{font-size:.7rem;color:var(--muted);letter-spacing:.05em;margin-top:3px;}
+.scard-accent{position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 14px 14px;}
+
+/* ── FILTER BAR ── */
+.filter-bar{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1rem 1.4rem;display:flex;align-items:center;gap:.8rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.filter-search{flex:1;min-width:140px;position:relative;}
+.filter-search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.78rem;}
+.filter-search input{width:100%;padding:9px 12px 9px 32px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--text);outline:none;transition:border-color .22s;}
+.filter-search input:focus{border-color:var(--blue5);}
+.filter-select{padding:9px 30px 9px 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--text);outline:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B8AA8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+
+/* ── TABLE ── */
+.table-card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1.5rem;}
+.table-card-hdr{padding:1.2rem 1.6rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.table-card-title{font-size:.92rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:9px;}
+.t-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.75rem;background:rgba(22,102,188,.1);color:var(--blue6);}
+.row-count{background:var(--blue1);color:var(--blue6);font-size:.7rem;font-weight:600;padding:2px 9px;border-radius:100px;}
+.att-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+.att-table th{padding:11px 16px;text-align:left;font-size:.67rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--surface);border-bottom:1px solid var(--border);}
+.att-table td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.att-table tr:last-child td{border-bottom:none;}
+.att-table tbody tr{transition:background .15s;}
+.att-table tbody tr:hover{background:var(--surface);}
+.stu-cell{display:flex;align-items:center;gap:10px;}
+.stu-av{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--blue7),var(--blue5));}
+.att-toggle{display:flex;gap:.4rem;align-items:center;}
+.att-btn{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.78rem;color:var(--muted);transition:all .18s;font-weight:600;}
+.att-btn:hover{transform:scale(1.08);}
+.att-btn.sel-P{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.3);color:var(--green);}
+.att-btn.sel-A{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:var(--red);}
+.att-btn.sel-L{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);color:var(--amber);}
+.status-label{font-size:.72rem;font-weight:600;min-width:46px;}
+.status-label.P{color:var(--green);}
+.status-label.A{color:var(--red);}
+.status-label.L{color:var(--amber);}
+.submit-bar{padding:1rem 1.6rem;border-top:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.summary-chips{display:flex;gap:.6rem;}
+.chip{padding:5px 12px;border-radius:99px;font-size:.72rem;font-weight:600;border:1px solid;}
+.chip.g{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.25);color:var(--green);}
+.chip.r{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--red);}
+.chip.a{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);color:var(--amber);}
+.save-btn{padding:10px 22px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--blue7),var(--blue5));color:#fff;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .25s;box-shadow:0 3px 12px rgba(22,102,188,.28);}
+.save-btn:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(22,102,188,.38);}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--navy3);color:#fff;padding:13px 18px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:.84rem;font-weight:500;box-shadow:0 10px 40px rgba(0,0,0,.3);transform:translateY(80px);opacity:0;transition:all .45s cubic-bezier(.34,1.56,.64,1);z-index:9999;border-left:3px solid var(--blue4);max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast i{color:var(--blue3);flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand"><div class="sb-name">Lumina School</div><div class="sb-sub">Language Institute</div></div>
+  </div>
+  <div class="sb-teacher">
+    <div class="sb-teacher-av"><img src="https://i.pravatar.cc/150?img=47" alt="KB"></div>
+    <div class="sb-teacher-info"><div class="sb-teacher-name">Mr. Karim Bouzid</div><div class="sb-teacher-role">Languages Department</div></div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+    <a href="index.html" class="ni"><div class="ni-icon"><i class="fas fa-house-chimney"></i></div><span class="ni-label">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a href="classes.html" class="ni"><div class="ni-icon"><i class="fas fa-chalkboard"></i></div><span class="ni-label">My Classes</span><div class="ni-tip">My Classes</div></a>
+    <a href="timetable.html" class="ni"><div class="ni-icon"><i class="fas fa-calendar-days"></i></div><span class="ni-label">Timetable</span><div class="ni-tip">Timetable</div></a>
+    <a href="grades.html" class="ni"><div class="ni-icon"><i class="fas fa-star"></i></div><span class="ni-label">Grades</span><div class="ni-tip">Grades</div></a>
+    <a href="attendance.html" class="ni active"><div class="ni-icon"><i class="fas fa-user-check"></i></div><span class="ni-label">Attendance</span><div class="ni-tip">Attendance</div></a>
+    <div class="sb-divider"></div>
+    <div class="sb-lbl">Teaching</div>
+    <a href="homework.html" class="ni"><div class="ni-icon"><i class="fas fa-book"></i></div><span class="ni-label">Homework</span><div class="ni-tip">Homework</div></a>
+    <a href="exam.html" class="ni"><div class="ni-icon"><i class="fas fa-pen"></i></div><span class="ni-label">Evaluations</span><div class="ni-tip">Evaluations</div></a>
+    <a href="materials.html" class="ni"><div class="ni-icon"><i class="fas fa-file-arrow-up"></i></div><span class="ni-label">Materials</span><div class="ni-tip">Materials</div></a>
+    <a href="progress.html" class="ni"><div class="ni-icon"><i class="fas fa-chart-line"></i></div><span class="ni-label">Progress</span><div class="ni-tip">Progress</div></a>
+    <div class="sb-divider"></div>
+    <a href="messages.html" class="ni"><div class="ni-icon"><i class="fas fa-envelope"></i></div><span class="ni-label">Messages</span><div class="ni-tip">Messages</div></a>
+    <a href="annonce.html" class="ni"><div class="ni-icon"><i class="fas fa-bullhorn"></i></div><span class="ni-label">Announcements</span><div class="ni-tip">Announcements</div></a>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-av">KB</div>
+    <div class="sb-foot-info"><div class="sb-foot-name">Mr. Karim Bouzid</div><div class="sb-foot-role">Teacher · Active</div></div>
+    <div class="sb-foot-actions"><button class="sb-foot-btn" onclick="toast('Logged out.','fa-arrow-right-from-bracket','var(--blue3)')"><i class="fas fa-arrow-right-from-bracket"></i></button></div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-crumb">Lumina School</span>
+      <span class="topbar-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="topbar-title">Attendance</span>
+    </div>
+    <button class="tbar-btn blue" onclick="saveAttendance()"><i class="fas fa-floppy-disk"></i> Save Session</button>
+  </header>
+
+  <div class="content">
+    <div class="stat-row">
+      <div class="scard"><div class="scard-icon si-g"><i class="fas fa-circle-check"></i></div><div><div class="scard-num" id="s-present">0</div><div class="scard-lbl">Present</div></div><div class="scard-accent" style="background:var(--green)"></div></div>
+      <div class="scard"><div class="scard-icon si-r"><i class="fas fa-circle-xmark"></i></div><div><div class="scard-num" id="s-absent">0</div><div class="scard-lbl">Absent</div></div><div class="scard-accent" style="background:var(--red)"></div></div>
+      <div class="scard"><div class="scard-icon si-a"><i class="fas fa-clock"></i></div><div><div class="scard-num" id="s-late">0</div><div class="scard-lbl">Late</div></div><div class="scard-accent" style="background:var(--amber)"></div></div>
+      <div class="scard"><div class="scard-icon si-b"><i class="fas fa-percent"></i></div><div><div class="scard-num" id="s-rate">—</div><div class="scard-lbl">Attendance rate</div></div><div class="scard-accent" style="background:var(--blue5)"></div></div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-search">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="text" id="stuSearch" placeholder="Search student…" oninput="filterStudents()">
+      </div>
+      <select class="filter-select" id="classSelect" onchange="renderTable()">
+        <option value="1AS">1AS — French &amp; English</option>
+        <option value="2AS">2AS — French &amp; Spanish</option>
+        <option value="3AS">3AS — English &amp; Italian</option>
+        <option value="1ES">1ES — Turkish &amp; Spanish</option>
+        <option value="TM">TM — French, Italian &amp; Turkish</option>
+      </select>
+      <input type="date" class="filter-select" id="attDate" value="2026-04-10">
+      <select class="filter-select" id="statusFilter" onchange="filterStudents()">
+        <option value="">All statuses</option>
+        <option value="P">Present</option>
+        <option value="A">Absent</option>
+        <option value="L">Late</option>
+      </select>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-hdr">
+        <div class="table-card-title">
+          <div class="t-icon"><i class="fas fa-clipboard-user"></i></div>
+          Attendance Sheet
+          <span class="row-count" id="rowCount">0</span>
+        </div>
+        <span style="font-size:.75rem;color:var(--muted)" id="classLabel">1AS — April 10, 2026</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="att-table">
+          <thead><tr><th>#</th><th>Student</th><th>Status</th><th>Mark</th></tr></thead>
+          <tbody id="attBody"></tbody>
+        </table>
+      </div>
+      <div class="submit-bar">
+        <div class="summary-chips">
+          <span class="chip g" id="chip-p">✓ Present: 0</span>
+          <span class="chip r" id="chip-a">✗ Absent: 0</span>
+          <span class="chip a" id="chip-l">⏱ Late: 0</span>
+        </div>
+        <button class="save-btn" onclick="saveAttendance()"><i class="fas fa-floppy-disk"></i> Save Attendance</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="toastIcon"></i><span id="toastMsg">Done!</span></div>
+
+<script>
+let shut=false;
+function toggleSB(){shut=!shut;document.getElementById('sb').classList.toggle('shut',shut);}
+function toast(msg,icon,color){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  const ic=document.getElementById('toastIcon');ic.className='fas '+(icon||'fa-check-circle');ic.style.color=color||'var(--blue3)';
+  t.style.borderLeftColor=color||'var(--blue4)';t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3400);
+}
+const CLASS_DATA={
+  '1AS':['Ali Benali','Sara Meziane','Yacine Hamidi','Nour Kaci','Amine Taleb','Fatima Cherif','Mohamed Ould','Iman Bouzid','Youcef Hamza','Rania Aissaoui','Mehdi Slimani','Karima Boudoukha'],
+  '2AS':['Houda Ferhat','Nassim Khelifa','Amira Zidane','Sofiane Meddah','Lina Bahloul','Omar Bendjelloul','Yasmine Tlemcani','Khalil Aoudia'],
+  '3AS':['Reda Lahmar','Widad Bensaid','Ismail Chaoui','Meryem Djaber','Anis Haddad','Selma Kaci'],
+  '1ES':['Tarek Bensalem','Nadia Khaled','Bilal Guerrouf','Zina Messaoudi','Rachid Tafat','Asma Djennane'],
+  'TM':['Ilyas Hamidou','Meriem Bouziane','Samir Ouhab','Lyna Benatia','Amine Cherif','Hadjira Lazreg','Toufik Maameri']
+};
+let attState={};
+function initState(students){attState={};students.forEach(s=>attState[s]='P');}
+function renderTable(){
+  const cls=document.getElementById('classSelect').value;
+  const date=document.getElementById('attDate').value;
+  const students=CLASS_DATA[cls]||[];
+  initState(students);
+  const dateStr=date?new Date(date+'T00:00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'';
+  document.getElementById('classLabel').textContent=`${cls} — ${dateStr}`;
+  buildRows(students);updateSummary();
+}
+function buildRows(students){
+  const tbody=document.getElementById('attBody');
+  document.getElementById('rowCount').textContent=students.length;
+  tbody.innerHTML=students.map((s,i)=>{
+    const initials=s.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const st=attState[s]||'P';
+    return `<tr id="row-${i}">
+      <td style="color:var(--muted);font-size:.78rem">${i+1}</td>
+      <td><div class="stu-cell"><div class="stu-av">${initials}</div><div><div style="font-weight:600;font-size:.87rem">${s}</div><div style="font-size:.7rem;color:var(--muted)">Student</div></div></div></td>
+      <td><span class="status-label ${st}" id="lbl-${i}">${labelText(st)}</span></td>
+      <td><div class="att-toggle">
+        <button class="att-btn ${st==='P'?'sel-P':''}" onclick="mark('${s}',${i},'P')" title="Present"><i class="fas fa-check"></i></button>
+        <button class="att-btn ${st==='A'?'sel-A':''}" onclick="mark('${s}',${i},'A')" title="Absent"><i class="fas fa-xmark"></i></button>
+        <button class="att-btn ${st==='L'?'sel-L':''}" onclick="mark('${s}',${i},'L')" title="Late"><i class="fas fa-clock"></i></button>
+      </div></td></tr>`;
+  }).join('');
+}
+function labelText(s){return s==='P'?'Present':s==='A'?'Absent':'Late';}
+function mark(name,idx,status){
+  attState[name]=status;
+  const row=document.getElementById('row-'+idx);
+  row.querySelectorAll('.att-btn').forEach(b=>{b.className='att-btn';});
+  const btns=row.querySelectorAll('.att-btn');
+  if(status==='P')btns[0].classList.add('sel-P');
+  if(status==='A')btns[1].classList.add('sel-A');
+  if(status==='L')btns[2].classList.add('sel-L');
+  const lbl=document.getElementById('lbl-'+idx);
+  lbl.className='status-label '+status;lbl.textContent=labelText(status);
+  updateSummary();
+}
+function updateSummary(){
+  const vals=Object.values(attState);
+  const p=vals.filter(v=>v==='P').length,a=vals.filter(v=>v==='A').length,l=vals.filter(v=>v==='L').length,total=vals.length;
+  document.getElementById('s-present').textContent=p;
+  document.getElementById('s-absent').textContent=a;
+  document.getElementById('s-late').textContent=l;
+  document.getElementById('s-rate').textContent=total?Math.round(((p+l)/total)*100)+'%':'—';
+  document.getElementById('chip-p').textContent=`✓ Present: ${p}`;
+  document.getElementById('chip-a').textContent=`✗ Absent: ${a}`;
+  document.getElementById('chip-l').textContent=`⏱ Late: ${l}`;
+}
+function filterStudents(){
+  const search=document.getElementById('stuSearch').value.toLowerCase();
+  const status=document.getElementById('statusFilter').value;
+  const cls=document.getElementById('classSelect').value;
+  const students=CLASS_DATA[cls]||[];
+  students.forEach((s,i)=>{
+    const row=document.getElementById('row-'+i);if(!row)return;
+    const matchName=!search||s.toLowerCase().includes(search);
+    const matchStatus=!status||attState[s]===status;
+    row.style.display=matchName&&matchStatus?'':'none';
+  });
+}
+function saveAttendance(){
+  const cls=document.getElementById('classSelect').value;
+  const vals=Object.values(attState);
+  const p=vals.filter(v=>v==='P').length,a=vals.filter(v=>v==='A').length,l=vals.filter(v=>v==='L').length;
+  toast(`Attendance saved — ${cls}: ${p} present, ${a} absent, ${l} late`,'fa-floppy-disk','var(--green)');
+}
+renderTable();
+</script>
+</body>
+</html>

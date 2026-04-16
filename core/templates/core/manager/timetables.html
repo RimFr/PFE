@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina School — Timetables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --navy:#05111F;--navy2:#081929;--navy3:#0C2140;
+  --blue8:#0D3A68;--blue7:#114F90;--blue6:#1666BC;
+  --blue5:#2080D8;--blue4:#4298E8;--blue3:#74B8F0;
+  --blue2:#AACFF5;--blue1:#D4E9FA;
+  --ice:#EBF5FD;--surface:#F2F7FC;--white:#FFFFFF;
+  --text:#0C2140;--muted:#6B8AA8;--border:#D8E8F4;
+  --gold:#D4AF37;--sb-open:264px;--sb-shut:74px;--ease:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--surface);color:var(--text);display:flex;}
+#sb{width:var(--sb-open);height:100vh;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;transition:width .4s var(--ease);overflow:visible;z-index:200;}
+#sb::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+#sb::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,var(--gold) 25%,var(--blue4) 60%,transparent 100%);z-index:3;}
+#sb.shut{width:var(--sb-shut);}
+.sb-chip{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--blue6);border:2.5px solid var(--navy);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:400;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:background .25s,transform .4s var(--ease);color:#fff;font-size:.6rem;}
+.sb-chip:hover{background:var(--blue5);}
+#sb.shut .sb-chip{transform:translateY(-50%) rotate(180deg);}
+.sb-head{display:flex;align-items:center;gap:13px;padding:24px 18px 20px 20px;border-bottom:1px solid rgba(255,255,255,.055);flex-shrink:0;overflow:hidden;position:relative;z-index:1;}
+.sb-icon-wrap{flex-shrink:0;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue7),var(--blue5));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(32,128,216,.4);transition:border-radius .4s var(--ease);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;}
+#sb.shut .sb-icon-wrap{border-radius:50%;}
+.sb-brand{overflow:hidden;white-space:nowrap;transition:opacity .3s var(--ease),transform .3s var(--ease),width .4s var(--ease);transform-origin:left;}
+#sb.shut .sb-brand{opacity:0;transform:scaleX(.85);width:0;}
+.sb-name{font-family:'Cormorant Garamond',serif;font-size:1.18rem;font-weight:600;color:var(--white);letter-spacing:.03em;line-height:1.2;}
+.sb-sub{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-top:1px;}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 10px;position:relative;z-index:1;}
+.sb-scroll::-webkit-scrollbar{width:0;}
+.sb-lbl{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .3s,max-height .3s,padding .3s;}
+#sb.shut .sb-lbl{opacity:0;max-height:0;padding-top:0;padding-bottom:0;}
+.sb-divider{height:1px;background:rgba(255,255,255,.05);margin:8px 14px;transition:opacity .3s;}
+#sb.shut .sb-divider{opacity:0;margin:4px 14px;}
+.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:12px;color:rgba(255,255,255,.48);text-decoration:none;font-size:.875rem;font-weight:400;transition:background .22s,color .22s,transform .22s,padding .4s var(--ease);white-space:nowrap;overflow:hidden;cursor:pointer;position:relative;margin-bottom:2px;}
+#sb.shut .ni{padding-left:0;padding-right:0;justify-content:center;}
+.ni-icon{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.88rem;background:rgba(255,255,255,.04);transition:background .25s,color .25s,border-radius .4s var(--ease);color:rgba(255,255,255,.42);}
+#sb.shut .ni-icon{border-radius:50%;}
+.ni-label{flex:1;overflow:hidden;transition:opacity .25s var(--ease),width .4s var(--ease),transform .25s var(--ease);white-space:nowrap;}
+#sb.shut .ni-label{opacity:0;width:0;transform:translateX(-8px);}
+.ni-tip{position:absolute;left:calc(100% + 16px);top:50%;transform:translateY(-50%);background:var(--navy3);color:var(--white);font-size:.8rem;font-weight:500;padding:7px 14px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .18s;box-shadow:0 6px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);z-index:999;}
+.ni-tip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:6px solid transparent;border-right-color:var(--navy3);}
+#sb.shut .ni:hover .ni-tip{opacity:1;}
+.ni:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9);transform:translateX(3px);}
+#sb.shut .ni:hover{transform:none;}
+.ni:hover .ni-icon{background:rgba(32,128,216,.18);color:var(--blue3);}
+.ni.active{background:linear-gradient(135deg,rgba(22,102,188,.7),rgba(32,128,216,.5));color:var(--white);box-shadow:0 4px 20px rgba(32,128,216,.25),inset 0 1px 0 rgba(255,255,255,.08);}
+.ni.active .ni-icon{background:rgba(255,255,255,.15);color:var(--white);}
+.sb-foot{padding:14px 12px;border-top:1px solid rgba(255,255,255,.055);display:flex;align-items:center;gap:11px;overflow:hidden;background:rgba(0,0,0,.18);flex-shrink:0;position:relative;z-index:1;}
+.sb-av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#B8860B);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.85rem;flex-shrink:0;transition:border-radius .4s var(--ease);}
+#sb.shut .sb-av{border-radius:50%;}
+.sb-foot-info{flex:1;overflow:hidden;transition:opacity .3s var(--ease),width .4s var(--ease);}
+#sb.shut .sb-foot-info{opacity:0;width:0;}
+.sb-foot-name{font-weight:600;color:white;font-size:.85rem;white-space:nowrap;}
+.sb-foot-role{font-size:.68rem;color:rgba(255,255,255,.35);white-space:nowrap;}
+.sb-foot-actions{display:flex;gap:6px;flex-shrink:0;transition:opacity .3s;}
+#sb.shut .sb-foot-actions{opacity:0;pointer-events:none;}
+.sb-foot-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.sb-foot-btn:hover{background:rgba(255,255,255,.12);color:white;}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:64px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.75rem;gap:1rem;flex-shrink:0;box-shadow:0 1px 4px rgba(12,33,64,.06);}
+.topbar-left{display:flex;align-items:center;gap:8px;flex:1;}
+.topbar-crumb{font-size:.8rem;color:var(--muted);}
+.topbar-sep{color:var(--border);font-size:.65rem;}
+.topbar-title{font-size:.9rem;font-weight:600;color:var(--text);}
+.stat-pill{background:var(--surface);border:1.5px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.75rem;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;gap:6px;}
+.top-btn{display:flex;align-items:center;gap:7px;border:none;border-radius:12px;padding:9px 16px;font-size:.8rem;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--blue6);color:white;}.btn-primary:hover{background:var(--blue7);}
+.btn-amber{background:#f59e0b;color:white;}.btn-amber:hover{background:#d97706;}
+.btn-amber.editing{background:var(--blue6);}.btn-amber.editing:hover{background:var(--blue7);}
+.btn-green{background:#16a34a;color:white;}.btn-green:hover{background:#15803d;}
+
+/* ── FILTERS BAR ── */
+.filters-bar{padding:14px 1.25rem;border-bottom:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
+.view-tabs{display:flex;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);}
+.view-tab{padding:8px 18px;font-size:.8rem;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;border:none;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.view-tab.active-tab{background:var(--navy3);color:white;}
+.view-tab:not(.active-tab){background:var(--white);color:var(--muted);}
+.view-tab:not(.active-tab):hover{background:var(--surface);}
+.teacher-badge{display:none;align-items:center;gap:8px;background:var(--ice);border:1.5px solid var(--blue2);border-radius:12px;padding:6px 12px;}
+.teacher-badge.show{display:flex;}
+.teacher-badge-av{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:white;}
+.teacher-badge-name{font-size:.8rem;font-weight:600;color:var(--blue7);}
+.teacher-badge-close{color:var(--muted);background:none;border:none;cursor:pointer;font-size:.75rem;margin-left:2px;}
+.teacher-badge-close:hover{color:#e11d48;}
+.edit-status{font-size:.8rem;font-weight:600;color:#d97706;display:none;}
+.edit-status.show{display:block;}
+
+/* ── TIMETABLE ── */
+.tt-container{flex:1;overflow:auto;padding:1.25rem;}
+.tt-container::-webkit-scrollbar{width:6px;height:6px;}
+.tt-container::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+.tt-card{background:var(--white);border-radius:20px;border:1px solid var(--border);box-shadow:0 4px 20px rgba(12,33,64,.06);overflow:hidden;min-width:860px;}
+.tt-table{width:100%;border-collapse:collapse;table-layout:fixed;}
+.tt-head{background:var(--navy);position:sticky;top:0;z-index:10;}
+.tt-head th{padding:12px 8px;font-size:.72rem;font-weight:600;letter-spacing:.08em;text-align:center;}
+.tt-head th:first-child{text-align:left;padding-left:14px;color:var(--muted);width:90px;}
+.tt-head .th-day{color:var(--blue3);}
+.tt-head .th-weekend{color:#f87171;}
+.tt-row{border-bottom:1px solid var(--border);}
+.tt-row:last-child{border-bottom:none;}
+.tt-time{padding:10px 14px;background:var(--surface);border-right:1px solid var(--border);vertical-align:middle;}
+.tt-time-val{font-size:.78rem;font-weight:600;color:var(--text);}
+.tt-time-end{font-size:.68rem;color:var(--muted);margin-top:2px;}
+.tt-cell{padding:6px 5px;border-right:1px solid var(--border);vertical-align:middle;text-align:center;cursor:pointer;transition:background .15s;height:76px;}
+.tt-cell:last-child{border-right:none;}
+.tt-cell:hover{background:var(--ice);}
+.tt-cell.empty{background:#fafcfe;}
+.tt-cell.empty:hover{background:var(--ice);}
+/* Session pill */
+.sess-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 4px;border-radius:100px;font-size:.7rem;font-weight:700;white-space:nowrap;}
+.sess-lang{padding:2px 6px;border-radius:100px;font-size:.6rem;font-weight:800;color:white;letter-spacing:.04em;}
+.sess-teacher{font-size:.66rem;color:var(--muted);margin-top:4px;}
+.sess-room{font-size:.6rem;color:#94a3b8;margin-top:2px;}
+
+/* ── MODALS ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,17,31,.55);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--white);border-radius:24px;width:100%;max-width:500px;margin:1rem;box-shadow:0 24px 80px rgba(5,17,31,.3);overflow:hidden;animation:modalPop .2s var(--ease);}
+@keyframes modalPop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-header{padding:1.5rem 1.75rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-header-title{font-size:1.05rem;font-weight:600;color:var(--text);}
+.modal-close{width:32px;height:32px;border-radius:9px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:var(--muted);transition:all .2s;}
+.modal-close:hover{background:#fff1f2;color:#e11d48;}
+.modal-body{padding:1.5rem 1.75rem;max-height:72vh;overflow-y:auto;}
+.modal-body::-webkit-scrollbar{width:4px;}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+.modal-footer{padding:1rem 1.75rem;border-top:1px solid var(--border);background:var(--surface);display:flex;justify-content:flex-end;gap:10px;}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field input,.field select{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.85rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .2s,background .2s;}
+.field input:focus,.field select:focus{border-color:var(--blue4);background:var(--white);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:12px;font-size:.84rem;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .2s;border:none;}
+.btn-blue{background:var(--blue6);color:white;}.btn-blue:hover{background:var(--blue7);}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border);}.btn-ghost:hover{background:var(--surface);}
+.btn-red{background:#e11d48;color:white;}.btn-red:hover{background:#be123c;}
+.btn-red-outline{background:#fff1f2;color:#e11d48;border:1.5px solid #fecdd3;}.btn-red-outline:hover{background:#ffe4e6;}
+/* Picker cards */
+.picker-card{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:14px;border:2px solid var(--border);cursor:pointer;transition:all .2s;}
+.picker-card:hover{border-color:var(--blue4);background:var(--ice);}
+.picker-card.selected{border-color:var(--blue5);background:var(--ice);}
+.picker-av{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:white;flex-shrink:0;}
+.picker-name{font-size:.88rem;font-weight:600;color:var(--text);}
+.picker-sub{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.sess-count{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:100px;}
+/* Lang buttons */
+.lang-btn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.lang-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;border-radius:12px;border:2px solid var(--border);background:none;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.lang-btn:hover{border-color:var(--blue4);}
+.lang-code{padding:3px 10px;border-radius:100px;font-size:.7rem;font-weight:800;}
+.lang-label{font-size:.7rem;font-weight:500;color:var(--muted);}
+/* Modal gradient header */
+.modal-gradient-header{padding:1.5rem 1.75rem;display:flex;align-items:flex-start;justify-content:space-between;}
+.modal-gradient-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:white;line-height:1.2;}
+.modal-gradient-sub{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:4px;}
+</style>
+</head>
+<body>
+
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand"><div class="sb-name">Lumina School</div><div class="sb-sub">Language Institute</div></div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+    <a href="dashboard.html" class="ni"><div class="ni-icon"><i class="fas fa-tachometer-alt"></i></div><span class="ni-label">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a href="groupes.html" class="ni"><div class="ni-icon"><i class="fas fa-users-rectangle"></i></div><span class="ni-label">Groupes Management</span><div class="ni-tip">Groupes</div></a>
+    <a href="teachers.html" class="ni"><div class="ni-icon"><i class="fas fa-chalkboard-teacher"></i></div><span class="ni-label">Teachers Management</span><div class="ni-tip">Teachers</div></a>
+    <a href="students.html" class="ni"><div class="ni-icon"><i class="fas fa-users"></i></div><span class="ni-label">Students Management</span><div class="ni-tip">Students</div></a>
+    <a href="timetables.html" class="ni active"><div class="ni-icon"><i class="fas fa-clock"></i></div><span class="ni-label">Timetables</span><div class="ni-tip">Timetables</div></a>
+    <div class="sb-divider"></div><div class="sb-lbl">Administration</div>
+    <a href="accounts.html" class="ni"><div class="ni-icon"><i class="fas fa-user-cog"></i></div><span class="ni-label">Accounts &amp; Roles</span><div class="ni-tip">Accounts</div></a>
+    <a href="financial.html" class="ni"><div class="ni-icon"><i class="fas fa-file-invoice-dollar"></i></div><span class="ni-label">Financial Overview</span><div class="ni-tip">Financial</div></a>
+    <div class="sb-divider"></div>
+    <a href="{% url 'core:login' %}" class="ni"><div class="ni-icon"><i class="fas fa-circle-user"></i></div><span class="ni-label">My Profile</span><div class="ni-tip">My Profile</div></a>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-av">MA</div>
+    <div class="sb-foot-info"><div class="sb-foot-name">Manager Admin</div><div class="sb-foot-role">Director · Active</div></div>
+    <div class="sb-foot-actions"><button class="sb-foot-btn" title="Logout" onclick="handleLogout()"><i class="fas fa-arrow-right-from-bracket"></i></button></div>
+  </div>
+</aside>
+
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-crumb">Lumina School</span>
+      <span class="topbar-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="topbar-title">Timetables</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="top-btn btn-primary" onclick="showCreateModal()"><i class="fas fa-plus"></i> New Entry</button>
+      <button class="top-btn btn-amber" id="editBtn" onclick="toggleEditMode()"><i class="fas fa-pen"></i> Edit Mode</button>
+      <button class="top-btn btn-green" onclick="publishTimetable()"><i class="fas fa-paper-plane"></i> Publish</button>
+    </div>
+  </header>
+
+  <!-- FILTERS -->
+  <div class="filters-bar">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div class="view-tabs">
+        <button id="tabGroup" class="view-tab active-tab" onclick="openGroupModal()">
+          <i class="fas fa-users" style="font-size:.7rem"></i> By Group
+          <span id="tabGroupLabel" style="opacity:.7;font-weight:400;font-size:.72rem;margin-left:2px;"></span>
+        </button>
+        <button id="tabTeacher" class="view-tab" onclick="openTeacherModal()">
+          <i class="fas fa-chalkboard-teacher" style="font-size:.7rem"></i> By Teacher
+        </button>
+      </div>
+      <div class="teacher-badge" id="teacherBadge">
+        <div class="teacher-badge-av" id="teacherBadgeAvatar"></div>
+        <span class="teacher-badge-name" id="teacherBadgeName"></span>
+        <button class="teacher-badge-close" onclick="clearTeacherFilter()"><i class="fas fa-times"></i></button>
+      </div>
+      <span class="edit-status" id="editStatus"><i class="fas fa-pen" style="margin-right:4px;"></i>Edit Mode — Click a slot to edit</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="stat-pill"><i class="fas fa-layer-group" style="color:var(--blue5)"></i><span id="statSessionsVal">0</span> sessions</span>
+      <span class="stat-pill"><i class="fas fa-clock" style="color:#22c55e"></i><span id="statHoursVal">0h</span></span>
+    </div>
+  </div>
+
+  <!-- TIMETABLE GRID -->
+  <div class="tt-container">
+    <div class="tt-card">
+      <table class="tt-table">
+        <thead class="tt-head">
+          <tr>
+            <th style="text-align:left;padding-left:14px;color:var(--muted);font-size:.7rem;">Time</th>
+            <th class="th-day">Sunday</th>
+            <th class="th-day">Monday</th>
+            <th class="th-day">Tuesday</th>
+            <th class="th-day">Wednesday</th>
+            <th class="th-day">Thursday</th>
+            <th class="th-weekend">Friday</th>
+            <th class="th-weekend">Saturday</th>
+          </tr>
+        </thead>
+        <tbody id="timetableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ GROUP PICKER MODAL ═══ -->
+<div id="groupModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-gradient-header" style="background:linear-gradient(135deg,var(--navy3),var(--blue7));">
+      <div><div class="modal-gradient-title">Select a Group</div><div class="modal-gradient-sub">Choose a group to view its timetable</div></div>
+      <button class="modal-close" onclick="closeGroupModal()" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:white;">×</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:10px;" id="groupList"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeGroupModal()">Cancel</button>
+      <button class="btn btn-blue" onclick="confirmGroupSelection()"><i class="fas fa-eye"></i> View Timetable</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEACHER PICKER MODAL ═══ -->
+<div id="teacherModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-gradient-header" style="background:linear-gradient(135deg,var(--navy2),var(--navy3));">
+      <div><div class="modal-gradient-title">Teacher's Planning</div><div class="modal-gradient-sub">Select a teacher to see their schedule</div></div>
+      <button class="modal-close" onclick="closeTeacherModal()" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:white;">×</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:10px;" id="teacherList"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeTeacherModal()">Cancel</button>
+      <button class="btn btn-blue" onclick="confirmTeacherSelection()"><i class="fas fa-eye"></i> View Planning</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EDIT SESSION MODAL ═══ -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="modal-header"><span class="modal-header-title" id="editModalTitle">Edit Session</span><button class="modal-close" onclick="hideEditModal()">×</button></div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Language</label>
+        <div class="lang-btn-grid" id="editLangGrid">
+          <button type="button" class="lang-btn" data-lang="EN" onclick="selectEditLang('EN','#1666BC')">
+            <span class="lang-code" style="background:#dbeafe;color:#1d4ed8;">EN</span>
+            <span class="lang-label">English</span>
+          </button>
+          <button type="button" class="lang-btn" data-lang="FR" onclick="selectEditLang('FR','#22c55e')">
+            <span class="lang-code" style="background:#dcfce7;color:#15803d;">FR</span>
+            <span class="lang-label">French</span>
+          </button>
+          <button type="button" class="lang-btn" data-lang="AR" onclick="selectEditLang('AR','#f97316')">
+            <span class="lang-code" style="background:#fed7aa;color:#c2410c;">AR</span>
+            <span class="lang-label">Arabic</span>
+          </button>
+          <button type="button" class="lang-btn" data-lang="ES" onclick="selectEditLang('ES','#f43f5e')">
+            <span class="lang-code" style="background:#fce7f3;color:#be185d;">ES</span>
+            <span class="lang-label">Spanish</span>
+          </button>
+        </div>
+        <input type="hidden" id="editLang" value="EN">
+      </div>
+      <div class="frow">
+        <div class="field"><label>Teacher</label><select id="editTeacher" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.85rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;"></select></div>
+        <div class="field"><label>Room</label><input id="editRoom" type="text" placeholder="Room 101"></div>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;">
+      <button class="btn btn-red-outline" onclick="deleteCurrentSession()"><i class="fas fa-trash"></i> Delete</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="hideEditModal()">Cancel</button>
+        <button class="btn btn-blue" onclick="saveEditedSession()"><i class="fas fa-save"></i> Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NEW ENTRY MODAL ═══ -->
+<div id="newTimetableModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header"><span class="modal-header-title">Create New Entry</span><button class="modal-close" onclick="hideNewTimetableModal()">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Group</label><select id="newGroup" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.85rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;"></select></div>
+      <div class="frow">
+        <div class="field"><label>Day</label>
+          <select id="newDay" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.85rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;">
+            <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+            <option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option>
+          </select>
+        </div>
+        <div class="field"><label>Start Time</label><select id="newStartTime" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.85rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;"></select></div>
+      </div>
+      <div class="field"><label>Teacher</label><select id="newTeacher" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;font-size:.85rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;"></select></div>
+      <div class="field">
+        <label>Language</label>
+        <div class="lang-btn-grid" id="newLangGrid">
+          <button type="button" class="lang-btn new-lang-btn" data-lang="EN" onclick="selectNewLang('EN')">
+            <span class="lang-code" style="background:#dbeafe;color:#1d4ed8;">EN</span><span class="lang-label">English</span>
+          </button>
+          <button type="button" class="lang-btn new-lang-btn" data-lang="FR" onclick="selectNewLang('FR')">
+            <span class="lang-code" style="background:#dcfce7;color:#15803d;">FR</span><span class="lang-label">French</span>
+          </button>
+          <button type="button" class="lang-btn new-lang-btn" data-lang="AR" onclick="selectNewLang('AR')">
+            <span class="lang-code" style="background:#fed7aa;color:#c2410c;">AR</span><span class="lang-label">Arabic</span>
+          </button>
+          <button type="button" class="lang-btn new-lang-btn" data-lang="ES" onclick="selectNewLang('ES')">
+            <span class="lang-code" style="background:#fce7f3;color:#be185d;">ES</span><span class="lang-label">Spanish</span>
+          </button>
+        </div>
+        <input type="hidden" id="newLang" value="">
+      </div>
+      <div class="field"><label>Room</label><input id="newRoom" type="text" placeholder="Room 101" value="Room 101"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideNewTimetableModal()">Cancel</button>
+      <button class="btn btn-blue" onclick="saveNewTimetableEntry()"><i class="fas fa-plus"></i> Add to Timetable</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let shut=false;
+function toggleSB(){shut=!shut;document.getElementById('sb').classList.toggle('shut',shut);}
+function handleLogout(){if(confirm('Log out of Lumina School?'))window.location.href='index.html';}
+
+/* ── DATA ── */
+const TEACHERS=[
+  {id:1,name:"Sophie Martin", initials:"SM",color:"#3b82f6",colorKey:"blue",  subject:"English"},
+  {id:2,name:"Ahmed Benali",  initials:"AB",color:"#8b5cf6",colorKey:"purple",subject:"French" },
+  {id:3,name:"Karim Mansouri",initials:"KM",color:"#22c55e",colorKey:"green", subject:"English"},
+  {id:4,name:"Nadia Bouchair",initials:"NB",color:"#f97316",colorKey:"orange",subject:"Arabic" },
+  {id:5,name:"Yasmine Larbi", initials:"YL",color:"#f43f5e",colorKey:"rose",  subject:"Spanish"},
+];
+const TIMETABLES={
+  1:[
+    {id:1, day:"Monday",   time:"08:00",subject:"Grammar",          teacherId:1,room:"Room 101"},
+    {id:2, day:"Monday",   time:"09:30",subject:"Speaking Practice",teacherId:1,room:"Room 101"},
+    {id:3, day:"Tuesday",  time:"08:00",subject:"Vocabulary",       teacherId:3,room:"Room 103"},
+    {id:4, day:"Wednesday",time:"14:00",subject:"Writing Workshop", teacherId:1,room:"Room 101"},
+    {id:5, day:"Saturday", time:"10:00",subject:"Intensive Review", teacherId:2,room:"Room 102"},
+    {id:6, day:"Thursday", time:"08:00",subject:"Listening",        teacherId:3,room:"Room 103"},
+    {id:7, day:"Friday",   time:"09:30",subject:"Reading",          teacherId:4,room:"Room 104"},
+  ],
+  2:[
+    {id:10,day:"Monday",   time:"14:00",subject:"Grammaire",        teacherId:2,room:"Room 102"},
+    {id:11,day:"Wednesday",time:"14:00",subject:"Expression Orale", teacherId:2,room:"Room 102"},
+    {id:12,day:"Friday",   time:"15:30",subject:"Compréhension",    teacherId:5,room:"Room 105"},
+    {id:13,day:"Saturday", time:"08:00",subject:"Dictée",           teacherId:2,room:"Room 102"},
+  ],
+  3:[
+    {id:20,day:"Sunday",   time:"08:00",subject:"Advanced Grammar", teacherId:1,room:"Room 101"},
+    {id:21,day:"Sunday",   time:"09:30",subject:"Debate",           teacherId:1,room:"Room 101"},
+    {id:22,day:"Tuesday",  time:"08:00",subject:"IELTS Prep",       teacherId:3,room:"Room 103"},
+    {id:23,day:"Tuesday",  time:"09:30",subject:"Exam Strategy",    teacherId:3,room:"Room 103"},
+    {id:24,day:"Thursday", time:"14:00",subject:"Essay Writing",    teacherId:1,room:"Room 101"},
+    {id:25,day:"Saturday", time:"08:00",subject:"Mock Test",        teacherId:2,room:"Room 102"},
+    {id:26,day:"Saturday", time:"09:30",subject:"Feedback Session", teacherId:3,room:"Room 103"},
+  ],
+};
+const DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const START_HOUR=8,END_HOUR=17,DURATION=90;
+const GROUPS=[
+  {id:1,label:"Group A",sub:"Morning — B1 English",  initials:"A",color:"#1666BC",lang:"EN",level:"B1",shortLabel:"1AS"},
+  {id:2,label:"Group B",sub:"Evening — A2 French",   initials:"B",color:"#0891b2",lang:"FR",level:"A2",shortLabel:"2AS"},
+  {id:3,label:"Group C",sub:"Intensive — C1 English",initials:"C",color:"#7c3aed",lang:"EN",level:"C1",shortLabel:"TM" },
+];
+
+let currentGroupId=1,currentTimetable=JSON.parse(JSON.stringify(TIMETABLES[1]));
+let isEditMode=false,currentEditingSlot=null,viewMode="group",selectedTeacherId=null;
+let pendingTeacherId=null,pendingGroupId=1;
+
+function generateTimeSlots(){
+  let s=[],c=START_HOUR*60;
+  while(c+DURATION<=END_HOUR*60){s.push(`${String(Math.floor(c/60)).padStart(2,'0')}:${String(c%60).padStart(2,'0')}`);c+=DURATION;}
+  return s;
+}
+function addMinutes(t,m){let[h,mn]=t.split(':').map(Number),tot=h*60+mn+m;return`${String(Math.floor(tot/60)).padStart(2,'0')}:${String(tot%60).padStart(2,'0')}`;}
+function getTeacher(id){return TEACHERS.find(t=>t.id===id);}
+
+/* LANG STYLES */
+const LANG={
+  EN:{bg:'rgba(22,102,188,.12)',color:'#0C2140',langBg:'#1666BC',codeBg:'#dbeafe',codeColor:'#1d4ed8'},
+  FR:{bg:'rgba(34,197,94,.12)', color:'#14532d',langBg:'#22c55e',codeBg:'#dcfce7',codeColor:'#15803d'},
+  AR:{bg:'rgba(249,115,22,.12)',color:'#7c2d12',langBg:'#f97316',codeBg:'#fed7aa',codeColor:'#c2410c'},
+  ES:{bg:'rgba(244,63,94,.12)', color:'#881337',langBg:'#f43f5e',codeBg:'#fce7f3',codeColor:'#be185d'},
+};
+function getLang(session){
+  if(!session)return'EN';
+  if(['EN','FR','AR','ES'].includes(session.subject))return session.subject;
+  const t=getTeacher(session.teacherId);
+  if(t?.subject==='French')return'FR';if(t?.subject==='Arabic')return'AR';if(t?.subject==='Spanish')return'ES';
+  return'EN';
+}
+
+/* RENDER */
+function renderTimetable(){
+  const tbody=document.getElementById('timetableBody');
+  tbody.innerHTML='';
+  const sessions=(viewMode==='teacher'&&selectedTeacherId)
+    ?Object.values(TIMETABLES).flat().filter(s=>s.teacherId===selectedTeacherId)
+    :currentTimetable;
+  document.getElementById('statSessionsVal').textContent=sessions.length;
+  document.getElementById('statHoursVal').textContent=(sessions.length*1.5).toFixed(1)+'h';
+  generateTimeSlots().forEach(time=>{
+    const row=document.createElement('tr');
+    row.className='tt-row';
+    let html=`<td class="tt-time"><div class="tt-time-val">${time}</div><div class="tt-time-end">${addMinutes(time,90)}</div></td>`;
+    DAYS.forEach(day=>{
+      const session=sessions.find(s=>s.day===day&&s.time===time);
+      const teacher=session?getTeacher(session.teacherId):null;
+      const isEmpty=!session;
+      let cellContent='<span style="color:#cbd5e1;font-size:.75rem;">—</span>';
+      if(session){
+        const lang=getLang(session);const L=LANG[lang]||LANG.EN;
+        let grp=null;
+        for(const[gid,list]of Object.entries(TIMETABLES)){if(list.find(s=>s.id===session.id)){grp=GROUPS.find(g=>g.id==gid);break;}}
+        if(!grp)grp=GROUPS.find(g=>g.id===currentGroupId);
+        const pillLabel=grp?grp.shortLabel:'';
+        const tFirst=teacher?teacher.name.split(' ')[0]:'';
+        const tLast=teacher?(teacher.name.split(' ')[1]?.[0]||'')+'.' :'';
+        cellContent=`
+          <div style="display:flex;align-items:center;justify-content:center;">
+            <span class="sess-pill" style="background:${L.bg};color:${L.color};">
+              <span class="sess-lang" style="background:${L.langBg}">${lang}</span>${pillLabel}
+            </span>
+          </div>
+          <div class="sess-teacher">${tFirst} ${tLast}</div>
+          <div class="sess-room">${session.room}</div>`;
+      }
+      html+=`<td class="tt-cell${isEmpty?' empty':''}" onclick="openEditModal('${day}','${time}')">${cellContent}</td>`;
+    });
+    row.innerHTML=html;
+    tbody.appendChild(row);
+  });
+}
+
+/* VIEW MODE */
+function setViewMode(mode){
+  viewMode=mode;
+  document.getElementById('tabGroup').classList.toggle('active-tab',mode==='group');
+  document.getElementById('tabTeacher').classList.toggle('active-tab',mode==='teacher');
+  const badge=document.getElementById('teacherBadge');
+  if(mode==='teacher'&&selectedTeacherId){badge.classList.add('show');}else{badge.classList.remove('show');}
+  renderTimetable();
+}
+
+/* GROUP MODAL */
+function openGroupModal(){
+  pendingGroupId=currentGroupId;
+  document.getElementById('groupList').innerHTML=GROUPS.map(g=>{
+    const count=(TIMETABLES[g.id]||[]).length;
+    return`<div class="picker-card${currentGroupId===g.id?' selected':''}" id="gcard-${g.id}" onclick="selectPendingGroup(${g.id})">
+      <div class="picker-av" style="background:${g.color}">${g.initials}</div>
+      <div style="flex:1"><div class="picker-name">${g.label}</div><div class="picker-sub">${g.sub}</div></div>
+      <span class="sess-count" style="background:var(--ice);color:var(--blue6);"><i class="fas fa-calendar-check" style="font-size:.6rem;margin-right:3px;"></i>${count} sessions</span>
+    </div>`;
+  }).join('');
+  document.getElementById('groupModal').classList.add('open');
+}
+function selectPendingGroup(id){
+  pendingGroupId=id;
+  document.querySelectorAll('[id^="gcard-"]').forEach(el=>el.classList.remove('selected'));
+  document.getElementById(`gcard-${id}`)?.classList.add('selected');
+}
+function confirmGroupSelection(){
+  currentGroupId=pendingGroupId;
+  currentTimetable=JSON.parse(JSON.stringify(TIMETABLES[currentGroupId]));
+  const g=GROUPS.find(g=>g.id===currentGroupId);
+  document.getElementById('tabGroupLabel').textContent='· '+g.label;
+  closeGroupModal();setViewMode('group');
+}
+function closeGroupModal(){document.getElementById('groupModal').classList.remove('open');}
+
+/* TEACHER MODAL */
+function openTeacherModal(){
+  pendingTeacherId=selectedTeacherId;
+  document.getElementById('teacherList').innerHTML=TEACHERS.map(t=>{
+    const count=Object.values(TIMETABLES).flat().filter(s=>s.teacherId===t.id).length;
+    return`<div class="picker-card${selectedTeacherId===t.id?' selected':''}" id="tcard-${t.id}" onclick="selectPendingTeacher(${t.id})">
+      <div class="picker-av" style="background:${t.color}">${t.initials}</div>
+      <div style="flex:1"><div class="picker-name">${t.name}</div><div class="picker-sub">${t.subject} Teacher</div></div>
+      <span class="sess-count" style="background:var(--ice);color:var(--blue6);"><i class="fas fa-calendar-check" style="font-size:.6rem;margin-right:3px;"></i>${count} sessions</span>
+    </div>`;
+  }).join('');
+  document.getElementById('teacherModal').classList.add('open');
+}
+function selectPendingTeacher(id){
+  pendingTeacherId=id;
+  document.querySelectorAll('[id^="tcard-"]').forEach(el=>el.classList.remove('selected'));
+  document.getElementById(`tcard-${id}`)?.classList.add('selected');
+}
+function confirmTeacherSelection(){
+  if(!pendingTeacherId)return;
+  selectedTeacherId=pendingTeacherId;const t=getTeacher(selectedTeacherId);
+  document.getElementById('teacherBadgeName').textContent=t.name;
+  const av=document.getElementById('teacherBadgeAvatar');av.textContent=t.initials;av.style.background=t.color;
+  closeTeacherModal();setViewMode('teacher');
+}
+function clearTeacherFilter(){selectedTeacherId=null;setViewMode('group');}
+function closeTeacherModal(){document.getElementById('teacherModal').classList.remove('open');}
+
+/* EDIT MODAL */
+function selectEditLang(lang,color){
+  document.getElementById('editLang').value=lang;
+  document.querySelectorAll('#editLangGrid .lang-btn').forEach(btn=>{
+    const active=btn.dataset.lang===lang;
+    btn.style.borderColor=active?color:'';btn.style.background=active?color+'18':'';
+  });
+}
+function openEditModal(day,time){
+  if(!isEditMode)return;
+  const sessions=(viewMode==='teacher'&&selectedTeacherId)
+    ?Object.values(TIMETABLES).flat().filter(s=>s.teacherId===selectedTeacherId)
+    :currentTimetable;
+  const session=sessions.find(s=>s.day===day&&s.time===time)||null;
+  currentEditingSlot={day,time};
+  document.getElementById('editModalTitle').textContent=session?'Edit Session':'Add Session';
+  const lang=getLang(session);
+  const LCOLORS={EN:'#1666BC',FR:'#22c55e',AR:'#f97316',ES:'#f43f5e'};
+  selectEditLang(lang,LCOLORS[lang]);
+  document.getElementById('editTeacher').value=session?.teacherId||TEACHERS[0].id;
+  document.getElementById('editRoom').value=session?.room||'Room 101';
+  document.getElementById('editModal').classList.add('open');
+}
+function hideEditModal(){document.getElementById('editModal').classList.remove('open');currentEditingSlot=null;}
+function saveEditedSession(){
+  if(!currentEditingSlot)return;
+  const{day,time}=currentEditingSlot;
+  const subject=document.getElementById('editLang').value||'EN';
+  const teacherId=parseInt(document.getElementById('editTeacher').value);
+  const room=document.getElementById('editRoom').value.trim()||'Room 101';
+  currentTimetable=currentTimetable.filter(s=>!(s.day===day&&s.time===time));
+  TIMETABLES[currentGroupId]=TIMETABLES[currentGroupId].filter(s=>!(s.day===day&&s.time===time));
+  const ns={id:Date.now(),day,time,subject,teacherId,room};
+  currentTimetable.push(ns);TIMETABLES[currentGroupId].push(ns);
+  hideEditModal();renderTimetable();
+}
+function deleteCurrentSession(){
+  if(!currentEditingSlot||!confirm('Delete this session?'))return;
+  const{day,time}=currentEditingSlot;
+  currentTimetable=currentTimetable.filter(s=>!(s.day===day&&s.time===time));
+  TIMETABLES[currentGroupId]=TIMETABLES[currentGroupId].filter(s=>!(s.day===day&&s.time===time));
+  hideEditModal();renderTimetable();
+}
+
+/* NEW ENTRY MODAL */
+function showCreateModal(){
+  document.getElementById('newGroup').innerHTML=GROUPS.map(g=>`<option value="${g.id}">${g.label} — ${g.sub}</option>`).join('');
+  document.getElementById('newTeacher').innerHTML=TEACHERS.map(t=>`<option value="${t.id}">${t.name} (${t.subject})</option>`).join('');
+  const sel=document.getElementById('newStartTime');sel.innerHTML='<option value="">Select Start Time</option>';
+  let cur=8*60;
+  while(cur+90<=17*60){
+    const h=Math.floor(cur/60),m=cur%60,ts=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    const o=document.createElement('option');o.value=ts;o.textContent=`${ts} – ${addMinutes(ts,90)}`;sel.appendChild(o);cur+=90;
+  }
+  document.getElementById('newLang').value='';
+  document.getElementById('newRoom').value='Room 101';
+  document.querySelectorAll('#newLangGrid .new-lang-btn').forEach(b=>{b.style.borderColor='';b.style.background='';});
+  document.getElementById('newTimetableModal').classList.add('open');
+}
+function hideNewTimetableModal(){document.getElementById('newTimetableModal').classList.remove('open');}
+
+function selectNewLang(lang){
+  document.getElementById('newLang').value=lang;
+  const LCOLORS={EN:'#1666BC',FR:'#22c55e',AR:'#f97316',ES:'#f43f5e'};
+  document.querySelectorAll('#newLangGrid .new-lang-btn').forEach(b=>{
+    const active=b.dataset.lang===lang;
+    b.style.borderColor=active?LCOLORS[lang]:'';b.style.background=active?LCOLORS[lang]+'18':'';
+  });
+}
+
+function saveNewTimetableEntry(){
+  const groupId=parseInt(document.getElementById('newGroup').value);
+  const day=document.getElementById('newDay').value;
+  const startTime=document.getElementById('newStartTime').value;
+  const teacherId=parseInt(document.getElementById('newTeacher').value);
+  const subject=document.getElementById('newLang').value;
+  const room=document.getElementById('newRoom').value.trim()||'Room 101';
+  if(!groupId||!day||!startTime||!teacherId||!subject){alert('Please fill all required fields, including the language!');return;}
+  const ns={id:Date.now(),day,time:startTime,subject,teacherId,room};
+  if(!TIMETABLES[groupId])TIMETABLES[groupId]=[];
+  TIMETABLES[groupId].push(ns);
+  if(currentGroupId===groupId)currentTimetable=JSON.parse(JSON.stringify(TIMETABLES[groupId]));
+  hideNewTimetableModal();renderTimetable();
+  alert(`✅ Session added to ${GROUPS.find(g=>g.id===groupId).label}`);
+}
+
+/* EDIT MODE */
+function toggleEditMode(){
+  isEditMode=!isEditMode;
+  const btn=document.getElementById('editBtn');
+  const status=document.getElementById('editStatus');
+  if(isEditMode){
+    btn.className='top-btn btn-amber editing';
+    btn.innerHTML=`<i class="fas fa-check"></i> Done Editing`;
+    status.classList.add('show');
+  }else{
+    btn.className='top-btn btn-amber';
+    btn.innerHTML=`<i class="fas fa-pen"></i> Edit Mode`;
+    status.classList.remove('show');
+  }
+}
+
+function publishTimetable(){
+  if(confirm('Publish this timetable to students and teachers?'))alert('✅ Timetable published Luminafully!');
+}
+
+/* INIT */
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+populateEditTeacher();
+document.getElementById('tabGroupLabel').textContent='· Group A';
+renderTimetable();
+
+function populateEditTeacher(){
+  document.getElementById('editTeacher').innerHTML=TEACHERS.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+}
+</script>
+</body>
+</html>

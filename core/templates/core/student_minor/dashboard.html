@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Lumina Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="shared.css">
+<style>
+.page{animation:fadeUp .3s var(--ease)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand">
+      <div class="sb-name">Lumina Academy</div>
+      <div class="sb-sub">Student Portal</div>
+    </div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main</div>
+    <a class="ni active" href="dashboard.html"><div class="ni-ic"><i class="fas fa-house-chimney"></i></div><span class="ni-lbl">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a class="ni" href="course.html"><div class="ni-ic"><i class="fas fa-book-open"></i></div><span class="ni-lbl">Courses</span><div class="ni-tip">Courses</div></a>
+    <a class="ni" href="homework.html"><div class="ni-ic"><i class="fas fa-pen-to-square"></i></div><span class="ni-lbl">Homework</span><span class="ni-bdg">3</span><div class="ni-tip">Homework</div></a>
+    <a class="ni" href="Grades.html"><div class="ni-ic"><i class="fas fa-star-half-stroke"></i></div><span class="ni-lbl">Grades</span><div class="ni-tip">Grades</div></a>
+    <div class="sb-div"></div>
+    <div class="sb-lbl">Account</div>
+    <a class="ni" href="payment.html"><div class="ni-ic"><i class="fas fa-wallet"></i></div><span class="ni-lbl">Payments</span><div class="ni-tip">Payments</div></a>
+    <a class="ni" href="{% url 'core:login' %}"><div class="ni-ic"><i class="fas fa-circle-user"></i></div><span class="ni-lbl">My Profile</span><div class="ni-tip">My Profile</div></a>
+    <div class="sb-div"></div>
+    <button class="ni ni-logout" onclick="openLogout()"><div class="ni-ic"><i class="fas fa-right-from-bracket"></i></div><span class="ni-lbl">Log out</span><div class="ni-tip">Log out</div></button>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-av">O</div>
+    <div class="sb-fi"><div class="sb-fn">Oumaima B.</div><div class="sb-fr">B1 Intermediate</div></div>
+    <div class="sb-fa"><button class="sb-fb set" title="Settings"><i class="fas fa-gear"></i></button></div>
+    <div class="sb-online"></div>
+  </div>
+</aside>
+
+<!-- MSG MODAL -->
+<div class="msg-overlay" id="msgOverlay" onclick="closeMsgModal()">
+  <div class="msg-modal" onclick="event.stopPropagation()">
+    <div class="mm-head"><div class="mm-av" id="mmAv">K</div><div><div class="mm-name" id="mmName"></div><div class="mm-role" id="mmRole"></div><div class="mm-time" id="mmTime"></div></div><button class="close-mm" onclick="closeMsgModal()"><i class="fas fa-xmark"></i></button></div>
+    <div class="mm-body" id="mmBody"></div>
+  </div>
+</div>
+
+<!-- LOGOUT MODAL -->
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogout()">
+  <div class="logout-modal" onclick="event.stopPropagation()">
+    <div class="lo-icon"><i class="fas fa-right-from-bracket"></i></div>
+    <div class="lo-title">Log out of Lumina Academy?</div>
+    <div class="lo-sub">Your progress is safely saved. See you next time, Oumaima!</div>
+    <div class="lo-btns">
+      <button class="lo-cancel" onclick="closeLogout()">Cancel</button>
+      <button class="lo-confirm" onclick="confirmLogout()">Log out</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="tb-crumb">Lumina Academy</span>
+      <span class="tb-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="tb-title">Dashboard</span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-notif-wrap">
+        <button class="notif-btn" onclick="toggleNotif()"><i class="fas fa-bell"></i><span class="n-badge" id="bellBadge">5</span></button>
+        <div class="notif-drop" id="nDrop">
+          <div class="nd-head"><h4>Notifications</h4><span class="nd-mark" onclick="markRead()">Mark all read</span></div>
+          <div id="ndList"></div>
+          <div class="nd-foot"><a href="#">View all →</a></div>
+        </div>
+      </div>
+      <a class="prof-chip" href="{% url 'core:login' %}">
+        <div class="pc-av">O</div>
+        <div><div class="pc-name">Oumaima B.</div><div class="pc-role">B1 Student</div></div>
+      </a>
+      <div class="online-chip"><div class="online-dot-chip"></div> Online</div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page">
+      <div class="page-hero" style="background:linear-gradient(130deg,var(--b8) 0%,var(--b6) 55%,var(--b5) 100%)">
+        <div class="ph-deco"></div>
+        <div class="ph-icon">✨</div>
+        <div>
+          <div class="ph-title">Welcome back, Oumaima!</div>
+          <div class="ph-sub">Let's continue your English & French learning journey · B1 Intermediate</div>
+        </div>
+      </div>
+
+      <div class="mini-row">
+        <div class="mc"><div class="mc-ic b"><i class="fas fa-layer-group"></i></div><div><div class="mc-n">B1</div><div class="mc-l">Current Level</div></div></div>
+        <div class="mc"><div class="mc-ic a"><i class="fas fa-fire-flame-curved"></i></div><div><div class="mc-n">12</div><div class="mc-l">Day Streak 🔥</div></div></div>
+        <div class="mc"><div class="mc-ic g"><i class="fas fa-circle-check"></i></div><div><div class="mc-n">8</div><div class="mc-l">Lessons Done</div></div></div>
+        <div class="mc"><div class="mc-ic r"><i class="fas fa-hourglass-half"></i></div><div><div class="mc-n">3</div><div class="mc-l">Homework Due</div></div></div>
+      </div>
+
+      <div class="two-col" style="margin-bottom:1.5rem">
+        <div class="card">
+          <div class="card-head"><div class="card-title"><div class="ct-ic b"><i class="fas fa-chart-line"></i></div>Course Progress</div></div>
+          <div style="padding:1.4rem">
+            <div style="margin-bottom:.9rem"><div class="plabel"><span>English – Verbs & Tenses</span><span>80%</span></div><div class="ptrack"><div class="pfill" style="width:80%;background:linear-gradient(90deg,var(--b6),var(--b4))"></div></div></div>
+            <div style="margin-bottom:.9rem"><div class="plabel"><span>English – Speaking Skills</span><span>65%</span></div><div class="ptrack"><div class="pfill" style="width:65%;background:linear-gradient(90deg,var(--b5),var(--green))"></div></div></div>
+            <div style="margin-bottom:.9rem"><div class="plabel"><span>French – Grammaire</span><span>72%</span></div><div class="ptrack"><div class="pfill" style="width:72%;background:linear-gradient(90deg,var(--green),var(--amber))"></div></div></div>
+            <div><div class="plabel"><span>French – Expression Écrite</span><span>55%</span></div><div class="ptrack"><div class="pfill" style="width:55%;background:linear-gradient(90deg,var(--amber),var(--red))"></div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title"><div class="ct-ic a"><i class="fas fa-calendar-days"></i></div>Upcoming Sessions</div></div>
+          <div style="padding:1.4rem">
+            <div class="uevent"><div class="edot" style="background:var(--b5)"></div><div><div class="etitle">French Grammar</div><div class="etime">Mon 18:00 – Room A1 · Prof. Martin</div></div></div>
+            <div class="uevent"><div class="edot" style="background:var(--b4)"></div><div><div class="etitle">English Speaking</div><div class="etime">Tue 17:30 – Room B2 · Prof. Laurent</div></div></div>
+            <div class="uevent"><div class="edot" style="background:var(--amber)"></div><div><div class="etitle">HW Due: Irregular Verbs</div><div class="etime">Wednesday</div></div></div>
+            <div class="uevent"><div class="edot" style="background:var(--green)"></div><div><div class="etitle">Grammar Test #3</div><div class="etime">Friday</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tip-banner">
+        <span class="tip-icon">💡</span>
+        <div class="tip-text"><strong>Tip of the Day — </strong>Practice 20 minutes of English listening every day — podcasts, series, or music. Consistency beats intensity!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="ti"></i><span id="tm"></span></div>
+<script src="shared.js"></script>
+</body>
+</html>

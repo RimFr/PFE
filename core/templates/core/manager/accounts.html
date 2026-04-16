@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lumina School - Accounts & Roles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Outfit:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════ PROFIL SIDEBAR TOKENS ═══════════════════ */
+    :root {
+      --navy:     #05111F;
+      --navy2:    #081929;
+      --navy3:    #0C2140;
+      --blue8:    #0D3A68;
+      --blue7:    #114F90;
+      --blue6:    #1666BC;
+      --blue5:    #2080D8;
+      --blue4:    #4298E8;
+      --blue3:    #74B8F0;
+      --blue2:    #AACFF5;
+      --blue1:    #D4E9FA;
+      --ice:      #EBF5FD;
+      --surface:  #F2F7FC;
+      --white:    #FFFFFF;
+      --text:     #0C2140;
+      --muted:    #6B8AA8;
+      --border:   #D8E8F4;
+      --gold:     #D4AF37;
+      --gold-bg:  rgba(212,175,55,.12);
+      --gold-lite:#F5E9A4;
+      --sb-open:  264px;
+      --sb-shut:  74px;
+      --ease:     cubic-bezier(.4,0,.2,1);
+    }
+
+    * { font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    body { background: #f1f5f9; display: flex; overflow: hidden; }
+
+    /* ═══════════════════ SIDEBAR ═══════════════════ */
+    #sb {
+      width: var(--sb-open);
+      height: 100vh;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: relative;
+      transition: width .4s var(--ease);
+      overflow: visible;
+      z-index: 200;
+    }
+    #sb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+    #sb::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, transparent 0%, var(--gold) 25%, var(--blue4) 60%, transparent 100%);
+      z-index: 3;
+    }
+    #sb.shut { width: var(--sb-shut); }
+
+    .sb-chip {
+      position: absolute;
+      top: 50%; right: -14px;
+      transform: translateY(-50%);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--blue6);
+      border: 2.5px solid var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 400;
+      box-shadow: 0 4px 14px rgba(0,0,0,.35);
+      transition: background .25s, transform .4s var(--ease);
+      color: #fff; font-size: .6rem;
+    }
+    .sb-chip:hover { background: var(--blue5); }
+    #sb.shut .sb-chip { transform: translateY(-50%) rotate(180deg); }
+
+    .sb-head {
+      display: flex; align-items: center; gap: 13px;
+      padding: 24px 18px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.055);
+      flex-shrink: 0; overflow: hidden;
+      position: relative; z-index: 1;
+    }
+    .sb-icon-wrap {
+      flex-shrink: 0;
+      width: 38px; height: 38px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--blue7), var(--blue5));
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(32,128,216,.4);
+      transition: border-radius .4s var(--ease);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 600; color: #fff; letter-spacing: -.02em;
+    }
+    #sb.shut .sb-icon-wrap { border-radius: 50%; }
+
+    .sb-brand {
+      overflow: hidden; white-space: nowrap;
+      transition: opacity .3s var(--ease), transform .3s var(--ease), width .4s var(--ease);
+      transform-origin: left;
+    }
+    #sb.shut .sb-brand { opacity: 0; transform: scaleX(.85); width: 0; }
+
+    .sb-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.18rem; font-weight: 600; color: var(--white);
+      letter-spacing: .03em; line-height: 1.2;
+    }
+    .sb-sub {
+      font-size: .62rem; letter-spacing: .2em;
+      text-transform: uppercase; color: rgba(255,255,255,.32); margin-top: 1px;
+    }
+
+    .sb-scroll {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 14px 10px; position: relative; z-index: 1;
+    }
+    .sb-scroll::-webkit-scrollbar { width: 0; }
+
+    .sb-lbl {
+      font-size: .58rem; letter-spacing: .28em;
+      text-transform: uppercase; color: rgba(255,255,255,.2);
+      padding: 10px 16px 5px; white-space: nowrap; overflow: hidden;
+      transition: opacity .3s, max-height .3s, padding .3s;
+    }
+    #sb.shut .sb-lbl { opacity:0; max-height:0; padding-top:0; padding-bottom:0; }
+
+    .sb-divider {
+      height: 1px; background: rgba(255,255,255,.05); margin: 8px 14px;
+      transition: opacity .3s;
+    }
+    #sb.shut .sb-divider { opacity: 0; margin: 4px 14px; }
+
+    .ni {
+      display: flex; align-items: center; gap: 13px;
+      padding: 11px 14px; border-radius: 12px;
+      color: rgba(255,255,255,.48); text-decoration: none;
+      font-size: .875rem; font-weight: 400;
+      transition: background .22s, color .22s, transform .22s, padding .4s var(--ease);
+      white-space: nowrap; overflow: hidden; cursor: pointer;
+      position: relative; margin-bottom: 2px;
+    }
+    #sb.shut .ni { padding-left:0; padding-right:0; justify-content: center; }
+
+    .ni-icon {
+      flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: .88rem;
+      background: rgba(255,255,255,.04);
+      transition: background .25s, color .25s, border-radius .4s var(--ease);
+      color: rgba(255,255,255,.42);
+    }
+    #sb.shut .ni-icon { border-radius: 50%; }
+
+    .ni-label {
+      flex: 1; overflow: hidden;
+      transition: opacity .25s var(--ease), width .4s var(--ease), transform .25s var(--ease);
+      white-space: nowrap;
+    }
+    #sb.shut .ni-label { opacity: 0; width: 0; transform: translateX(-8px); }
+
+    .ni-badge {
+      flex-shrink: 0; background: var(--blue6); color: var(--white);
+      font-size: .6rem; font-weight: 600; padding: 2px 7px;
+      border-radius: 100px; line-height: 1.4;
+      transition: opacity .25s, width .4s var(--ease);
+    }
+    #sb.shut .ni-badge { opacity: 0; width: 0; overflow: hidden; padding: 0; }
+
+    .ni:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.9); transform: translateX(3px); }
+    #sb.shut .ni:hover { transform: none; }
+    .ni:hover .ni-icon { background: rgba(32,128,216,.18); color: var(--blue3); }
+
+    .ni.active {
+      background: linear-gradient(135deg, rgba(22,102,188,.7), rgba(32,128,216,.5));
+      color: var(--white);
+      box-shadow: 0 4px 20px rgba(32,128,216,.25), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .ni.active .ni-icon { background: rgba(255,255,255,.15); color: var(--white); }
+
+    .ni-tip {
+      position: absolute; left: calc(100% + 16px); top: 50%; transform: translateY(-50%);
+      background: var(--navy3); color: var(--white);
+      font-size: .8rem; font-weight: 500; padding: 7px 14px; border-radius: 8px;
+      white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .18s;
+      box-shadow: 0 6px 24px rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.07); z-index: 999;
+    }
+    .ni-tip::before {
+      content: ''; position: absolute; right: 100%; top: 50%; transform: translateY(-50%);
+      border: 6px solid transparent; border-right-color: var(--navy3);
+    }
+    #sb.shut .ni:hover .ni-tip { opacity: 1; }
+
+    .sb-foot {
+      padding: 14px 12px; border-top: 1px solid rgba(255,255,255,.055);
+      display: flex; align-items: center; gap: 11px; overflow: hidden;
+      flex-shrink: 0; position: relative; z-index: 1; background: rgba(0,0,0,.18);
+    }
+    .sb-av {
+      flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue7), var(--blue5));
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; font-weight: 600; color: var(--white);
+      border: 1.5px solid rgba(255,255,255,.18);
+      transition: border-radius .4s var(--ease);
+    }
+    #sb.shut .sb-av { border-radius: 50%; }
+
+    .sb-foot-info {
+      flex: 1; min-width: 0; overflow: hidden;
+      transition: opacity .3s var(--ease), width .4s var(--ease);
+    }
+    #sb.shut .sb-foot-info { opacity: 0; width: 0; }
+
+    .sb-foot-name { font-size: .85rem; font-weight: 600; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sb-foot-role { font-size: .68rem; color: rgba(255,255,255,.35); white-space: nowrap; }
+
+    .sb-foot-actions { display: flex; gap: 4px; flex-shrink: 0; transition: opacity .3s; }
+    #sb.shut .sb-foot-actions { opacity: 0; pointer-events: none; }
+
+    .sb-foot-btn {
+      width: 30px; height: 30px; border-radius: 8px; border: none;
+      background: rgba(255,255,255,.06); color: rgba(255,255,255,.4);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: .78rem; transition: background .2s, color .2s;
+    }
+    .sb-foot-btn:hover { background: rgba(248,113,113,.15); color: #F87171; }
+    .sb-foot-btn.settings:hover { background: rgba(32,128,216,.15); color: var(--blue3); }
+
+    /* ═══════════════════ ACCOUNTS PAGE STYLES ═══════════════════ */
+    .main-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+    tbody tr { transition: all 0.15s ease; }
+    tbody tr:hover { background-color: #f8fafc; box-shadow: inset 4px 0 0 #6366f1; }
+    #createModal, #viewModal, #editModal, #deleteModal { backdrop-filter: blur(6px); }
+
+    .avatar-initials { width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; color:white; flex-shrink:0; }
+
+    .role-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 12px; border-radius:999px; font-size:11px; font-weight:700; }
+    .role-manager  { background:#fef3c7; color:#92400e; }
+    .role-teacher  { background:#dbeafe; color:#1e40af; }
+    .role-secretary{ background:#f0fdf4; color:#166534; }
+    .role-accountant{ background:#fce7f3; color:#9d174d; }
+    .role-student  { background:#ede9fe; color:#5b21b6; }
+
+    .status-active   { background:#dcfce7; color:#15803d; padding:3px 12px; border-radius:999px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:4px; }
+    .status-inactive { background:#fee2e2; color:#b91c1c; padding:3px 12px; border-radius:999px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:4px; }
+    .status-suspended{ background:#fef9c3; color:#854d0e; padding:3px 12px; border-radius:999px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; gap:4px; }
+
+    .action-btn { width:34px; height:34px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; cursor:pointer; }
+    .btn-view  { background:#f5f3ff; color:#6366f1; }
+    .btn-view:hover { background:#ede9fe; }
+    .btn-edit  { background:#f0fdf4; color:#16a34a; }
+    .btn-edit:hover { background:#dcfce7; }
+    .btn-del   { background:#fff1f2; color:#e11d48; }
+    .btn-del:hover { background:#ffe4e6; }
+    .btn-toggle{ background:#fef9c3; color:#854d0e; }
+    .btn-toggle:hover { background:#fef08a; }
+
+    .detail-row { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid #f1f5f9; }
+    .detail-row:last-child { border-bottom:none; }
+    .detail-icon { width:36px; height:36px; border-radius:10px; background:#f5f3ff; display:flex; align-items:center; justify-content:center; color:#6366f1; flex-shrink:0; font-size:13px; }
+
+    .stat-pill { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:6px 14px; font-size:12px; font-weight:600; color:#475569; }
+
+    .perm-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:8px; font-size:10px; font-weight:600; background:#eff6ff; color:#1d4ed8; margin:2px; }
+
+    input[type="password"] { letter-spacing: 0.1em; }
+    .strength-bar { height:4px; border-radius:999px; transition:all 0.3s; }
+
+    .tab-btn { transition:all 0.2s; border-bottom:2px solid transparent; }
+    .tab-btn.active-tab { border-bottom-color:#6366f1; color:#6366f1; font-weight:700; }
+    .tab-btn:not(.active-tab) { color:#94a3b8; }
+    .tab-btn:hover:not(.active-tab) { color:#475569; }
+
+    .table-container, .accounts-table-wrapper, div.table-responsive {
+      overflow-x: auto !important;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 12px;
+      scrollbar-width: thin;
+    }
+    th:last-child, td:last-child {
+      position: sticky;
+      right: 0;
+      background: white;
+      z-index: 10;
+      min-width: 110px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ SIDEBAR ════════════════ -->
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand">
+      <div class="sb-name">Lumina School</div>
+      <div class="sb-sub">Language Institute</div>
+    </div>
+  </div>
+
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main Menu</div>
+
+    <a href="dashboard.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-tachometer-alt"></i></div>
+      <span class="ni-label">Dashboard</span>
+      <div class="ni-tip">Dashboard</div>
+    </a>
+
+    <a href="groupes.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-users-rectangle"></i></div>
+      <span class="ni-label">Groupes Management</span>
+      <div class="ni-tip">Groupes</div>
+    </a>
+
+    <a href="teachers.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+      <span class="ni-label">Teachers Management</span>
+      <div class="ni-tip">Teachers</div>
+    </a>
+
+    <a href="students.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-users"></i></div>
+      <span class="ni-label">Students Management</span>
+      <div class="ni-tip">Students</div>
+    </a>
+
+    <a href="timetables.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-clock"></i></div>
+      <span class="ni-label">Timetables</span>
+      <div class="ni-tip">Timetables</div>
+    </a>
+
+    <div class="sb-divider"></div>
+    <div class="sb-lbl">Administration</div>
+
+    <a href="accounts.html" class="ni active">
+      <div class="ni-icon"><i class="fas fa-user-cog"></i></div>
+      <span class="ni-label">Accounts &amp; Roles</span>
+      <div class="ni-tip">Accounts</div>
+    </a>
+
+    <a href="financial.html" class="ni">
+      <div class="ni-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+      <span class="ni-label">Financial Overview</span>
+      <div class="ni-tip">Financial</div>
+    </a>
+
+    <div class="sb-divider"></div>
+
+    <a href="{% url 'core:login' %}" class="ni">
+      <div class="ni-icon"><i class="fas fa-circle-user"></i></div>
+      <span class="ni-label">My Profile</span>
+      <div class="ni-tip">My Profile</div>
+    </a>
+  </div>
+
+  <div class="sb-foot">
+    <div class="sb-av">MA</div>
+    <div class="sb-foot-info">
+      <div class="sb-foot-name">Manager Admin</div>
+      <div class="sb-foot-role">Director · Active</div>
+    </div>
+    <div class="sb-foot-actions">
+      <button class="sb-foot-btn" title="Logout"><i class="fas fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </div>
+</aside>
+
+<!-- ════════════════ MAIN ════════════════ -->
+<div class="main-wrap">
+
+  <header class="bg-white shadow-sm border-b h-16 flex items-center px-8" style="border-bottom:1px solid #e2e8f0; flex-shrink:0;">
+    <div class="flex-1 flex items-center gap-4">
+      <h2 class="text-2xl font-semibold text-slate-800">Accounts &amp; Roles</h2>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="stat-pill"><i class="fas fa-users mr-1 text-indigo-500"></i><span id="statTotal">0</span> accounts</span>
+      <span class="stat-pill"><i class="fas fa-check-circle mr-1 text-green-500"></i><span id="statActive">0</span> active</span>
+      <div class="relative w-64">
+        <input id="searchInput" type="text" placeholder="Search accounts..."
+               class="bg-slate-50 border border-slate-200 rounded-2xl py-2.5 px-5 pl-10 w-full text-sm focus:outline-none focus:border-indigo-400 focus:bg-white transition"
+               onkeyup="filterTable()">
+        <i class="fas fa-search absolute left-4 top-3 text-slate-400 text-sm"></i>
+      </div>
+      <select id="roleFilter" onchange="filterTable()"
+              class="border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-400 bg-white">
+        <option value="">All Roles</option>
+        <option value="Manager">Manager</option>
+        <option value="Teacher">Teacher</option>
+        <option value="Secretary">Secretary</option>
+        <option value="Accountant">Accountant</option>
+        <option value="Student">Student</option>
+      </select>
+      <button onclick="showCreateModal()"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-2xl flex items-center gap-2 font-semibold text-sm transition">
+        <i class="fas fa-plus"></i><span>Create Account</span>
+      </button>
+    </div>
+  </header>
+
+  <main style="flex:1; padding:1.5rem; overflow:auto; background:#f1f5f9;">
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-slate-50 border-b text-slate-500 font-semibold text-xs uppercase tracking-wide">
+            <th class="px-6 py-4 text-left">User</th>
+            <th class="px-5 py-4 text-left">Username / Email</th>
+            <th class="px-5 py-4 text-left">Role</th>
+            <th class="px-5 py-4 text-left">Birthday</th>
+            <th class="px-5 py-4 text-center">Status</th>
+            <th class="px-5 py-4 text-center">Last Login</th>
+            <th class="px-6 py-4 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="accountsTable" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- ===== VIEW MODAL ===== -->
+<div id="viewModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+  <div class="bg-white rounded-3xl w-full max-w-md mx-4 shadow-2xl overflow-hidden">
+    <div id="viewHeader" class="px-8 py-6 flex items-center gap-4">
+      <div id="viewAvatar" class="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold flex-shrink-0"></div>
+      <div class="flex-1">
+        <h3 id="viewName" class="text-xl font-bold text-white"></h3>
+        <p id="viewUsername" class="text-sm opacity-75 text-white mt-0.5"></p>
+        <span id="viewRoleBadge" class="mt-1.5 inline-block text-xs font-bold px-3 py-1 rounded-full bg-white/20 text-white"></span>
+      </div>
+      <button onclick="hideViewModal()" class="text-white/70 hover:text-white text-3xl leading-none">×</button>
+    </div>
+    <div class="px-8 py-6 space-y-5" id="viewBody"></div>
+  </div>
+</div>
+
+<!-- ===== CREATE ACCOUNT MODAL ===== -->
+<div id="createModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl flex flex-col" style="max-height:90vh">
+    <div class="px-7 py-4 border-b flex justify-between items-center flex-shrink-0">
+      <h3 class="text-lg font-bold text-slate-800">Create Account</h3>
+      <button onclick="hideCreateModal()" class="text-2xl text-slate-400 hover:text-slate-600 leading-none">×</button>
+    </div>
+    <div class="overflow-y-auto flex-1 p-6">
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+        <!-- LEFT COLUMN -->
+        <div class="space-y-4">
+          <p class="text-xs font-bold text-indigo-600 uppercase tracking-widest">User Info</p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Select User</label>
+            <select id="c-user" onchange="autoFillFromUser()"
+                    class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400 bg-white">
+              <option value="">— Choose a user —</option>
+              <optgroup label="Teachers">
+                <option value="T001|Sophie|Martin|sophie.martin@gmail.com|Teacher">Sophie Martin (Teacher)</option>
+                <option value="T002|Ahmed|Benali|ahmed.benali@gmail.com|Teacher">Ahmed Benali (Teacher)</option>
+                <option value="T003|Karim|Mansouri|karim.mansouri@gmail.com|Teacher">Karim Mansouri (Teacher)</option>
+              </optgroup>
+              <optgroup label="Students">
+                <option value="ST001|Amina|Bounnah|amina.bounnah@gmail.com|Student">Amina Bounnah (Student)</option>
+                <option value="ST002|Karim|Khelifi|karim.khelifi@gmail.com|Student">Karim Khelifi (Student)</option>
+                <option value="ST003|Lina|Hamdi|lina.hamdi@gmail.com|Student">Lina Hamdi (Student)</option>
+                <option value="ST004|Younes|Brahim|younes.brahim@gmail.com|Student">Younes Brahim (Student)</option>
+                <option value="ST005|Sara|Meziane|sara.meziane@gmail.com|Student">Sara Meziane (Student)</option>
+              </optgroup>
+              <optgroup label="Staff">
+                <option value="SF001|Rania|Hadj|rania.hadj@gmail.com|Secretary">Rania Hadj (Secretary)</option>
+                <option value="SF002|Tarek|Saidi|tarek.saidi@gmail.com|Accountant">Tarek Saidi (Accountant)</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">First Name</label>
+              <input id="c-fname" type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Last Name</label>
+              <input id="c-lname" type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Username</label>
+            <input id="c-username" type="text" placeholder="e.g. sophie.martin"
+                   class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Email</label>
+            <input id="c-email" type="email" placeholder="user@gmail.com"
+                   class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Date of Birth</label>
+            <input id="c-birthday" type="date" max="2015-12-31"
+                   class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400 text-slate-700">
+          </div>
+          <p class="text-xs font-bold text-indigo-600 uppercase tracking-widest pt-2">Password</p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Password</label>
+            <div class="relative">
+              <input id="c-password" type="password" placeholder="Create password" oninput="checkStrength()"
+                     class="w-full border border-slate-200 rounded-xl px-3 py-2.5 pr-10 text-sm focus:outline-none focus:border-indigo-400">
+              <button onclick="togglePwd('c-password','eyeIcon1')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                <i id="eyeIcon1" class="fas fa-eye text-xs"></i>
+              </button>
+            </div>
+            <div class="flex gap-1 mt-1.5">
+              <div id="bar1" class="strength-bar flex-1 bg-slate-200"></div>
+              <div id="bar2" class="strength-bar flex-1 bg-slate-200"></div>
+              <div id="bar3" class="strength-bar flex-1 bg-slate-200"></div>
+              <div id="bar4" class="strength-bar flex-1 bg-slate-200"></div>
+            </div>
+            <p id="strengthLabel" class="text-xs text-slate-400 mt-0.5"></p>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Confirm Password</label>
+            <div class="relative">
+              <input id="c-confirm" type="password" placeholder="Repeat password" oninput="checkMatch()"
+                     class="w-full border border-slate-200 rounded-xl px-3 py-2.5 pr-10 text-sm focus:outline-none focus:border-indigo-400">
+              <button onclick="togglePwd('c-confirm','eyeIcon2')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                <i id="eyeIcon2" class="fas fa-eye text-xs"></i>
+              </button>
+            </div>
+            <p id="matchMsg" class="text-xs mt-1 hidden"></p>
+          </div>
+          <div class="bg-indigo-50 rounded-xl p-3 grid grid-cols-2 gap-1">
+            <li id="req-len"     class="flex items-center gap-1.5 text-xs list-none"><i class="fas fa-times text-red-400 w-3 text-[10px]"></i>8+ chars</li>
+            <li id="req-upper"   class="flex items-center gap-1.5 text-xs list-none"><i class="fas fa-times text-red-400 w-3 text-[10px]"></i>Uppercase</li>
+            <li id="req-num"     class="flex items-center gap-1.5 text-xs list-none"><i class="fas fa-times text-red-400 w-3 text-[10px]"></i>Number</li>
+            <li id="req-special" class="flex items-center gap-1.5 text-xs list-none"><i class="fas fa-times text-red-400 w-3 text-[10px]"></i>Special char</li>
+          </div>
+        </div>
+        <!-- RIGHT COLUMN -->
+        <div class="space-y-4">
+          <p class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Role &amp; Permissions</p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wide">Role</label>
+            <div class="grid grid-cols-2 gap-2" id="roleRadios"></div>
+          </div>
+          <div id="permCheckboxes" class="hidden"></div>
+        </div>
+      </div>
+    </div>
+    <div class="px-6 py-4 border-t bg-slate-50 flex justify-end gap-3 flex-shrink-0">
+      <button onclick="hideCreateModal()" class="px-5 py-2 text-slate-600 font-semibold hover:bg-slate-100 rounded-xl text-sm">Cancel</button>
+      <button onclick="saveAccount()"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-semibold text-sm flex items-center gap-2">
+        <i class="fas fa-user-plus"></i> Create Account
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EDIT MODAL ===== -->
+<div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl flex flex-col" style="max-height:90vh">
+    <div class="px-7 py-4 border-b flex justify-between items-center flex-shrink-0">
+      <h3 class="text-lg font-bold text-slate-800">Modify Account</h3>
+      <button onclick="hideEditModal()" class="text-2xl text-slate-400 hover:text-slate-600 leading-none">×</button>
+    </div>
+    <div class="overflow-y-auto flex-1 p-6 space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Username</label>
+          <input id="e-username" type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Email</label>
+          <input id="e-email" type="email" class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Date of Birth</label>
+        <input id="e-birthday" type="date" max="2015-12-31"
+               class="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-400 text-slate-700">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wide">Role</label>
+        <div class="grid grid-cols-3 gap-2" id="e-roleRadios"></div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">New Password <span class="text-slate-300 font-normal normal-case">(leave blank to keep)</span></label>
+        <div class="relative">
+          <input id="e-password" type="password" placeholder="New password (optional)"
+                 class="w-full border border-slate-200 rounded-xl px-3 py-2.5 pr-10 text-sm focus:outline-none focus:border-indigo-400">
+          <button onclick="togglePwd('e-password','eyeIcon3')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+            <i id="eyeIcon3" class="fas fa-eye text-xs"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="px-6 py-4 border-t bg-slate-50 flex justify-end gap-3 flex-shrink-0">
+      <button onclick="hideEditModal()" class="px-5 py-2 text-slate-600 font-semibold hover:bg-slate-100 rounded-xl text-sm">Cancel</button>
+      <button onclick="saveEdit()"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl font-semibold text-sm flex items-center gap-2">
+        <i class="fas fa-save"></i> Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DELETE CONFIRM MODAL ===== -->
+<div id="deleteModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+  <div class="bg-white rounded-3xl w-full max-w-sm mx-4 shadow-2xl overflow-hidden">
+    <div class="p-8 text-center">
+      <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-trash text-2xl text-red-500"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-800 mb-2">Delete Account</h3>
+      <p class="text-sm text-slate-500 mb-6">Are you sure you want to delete <strong id="deleteTargetName"></strong>'s account? This action cannot be undone.</p>
+      <div class="flex gap-3">
+        <button onclick="hideDeleteModal()" class="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl text-sm">Cancel</button>
+        <button onclick="confirmDelete()" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-2xl text-sm">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── sidebar ── */
+  let shut = false;
+  function toggleSB() {
+    shut = !shut;
+    document.getElementById('sb').classList.toggle('shut', shut);
+  }
+
+  // ─── DATA ───────────────────────────────────────
+  const ROLES = ["Manager","Teacher","Secretary","Accountant","Student"];
+  const ROLE_COLORS = { Manager:"#92400e", Teacher:"#1e40af", Secretary:"#166534", Accountant:"#9d174d", Student:"#5b21b6" };
+  const ROLE_BG = { Manager:"#fef3c7", Teacher:"#dbeafe", Secretary:"#f0fdf4", Accountant:"#fce7f3", Student:"#ede9fe" };
+  const ROLE_ICON = { Manager:"fa-crown", Teacher:"fa-chalkboard-teacher", Secretary:"fa-file-alt", Accountant:"fa-calculator", Student:"fa-graduation-cap" };
+
+  const ALL_PERMS = [
+    "View Timetables","Edit Timetables","Manage Teachers","Manage Students",
+    "View Financials","Edit Financials","Manage Accounts","View Reports"
+  ];
+
+  const ROLE_DEFAULT_PERMS = {
+    Manager:   ["View Timetables","Edit Timetables","Manage Teachers","Manage Students","View Financials","Edit Financials","Manage Accounts","View Reports"],
+    Teacher:   ["View Timetables"],
+    Secretary: ["View Timetables","Manage Teachers","Manage Students","View Reports"],
+    Accountant:["View Financials","Edit Financials","View Reports"],
+    Student:   ["View Timetables"],
+  };
+
+  const COLORS = ["#6366f1","#3b82f6","#22c55e","#f97316","#f43f5e","#8b5cf6","#0891b2"];
+  function getColor(id) { return COLORS[parseInt(id.replace(/\D/g,'')) % COLORS.length]; }
+  function getInitials(a) { return (a.fname[0]+a.lname[0]).toUpperCase(); }
+
+  let accounts = [
+    { id:"A001", fname:"Manager", lname:"Admin",    username:"manager.admin",    email:"manager@Luminaschool.dz", role:"Manager",    status:"Active",    lastLogin:"2026-04-01 09:15", birthday:"1985-03-12", perms:[...ROLE_DEFAULT_PERMS.Manager]   },
+    { id:"A002", fname:"Sophie",  lname:"Martin",   username:"sophie.martin",    email:"sophie.martin@gmail.com",  role:"Teacher",    status:"Active",    lastLogin:"2026-04-01 08:02", birthday:"1990-07-24", perms:[...ROLE_DEFAULT_PERMS.Teacher]   },
+    { id:"A003", fname:"Rania",   lname:"Hadj",     username:"rania.hadj",       email:"rania.hadj@gmail.com",     role:"Secretary",  status:"Active",    lastLogin:"2026-03-31 14:30", birthday:"1993-11-05", perms:[...ROLE_DEFAULT_PERMS.Secretary] },
+    { id:"A004", fname:"Tarek",   lname:"Saidi",    username:"tarek.saidi",      email:"tarek.saidi@gmail.com",    role:"Accountant", status:"Active",    lastLogin:"2026-03-30 11:00", birthday:"1988-01-30", perms:[...ROLE_DEFAULT_PERMS.Accountant]},
+    { id:"A005", fname:"Ahmed",   lname:"Benali",   username:"ahmed.benali",     email:"ahmed.benali@gmail.com",   role:"Teacher",    status:"Inactive",  lastLogin:"2026-03-20 09:45", birthday:"1992-06-18", perms:[...ROLE_DEFAULT_PERMS.Teacher]   },
+    { id:"A006", fname:"Karim",   lname:"Mansouri", username:"karim.mansouri",   email:"karim.mansouri@gmail.com", role:"Teacher",    status:"Suspended", lastLogin:"2026-03-15 13:00", birthday:"1995-09-03", perms:[...ROLE_DEFAULT_PERMS.Teacher]   },
+  ];
+
+  function formatBirthday(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function calcAge(dateStr) {
+    if (!dateStr) return null;
+    const dob = new Date(dateStr);
+    const diff = Date.now() - dob.getTime();
+    return Math.floor(diff / (1000*60*60*24*365.25));
+  }
+  let editingId   = null;
+  let deletingId  = null;
+  let activeTab   = 'info';
+
+  // ─── RENDER ─────────────────────────────────────
+  function renderTable(data) {
+    const tbody = document.getElementById('accountsTable');
+    tbody.innerHTML = '';
+    document.getElementById('statTotal').textContent  = data.length;
+    document.getElementById('statActive').textContent = data.filter(a => a.status === 'Active').length;
+
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center py-16 text-slate-400">
+        <i class="fas fa-user-slash text-4xl mb-3 block opacity-30"></i>No accounts found</td></tr>`;
+      return;
+    }
+
+    data.forEach(a => {
+      const color    = getColor(a.id);
+      const initials = getInitials(a);
+      const statusClass = a.status === 'Active' ? 'status-active' : a.status === 'Inactive' ? 'status-inactive' : 'status-suspended';
+      const statusIcon  = a.status === 'Active' ? 'fa-circle' : a.status === 'Inactive' ? 'fa-circle' : 'fa-pause-circle';
+      const roleClass   = `role-${a.role.toLowerCase()}`;
+
+      const permChips = a.perms.slice(0,3).map(p =>
+        `<span class="perm-chip"><i class="fas fa-check text-[8px]"></i>${p}</span>`
+      ).join('') + (a.perms.length > 3 ? `<span class="perm-chip">+${a.perms.length-3}</span>` : '');
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="avatar-initials" style="background:${color}">${initials}</div>
+            <div>
+              <div class="font-semibold text-slate-800">${a.fname} ${a.lname}</div>
+              <div class="text-xs text-slate-400 mt-0.5">${a.id}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-5 py-4">
+          <div class="text-slate-700 text-sm font-medium">${a.username}</div>
+          <div class="text-blue-500 text-xs mt-0.5">${a.email}</div>
+        </td>
+        <td class="px-5 py-4">
+          <span class="role-badge ${roleClass}">
+            <i class="fas ${ROLE_ICON[a.role]} text-[10px]"></i>${a.role}
+          </span>
+        </td>
+        <td class="px-5 py-4 text-xs text-slate-500">${a.birthday ? formatBirthday(a.birthday) : '<span class="text-slate-300">—</span>'}</td>
+        <td class="px-5 py-4 text-center">
+          <span class="${statusClass}"><i class="fas ${statusIcon} text-[7px]"></i>${a.status}</span>
+        </td>
+        <td class="px-5 py-4 text-center text-xs text-slate-500">${a.lastLogin}</td>
+        <td class="px-6 py-4">
+          <div class="flex items-center justify-center gap-1.5">
+            <button onclick="viewAccount('${a.id}')" class="action-btn btn-view" title="View"><i class="fas fa-eye text-xs"></i></button>
+            <button onclick="editAccount('${a.id}')" class="action-btn btn-edit" title="Modify"><i class="fas fa-edit text-xs"></i></button>
+            <button onclick="toggleStatus('${a.id}')" class="action-btn btn-toggle" title="Toggle Status"><i class="fas fa-power-off text-xs"></i></button>
+          </div>
+        </td>`;
+      tbody.appendChild(row);
+    });
+  }
+
+  // ─── VIEW MODAL ─────────────────────────────────
+  function viewAccount(id) {
+    const a = accounts.find(acc => acc.id === id);
+    if (!a) return;
+    const color = getColor(a.id);
+    document.getElementById('viewHeader').style.background = `linear-gradient(135deg, ${color}bb, ${color})`;
+    document.getElementById('viewAvatar').textContent      = getInitials(a);
+    document.getElementById('viewAvatar').style.background = 'rgba(255,255,255,0.25)';
+    document.getElementById('viewName').textContent        = `${a.fname} ${a.lname}`;
+    document.getElementById('viewUsername').textContent    = `@${a.username}`;
+    document.getElementById('viewRoleBadge').textContent   = a.role;
+
+    document.getElementById('viewBody').innerHTML = `
+      <div class="detail-row">
+        <div class="detail-icon"><i class="fas fa-at"></i></div>
+        <div>
+          <div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Username</div>
+          <div class="text-sm font-semibold text-slate-700 mt-0.5">${a.username}</div>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-icon"><i class="fas fa-envelope"></i></div>
+        <div>
+          <div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Email</div>
+          <div class="text-sm font-semibold text-blue-600 mt-0.5">${a.email}</div>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-icon"><i class="fas fa-shield-alt"></i></div>
+        <div>
+          <div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Role</div>
+          <div class="mt-1">
+            <span class="role-badge role-${a.role.toLowerCase()}">
+              <i class="fas ${ROLE_ICON[a.role]} text-[10px]"></i>${a.role}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-icon"><i class="fas fa-toggle-on"></i></div>
+        <div>
+          <div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Status</div>
+          <div class="text-sm font-semibold mt-0.5 ${a.status==='Active' ? 'text-green-600' : a.status==='Inactive' ? 'text-red-600' : 'text-amber-600'}">
+            ${a.status}
+          </div>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-icon"><i class="fas fa-clock"></i></div>
+        <div>
+          <div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Last Login</div>
+          <div class="text-sm font-semibold text-slate-700 mt-0.5">${a.lastLogin}</div>
+        </div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-icon"><i class="fas fa-birthday-cake"></i></div>
+        <div>
+          <div class="text-xs text-slate-400 font-semibold uppercase tracking-wide">Date of Birth</div>
+          <div class="text-sm font-semibold text-slate-700 mt-0.5">
+            ${a.birthday
+              ? formatBirthday(a.birthday) + ` <span class="text-slate-400 text-xs">(${calcAge(a.birthday)} yrs)</span>`
+              : '—'}
+          </div>
+        </div>
+      </div>
+    `;
+    document.getElementById('viewModal').classList.remove('hidden');
+  }
+
+  function hideViewModal() { document.getElementById('viewModal').classList.add('hidden'); }
+
+  // ─── CREATE MODAL ───────────────────────────────
+  function showCreateModal() {
+    editingId = null;
+    ['c-fname','c-lname','c-username','c-email','c-password','c-confirm','c-birthday'].forEach(id => {
+      const el = document.getElementById(id); if(el) el.value = '';
+    });
+    document.getElementById('c-user').value = '';
+    buildRoleRadios('roleRadios', 'Teacher', 'c-role');
+    resetStrength();
+    document.getElementById('createModal').classList.remove('hidden');
+  }
+  function hideCreateModal() { document.getElementById('createModal').classList.add('hidden'); }
+
+  function autoFillFromUser() {
+    const val = document.getElementById('c-user').value;
+    if (!val) return;
+    const [,fname,lname,email,role] = val.split('|');
+    document.getElementById('c-fname').value    = fname;
+    document.getElementById('c-lname').value    = lname;
+    document.getElementById('c-email').value    = email;
+    document.getElementById('c-username').value = `${fname.toLowerCase()}.${lname.toLowerCase()}`;
+    const radio = document.querySelector(`input[name="c-role"][value="${role}"]`);
+    if (radio) {
+      radio.checked = true;
+      syncPermsToRole('roleRadios','c-role','permCheckboxes','c-perm');
+    }
+  }
+
+  function saveAccount() {
+    const fname    = document.getElementById('c-fname').value.trim();
+    const lname    = document.getElementById('c-lname').value.trim();
+    const username = document.getElementById('c-username').value.trim();
+    const email    = document.getElementById('c-email').value.trim();
+    const birthday = document.getElementById('c-birthday').value;
+    const pwd      = document.getElementById('c-password').value;
+    const confirm  = document.getElementById('c-confirm').value;
+    const role     = document.querySelector('input[name="c-role"]:checked')?.value || 'Teacher';
+    const perms    = Array.from(document.querySelectorAll('input[name="c-perm"]:checked')).map(c => c.value);
+
+    if (!fname||!lname||!username||!email) { alert('Please fill in all required fields.'); return; }
+    if (!pwd) { alert('Password is required.'); return; }
+    if (pwd !== confirm) { alert('Passwords do not match.'); return; }
+
+    const now = new Date();
+    accounts.unshift({
+      id: 'A'+String(100+accounts.length),
+      fname, lname, username, email, role, birthday: birthday || '',
+      status: 'Active',
+      lastLogin: '—',
+      perms: perms.length ? perms : ROLE_DEFAULT_PERMS[role]
+    });
+    renderTable(accounts);
+    hideCreateModal();
+  }
+
+  // ─── EDIT MODAL ─────────────────────────────────
+  function editAccount(id) {
+    const a = accounts.find(a => a.id === id);
+    if (!a) return;
+    editingId = id;
+    document.getElementById('e-username').value = a.username;
+    document.getElementById('e-email').value    = a.email;
+    document.getElementById('e-birthday').value = a.birthday || '';
+    document.getElementById('e-password').value = '';
+    buildRoleRadios('e-roleRadios', a.role, 'e-role');
+    document.getElementById('editModal').classList.remove('hidden');
+  }
+  function hideEditModal() { document.getElementById('editModal').classList.add('hidden'); editingId=null; }
+
+  function saveEdit() {
+    if (!editingId) return;
+    const a = accounts.find(a => a.id === editingId);
+    if (!a) return;
+    a.username = document.getElementById('e-username').value.trim() || a.username;
+    a.email    = document.getElementById('e-email').value.trim()    || a.email;
+    a.birthday = document.getElementById('e-birthday').value        || a.birthday;
+    a.role     = document.querySelector('input[name="e-role"]:checked')?.value || a.role;
+    renderTable(accounts);
+    hideEditModal();
+  }
+
+  // ─── DELETE ─────────────────────────────────────
+  function showDeleteModal(id) {
+    deletingId = id;
+    const a = accounts.find(a => a.id === id);
+    document.getElementById('deleteTargetName').textContent = `${a.fname} ${a.lname}`;
+    document.getElementById('deleteModal').classList.remove('hidden');
+  }
+  function hideDeleteModal() { document.getElementById('deleteModal').classList.add('hidden'); deletingId=null; }
+  function confirmDelete() {
+    accounts = accounts.filter(a => a.id !== deletingId);
+    renderTable(accounts);
+    hideDeleteModal();
+  }
+
+  // ─── TOGGLE STATUS ──────────────────────────────
+  function toggleStatus(id) {
+    const a = accounts.find(a => a.id === id);
+    if (!a) return;
+    const cycle = { Active:'Inactive', Inactive:'Active', Suspended:'Active' };
+    a.status = cycle[a.status] || 'Active';
+    renderTable(accounts);
+  }
+
+  // ─── SEARCH / FILTER ────────────────────────────
+  function filterTable() {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const role = document.getElementById('roleFilter').value;
+    renderTable(accounts.filter(a =>
+      (`${a.fname} ${a.lname} ${a.username} ${a.email}`).toLowerCase().includes(term) &&
+      (!role || a.role === role)
+    ));
+  }
+
+  // ─── HELPERS ────────────────────────────────────
+  function buildRoleRadios(containerId, selected, name) {
+    document.getElementById(containerId).innerHTML = ROLES.map(r => `
+      <label class="flex items-center gap-2 p-2.5 border-2 rounded-xl cursor-pointer transition hover:border-indigo-300 text-xs
+                    ${r===selected?'border-indigo-400 bg-indigo-50':'border-slate-200'}">
+        <input type="radio" name="${name}" value="${r}" class="accent-indigo-600" ${r===selected?'checked':''}
+               onchange="syncPermsToRole('${containerId}','${name}','${containerId==='roleRadios'?'permCheckboxes':'e-permCheckboxes'}','${containerId==='roleRadios'?'c-perm':'e-perm'}')">
+        <span class="font-semibold text-slate-700"><i class="fas ${ROLE_ICON[r]} mr-1 text-indigo-400 text-[10px]"></i>${r}</span>
+      </label>`).join('');
+  }
+
+  function buildPermCheckboxes(containerId, selected, name) {
+    document.getElementById(containerId).innerHTML = ALL_PERMS.map(p => `
+      <label class="flex items-center gap-2 px-3 py-2 bg-slate-50 hover:bg-slate-100 rounded-xl cursor-pointer text-xs transition">
+        <input type="checkbox" name="${name}" value="${p}" class="accent-indigo-600 w-3.5 h-3.5 flex-shrink-0" ${selected.includes(p)?'checked':''}>
+        <span>${p}</span>
+      </label>`).join('');
+  }
+
+  function syncPermsToRole(roleContainerId, roleName, permContainerId, permName) {
+    const role = document.querySelector(`input[name="${roleName}"]:checked`)?.value;
+    if (!role) return;
+    const permContainer = document.getElementById(permContainerId);
+    if (permContainer) buildPermCheckboxes(permContainerId, ROLE_DEFAULT_PERMS[role]||[], permName);
+    document.querySelectorAll(`#${roleContainerId} label`).forEach(l => {
+      const inp = l.querySelector('input');
+      l.className = l.className.replace('border-indigo-400 bg-indigo-50','border-slate-200');
+      if (inp.checked) l.className = l.className.replace('border-slate-200','border-indigo-400 bg-indigo-50');
+    });
+  }
+
+  function checkStrength() {
+    const pwd = document.getElementById('c-password').value;
+    const bars = [document.getElementById('bar1'),document.getElementById('bar2'),document.getElementById('bar3'),document.getElementById('bar4')];
+    const label = document.getElementById('strengthLabel');
+    const checks = [pwd.length>=8, /[A-Z]/.test(pwd), /\d/.test(pwd), /[^a-zA-Z0-9]/.test(pwd)];
+    const score  = checks.filter(Boolean).length;
+    const colors = ['#ef4444','#f97316','#eab308','#22c55e'];
+    const labels = ['Too weak','Fair','Good','Strong'];
+    bars.forEach((b,i) => { b.style.background = i < score ? colors[score-1] : '#e2e8f0'; });
+    label.textContent = score ? labels[score-1] : '';
+    label.style.color = score ? colors[score-1] : '#94a3b8';
+    const reqs = [
+      {id:'req-len',    ok: pwd.length>=8},
+      {id:'req-upper',  ok: /[A-Z]/.test(pwd)},
+      {id:'req-num',    ok: /\d/.test(pwd)},
+      {id:'req-special',ok: /[^a-zA-Z0-9]/.test(pwd)},
+    ];
+    reqs.forEach(({id,ok}) => {
+      const el = document.getElementById(id);
+      el.querySelector('i').className = ok ? 'fas fa-check text-green-500 w-3' : 'fas fa-times text-red-400 w-3';
+      el.style.color = ok ? '#16a34a' : '';
+    });
+    checkMatch();
+  }
+
+  function checkMatch() {
+    const pwd     = document.getElementById('c-password').value;
+    const confirm = document.getElementById('c-confirm').value;
+    const msg     = document.getElementById('matchMsg');
+    if (!confirm) { msg.classList.add('hidden'); return; }
+    msg.classList.remove('hidden');
+    if (pwd === confirm) { msg.textContent = '✓ Passwords match'; msg.className = 'text-xs mt-1 text-green-600'; }
+    else                 { msg.textContent = '✗ Passwords do not match'; msg.className = 'text-xs mt-1 text-red-500'; }
+  }
+
+  function resetStrength() {
+    ['bar1','bar2','bar3','bar4'].forEach(id => document.getElementById(id).style.background='#e2e8f0');
+    document.getElementById('strengthLabel').textContent='';
+    document.getElementById('matchMsg').classList.add('hidden');
+    ['req-len','req-upper','req-num','req-special'].forEach(id => {
+      const el=document.getElementById(id);
+      el.querySelector('i').className='fas fa-times text-red-400 w-3';
+      el.style.color='';
+    });
+  }
+
+  function togglePwd(inputId, iconId) {
+    const inp = document.getElementById(inputId);
+    const ico = document.getElementById(iconId);
+    if (inp.type==='password') { inp.type='text';     ico.className='fas fa-eye-slash text-sm'; }
+    else                        { inp.type='password'; ico.className='fas fa-eye text-sm'; }
+  }
+
+  // ─── INIT ───────────────────────────────────────
+  renderTable(accounts);
+</script>
+</body>
+</html>

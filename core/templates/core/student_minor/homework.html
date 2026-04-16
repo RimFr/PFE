@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homework — Lumina Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="shared.css">
+<style>.page{animation:fadeUp .3s var(--ease)}</style>
+</head>
+<body>
+
+<aside id="sb">
+  <div class="sb-chip" onclick="toggleSB()"><i class="fas fa-chevron-left"></i></div>
+  <div class="sb-head">
+    <div class="sb-icon-wrap">S</div>
+    <div class="sb-brand"><div class="sb-name">Lumina Academy</div><div class="sb-sub">Student Portal</div></div>
+  </div>
+  <div class="sb-scroll">
+    <div class="sb-lbl">Main</div>
+    <a class="ni" href="dashboard.html"><div class="ni-ic"><i class="fas fa-house-chimney"></i></div><span class="ni-lbl">Dashboard</span><div class="ni-tip">Dashboard</div></a>
+    <a class="ni" href="course.html"><div class="ni-ic"><i class="fas fa-book-open"></i></div><span class="ni-lbl">Courses</span><div class="ni-tip">Courses</div></a>
+    <a class="ni active" href="homework.html"><div class="ni-ic"><i class="fas fa-pen-to-square"></i></div><span class="ni-lbl">Homework</span><span class="ni-bdg">3</span><div class="ni-tip">Homework</div></a>
+    <a class="ni" href="Grades.html"><div class="ni-ic"><i class="fas fa-star-half-stroke"></i></div><span class="ni-lbl">Grades</span><div class="ni-tip">Grades</div></a>
+    <div class="sb-div"></div>
+    <div class="sb-lbl">Account</div>
+    <a class="ni" href="payment.html"><div class="ni-ic"><i class="fas fa-wallet"></i></div><span class="ni-lbl">Payments</span><div class="ni-tip">Payments</div></a>
+    <a class="ni" href="{% url 'core:login' %}"><div class="ni-ic"><i class="fas fa-circle-user"></i></div><span class="ni-lbl">My Profile</span><div class="ni-tip">My Profile</div></a>
+    <div class="sb-div"></div>
+    <button class="ni ni-logout" onclick="openLogout()"><div class="ni-ic"><i class="fas fa-right-from-bracket"></i></div><span class="ni-lbl">Log out</span><div class="ni-tip">Log out</div></button>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-av">O</div>
+    <div class="sb-fi"><div class="sb-fn">Oumaima B.</div><div class="sb-fr">B1 Intermediate</div></div>
+    <div class="sb-fa"><button class="sb-fb set"><i class="fas fa-gear"></i></button></div>
+    <div class="sb-online"></div>
+  </div>
+</aside>
+
+<div class="msg-overlay" id="msgOverlay" onclick="closeMsgModal()">
+  <div class="msg-modal" onclick="event.stopPropagation()">
+    <div class="mm-head"><div class="mm-av" id="mmAv">K</div><div><div class="mm-name" id="mmName"></div><div class="mm-role" id="mmRole"></div><div class="mm-time" id="mmTime"></div></div><button class="close-mm" onclick="closeMsgModal()"><i class="fas fa-xmark"></i></button></div>
+    <div class="mm-body" id="mmBody"></div>
+  </div>
+</div>
+
+<div class="logout-overlay" id="logoutOverlay" onclick="closeLogout()">
+  <div class="logout-modal" onclick="event.stopPropagation()">
+    <div class="lo-icon"><i class="fas fa-right-from-bracket"></i></div>
+    <div class="lo-title">Log out of Lumina Academy?</div>
+    <div class="lo-sub">Your progress is safely saved. See you next time, Oumaima!</div>
+    <div class="lo-btns">
+      <button class="lo-cancel" onclick="closeLogout()">Cancel</button>
+      <button class="lo-confirm" onclick="confirmLogout()">Log out</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="tb-crumb">Lumina Academy</span>
+      <span class="tb-sep"><i class="fas fa-chevron-right"></i></span>
+      <span class="tb-title">Homework</span>
+    </div>
+    <div class="tb-right">
+      <div class="tb-notif-wrap">
+        <button class="notif-btn" onclick="toggleNotif()"><i class="fas fa-bell"></i><span class="n-badge" id="bellBadge">5</span></button>
+        <div class="notif-drop" id="nDrop">
+          <div class="nd-head"><h4>Notifications</h4><span class="nd-mark" onclick="markRead()">Mark all read</span></div>
+          <div id="ndList"></div>
+          <div class="nd-foot"><a href="#">View all →</a></div>
+        </div>
+      </div>
+      <a class="prof-chip" href="{% url 'core:login' %}">
+        <div class="pc-av">O</div>
+        <div><div class="pc-name">Oumaima B.</div><div class="pc-role">B1 Student</div></div>
+      </a>
+      <div class="online-chip"><div class="online-dot-chip"></div> Online</div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page">
+      <div class="page-hero" style="background:linear-gradient(130deg,var(--b8) 0%,var(--b7) 45%,var(--amber) 100%)">
+        <div class="ph-deco"></div>
+        <div class="ph-icon"><i class="fas fa-pen-to-square"></i></div>
+        <div><div class="ph-title">My Homework</div><div class="ph-sub">Track and submit your assignments</div></div>
+      </div>
+
+      <div id="hw-main">
+        <div class="lang-filter">
+          <button class="lf-btn active" onclick="filterHW('all',this)">🌐 All</button>
+          <button class="lf-btn" onclick="filterHW('en',this)">🇬🇧 English</button>
+          <button class="lf-btn" onclick="filterHW('fr',this)">🇫🇷 French</button>
+        </div>
+        <div class="cgrid" id="hwgrid"></div>
+      </div>
+
+      <div id="hw-lesson-view" class="lesson-view">
+        <button class="back-btn" onclick="closeLesson()"><i class="fas fa-arrow-left"></i> Back to Homework</button>
+        <div id="hw-lhead" class="lhead">
+          <div class="lhead-actions">
+            <div id="hw-lhead-info"></div>
+            <button class="pdf-dl-btn" onclick="downloadLessonPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button>
+          </div>
+        </div>
+        <div id="hw-lbody" class="lbody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle" id="ti"></i><span id="tm"></span></div>
+<script src="shared.js"></script>
+<script>
+let currentLesson=null;
+
+function renderHW(f='all'){
+  document.getElementById('hwgrid').innerHTML=HOMEWORK.filter(h=>f==='all'||h.lang===f).map(h=>`
+    <div class="ccard" onclick="openLesson('${h.id}')">
+      <div class="ccard-tag ${h.tag}">${h.emoji} ${h.lang==='en'?'English':'Français'}</div>
+      <div class="ccard-title">${h.title}</div>
+      <div class="ccard-sub">${h.sub}</div>
+      <div class="hw-due ${h.due}"><i class="fas fa-${h.due==='ok'?'check':'clock'}"></i> ${h.dueLabel}</div>
+    </div>`).join('');
+}
+function filterHW(f,btn){document.querySelectorAll('.lf-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderHW(f)}
+function openLesson(id){
+  const data=HOMEWORK.find(h=>h.id===id);if(!data)return;
+  currentLesson=data;
+  document.getElementById('hw-main').style.display='none';
+  document.getElementById('hw-lhead-info').innerHTML=`<div style="display:flex;align-items:center;gap:.9rem"><div style="font-size:2rem">${data.emoji}</div><div><div style="font-size:1.05rem;font-weight:600;color:var(--text)">${data.title}</div><div style="font-size:.74rem;color:var(--muted);margin-top:3px">${data.sub}</div></div></div>`;
+  document.getElementById('hw-lbody').innerHTML=data.sections.map(s=>`<div class="lsection"><div class="lsec-title"><i class="fas ${s.icon}"></i>${s.title}</div><div class="lsec-content">${s.content}</div></div>`).join('');
+  document.getElementById('hw-lesson-view').classList.add('open');
+}
+function closeLesson(){
+  document.getElementById('hw-lesson-view').classList.remove('open');
+  document.getElementById('hw-main').style.display='';
+}
+
+function stripHTML(html){const d=document.createElement('div');d.innerHTML=html;return(d.innerText||d.textContent||'').trim()}
+function extractListItems(html){const d=document.createElement('div');d.innerHTML=html;const items=[];d.querySelectorAll('li').forEach(li=>items.push(li.innerText||li.textContent||''));return items}
+function downloadLessonPDF(){
+  const d=currentLesson;if(!d)return;
+  const{jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  const W=210,M=16,TW=W-M*2;
+  const blue1=[13,58,104],amber=[245,158,11];const dark=[12,33,64];const white=[255,255,255];const borderClr=[216,232,244];
+  doc.setFillColor(...blue1);doc.rect(0,0,W,50,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(...white);doc.text('Lumina ACADEMY',M,20);
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(180,210,245);doc.text('Student Homework Portal',M,27);
+  doc.setFontSize(13);doc.setFont('helvetica','bold');doc.setTextColor(...white);doc.text(d.title,M,40);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(200,225,248);doc.text(d.sub,M,47);
+  let y=62;
+  d.sections.forEach(s=>{
+    if(y>270){doc.addPage();y=20;}
+    doc.setFillColor(...blue1);doc.roundedRect(M,y-4,TW,10,2,2,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(...white);doc.text(s.title,M+5,y+3);y+=12;
+    const hasLi=/<li/i.test(s.content);
+    if(hasLi){
+      extractListItems(s.content).forEach(item=>{
+        if(y>275){doc.addPage();y=20;}
+        doc.setFillColor(...white);doc.setDrawColor(...borderClr);doc.setLineWidth(0.25);
+        const wrappedLines=doc.splitTextToSize(item.trim(),TW-14);
+        const rowH=wrappedLines.length*5+5;
+        doc.roundedRect(M,y-3,TW,rowH,2,2,'FD');
+        doc.setFillColor(...amber);doc.circle(M+5,y+1,1.5,'F');
+        doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(...dark);
+        wrappedLines.forEach((ln,li)=>doc.text(ln,M+10,y+li*5));
+        y+=rowH+2;
+      });
+    } else {
+      const plain=stripHTML(s.content);
+      if(plain){
+        doc.setFillColor(...white);doc.setDrawColor(...borderClr);doc.setLineWidth(0.25);
+        const contentLines=doc.splitTextToSize(plain,TW-8);
+        const blockH=contentLines.length*5.2+8;
+        doc.roundedRect(M,y-3,TW,blockH,2,2,'FD');
+        doc.setFont('helvetica','normal');doc.setFontSize(9.2);doc.setTextColor(...dark);
+        contentLines.forEach((line,li)=>doc.text(line,M+5,y+li*5.2));
+        y+=blockH+3;
+      }
+    }
+    y+=4;
+  });
+  const totalPages=doc.getNumberOfPages();
+  for(let p=1;p<=totalPages;p++){
+    doc.setPage(p);doc.setFillColor(...blue1);doc.rect(0,287,W,10,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(180,210,245);doc.text('Lumina ACADEMY',M,293);
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(180,210,245);doc.text(`Page ${p} / ${totalPages}`,W-M,293,{align:'right'});
+  }
+  doc.save(`${d.title.replace(/[^a-zA-Z0-9\s]/g,'').replace(/\s+/g,'_')}.pdf`);
+  toast(`PDF downloaded: ${d.title}`,'fa-file-pdf','var(--b3)');
+}
+
+document.addEventListener('DOMContentLoaded',()=>renderHW());
+</script>
+</body>
+</html>
